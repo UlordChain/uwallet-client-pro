@@ -1,0 +1,2086 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: electrum\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-16 13:29+0000\n"
+"PO-Revision-Date: 2017-08-25 05:30-0400\n"
+"Last-Translator: rdymac <rdy@aol.es>\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: electrum\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /electrum-client/messages.pot\n"
+
+#: gui/qt/main_window.py:2516
+msgid " These settings affects the fields in the Send tab"
+msgstr " Тези настройки се отнасят за полетата в раздел Изпращане"
+
+#: gui/qt/main_window.py:557
+#, python-format
+msgid "%(txs)s new transactions received. Total amount received in the new transactions %(amount)s"
+msgstr "%(txs)s получени нови транзакции. Общо получена сума от нови транзакции %(amount)s"
+
+#: gui/qt/main_window.py:511
+msgid "&About"
+msgstr "&Относно"
+
+#: gui/qt/main_window.py:146
+msgid "&Addresses"
+msgstr ""
+
+#: gui/qt/main_window.py:514
+msgid "&Documentation"
+msgstr "&Документация"
+
+#: gui/qt/main_window.py:517
+msgid "&Donate to server"
+msgstr ""
+
+#: gui/qt/main_window.py:497
+msgid "&Encrypt/decrypt message"
+msgstr "&Шифриране/разшифриране на съобщение"
+
+#: gui/qt/main_window.py:458 gui/qt/main_window.py:465
+msgid "&Export"
+msgstr "&Експортиране"
+
+#: gui/qt/main_window.py:441
+msgid "&File"
+msgstr "&Файл"
+
+#: gui/qt/main_window.py:506
+msgid "&From QR code"
+msgstr "&От QR код"
+
+#: gui/qt/main_window.py:503
+msgid "&From file"
+msgstr "&От файл"
+
+#: gui/qt/main_window.py:504
+msgid "&From text"
+msgstr "&От текст"
+
+#: gui/qt/main_window.py:505
+msgid "&From the blockchain"
+msgstr "&От блок-веригата"
+
+#: gui/qt/main_window.py:510
+msgid "&Help"
+msgstr "&Помощ"
+
+#: gui/qt/main_window.py:471
+msgid "&History"
+msgstr ""
+
+#: gui/qt/main_window.py:457 gui/qt/main_window.py:464
+msgid "&Import"
+msgstr "&Импортиране"
+
+#: gui/qt/main_window.py:463
+msgid "&Labels"
+msgstr "&Етикети"
+
+#: gui/qt/main_window.py:502
+msgid "&Load transaction"
+msgstr "&Зареждане на транзакция"
+
+#: gui/qt/main_window.py:453
+msgid "&Master Public Keys"
+msgstr "&Главни публични ключове"
+
+#: gui/qt/main_window.py:493
+msgid "&Network"
+msgstr "&Мрежа"
+
+#: gui/qt/main_window.py:467
+msgid "&New"
+msgstr ""
+
+#: gui/qt/main_window.py:444
+msgid "&New/Restore"
+msgstr "&Нов/Възстановяване"
+
+#: gui/qt/main_window.py:512
+msgid "&Official website"
+msgstr "&Официален уебсайт"
+
+#: gui/qt/main_window.py:443
+msgid "&Open"
+msgstr "&Отваряне"
+
+#: gui/qt/main_window.py:451
+msgid "&Password"
+msgstr "&Парола"
+
+#: gui/qt/main_window.py:500
+msgid "&Pay to many"
+msgstr "&Плащане към повече хора"
+
+#: gui/qt/main_window.py:494
+msgid "&Plugins"
+msgstr "&Разширения"
+
+#: gui/qt/main_window.py:455
+msgid "&Private keys"
+msgstr "&Частни ключове"
+
+#: gui/qt/main_window.py:447
+msgid "&Quit"
+msgstr "&Изход"
+
+#: gui/qt/main_window.py:442
+msgid "&Recently open"
+msgstr ""
+
+#: gui/qt/main_window.py:515
+msgid "&Report Bug"
+msgstr "&Докладване на грешки"
+
+#: gui/qt/main_window.py:445
+msgid "&Save Copy"
+msgstr "&Запазване на копие"
+
+#: gui/qt/main_window.py:452
+msgid "&Seed"
+msgstr "&Сийд"
+
+#: gui/qt/main_window.py:496
+msgid "&Sign/verify message"
+msgstr "&Подписване/потвърждаване на съобщение"
+
+#: gui/qt/main_window.py:456
+msgid "&Sweep"
+msgstr "&Усвояване"
+
+#: gui/qt/main_window.py:489
+msgid "&Tools"
+msgstr "&Инструменти"
+
+#: gui/qt/main_window.py:483
+msgid "&View"
+msgstr ""
+
+#: gui/qt/main_window.py:449
+msgid "&Wallet"
+msgstr "&Портфейл"
+
+#: plugins/virtualkeyboard/qt.py:13
+msgid "+"
+msgstr "+"
+
+#: gui/qt/util.py:46
+msgid "1 day"
+msgstr "1 ден"
+
+#: gui/qt/util.py:45
+msgid "1 hour"
+msgstr "1 час"
+
+#: gui/qt/util.py:47
+msgid "1 week"
+msgstr "1 седмица"
+
+#: gui/qt/main_window.py:399
+msgid "A copy of your wallet file was created in"
+msgstr "Създадено беше копие на ваш портфейл"
+
+#: gui/qt/main_window.py:1047
+msgid "A suggested fee is automatically added to this field. You may override it. The suggested fee increases with the size of the transaction."
+msgstr "Предложената такса ще бъде автоматично прибавена към това поле. Можете да я отмените. Предложената такса нараства с размера на транзакцията."
+
+#: gui/qt/installwizard.py:346 gui/kivy/uix/dialogs/installwizard.py:789
+msgid "Add Cosigner"
+msgstr "Добавяне на съподписан"
+
+#: gui/qt/main_window.py:1361
+msgid "Additional fees"
+msgstr "Допълнителни такси"
+
+#: gui/qt/main_window.py:1799 gui/qt/main_window.py:1871
+#: gui/qt/main_window.py:1937 gui/qt/contact_list.py:42
+#: gui/qt/request_list.py:41 gui/qt/util.py:316 gui/qt/address_dialog.py:39
+msgid "Address"
+msgstr "Адрес"
+
+#: gui/qt/address_dialog.py:51
+msgid "Address:"
+msgstr "Адрес:"
+
+#: gui/qt/main_window.py:2456
+msgid "Always"
+msgstr ""
+
+#: gui/qt/main_window.py:1027 gui/qt/main_window.py:1657
+#: gui/qt/history_list.py:60 gui/qt/history_list.py:63
+#: gui/qt/invoice_list.py:36 gui/qt/request_list.py:41
+msgid "Amount"
+msgstr "Сума"
+
+#: gui/qt/transaction_dialog.py:206
+msgid "Amount received:"
+msgstr "Получена сума:"
+
+#: gui/qt/transaction_dialog.py:208
+msgid "Amount sent:"
+msgstr "Изпратена сума:"
+
+#: gui/qt/main_window.py:1354
+msgid "Amount to be sent"
+msgstr "Сума за изпращане"
+
+#: gui/qt/main_window.py:1023
+msgid "Amount to be sent."
+msgstr "Сума за изпращане."
+
+#: gui/qt/main_window.py:2703
+msgid "Appearance"
+msgstr "Изглед"
+
+#: gui/qt/installwizard.py:491
+msgid "Auto connect"
+msgstr "Автоматично свързване"
+
+#: gui/qt/seed_dialog.py:80
+msgid "BIP39 seed"
+msgstr "BIP39 сийд"
+
+#: gui/qt/seed_dialog.py:71
+msgid "BIP39 seeds can be imported in Electrum so that users can access funds locked in other wallets."
+msgstr ""
+
+#: gui/qt/installwizard.py:78 gui/qt/installwizard.py:111
+#: gui/qt/installwizard.py:112
+msgid "Back"
+msgstr "Обратно"
+
+#: gui/qt/main_window.py:687 gui/qt/history_list.py:60
+#: gui/qt/history_list.py:63
+msgid "Balance"
+msgstr "Баланс"
+
+#: gui/qt/main_window.py:2517
+msgid "Base unit"
+msgstr "Основна единица"
+
+#: gui/qt/main_window.py:2514
+msgid "Base unit of your wallet."
+msgstr "Основната единица на вашия портфейл."
+
+#: gui/qt/main_window.py:539
+msgid "Before reporting a bug, upgrade to the most recent version of Electrum (latest release or git HEAD), and include the version number in your report."
+msgstr "Преди докладване на грешка, обновете до последната версия на Electrum (последното издание или git HEAD) и включете номера на версията в доклада си."
+
+#: gui/qt/main_window.py:1303
+msgid "Bitcoin Address is None"
+msgstr "Биткойн адреса няма стойност"
+
+#: gui/qt/main_window.py:749
+msgid "Bitcoin address where the payment should be received. Note that each payment request uses a different Bitcoin address."
+msgstr "Биткойн адреса, на който ще бъде получено плащането. Обърнете внимание, че всяка заявка за плащане ползва различен Биткойн адрес."
+
+#: gui/qt/main_window.py:1045
+msgid "Bitcoin transactions are in general not free. A transaction fee is paid by the sender of the funds."
+msgstr "Принципно Биткойн транзакциите не са безплатни. Таксата за транзакцията се плаща от изпращача на средствата."
+
+#: gui/qt/network_dialog.py:288
+msgid "Blockchain"
+msgstr "Блокчейн"
+
+#: gui/qt/transaction_dialog.py:100
+msgid "Broadcast"
+msgstr "Излъчване"
+
+#: gui/qt/main_window.py:1444
+msgid "Broadcasting transaction..."
+msgstr "Излъчване на транзакция..."
+
+#: gui/qt/main_window.py:2879
+msgid "Bump Fee"
+msgstr ""
+
+#: gui/qt/util.py:329
+msgid "CSV"
+msgstr "CSV"
+
+#: gui/qt/installwizard.py:78 gui/qt/installwizard.py:112
+#: gui/qt/installwizard.py:494 gui/qt/util.py:167
+msgid "Cancel"
+msgstr "Отказ"
+
+#: gui/kivy/main_window.py:818
+msgid "Cannot broadcast transaction"
+msgstr "Невъзможно излъчване на транзакция"
+
+#: gui/qt/installwizard.py:196
+msgid "Cannot read file"
+msgstr ""
+
+#: gui/qt/network_dialog.py:365
+#, python-format
+msgid "Chain split detected at block %d"
+msgstr ""
+
+#: gui/qt/password_dialog.py:57
+msgid "Change Password"
+msgstr "Промяна на парола"
+
+#: gui/kivy/main_window.py:894
+msgid "Changing PIN code."
+msgstr "Промяна на ПИН код."
+
+#: gui/qt/main_window.py:2825
+msgid "Child Pays for Parent"
+msgstr ""
+
+#: gui/qt/history_list.py:176
+msgid "Child pays for parent"
+msgstr ""
+
+#: gui/qt/installwizard.py:28
+msgid "Choose a password to encrypt your wallet keys."
+msgstr "Изберете парола за шифриране на ключовете на портфейла ви."
+
+#: gui/kivy/main_window.py:104
+msgid "Choose a server"
+msgstr ""
+
+#: gui/qt/main_window.py:2609
+msgid "Choose coin (UTXO) selection method.  The following are available:\n\n"
+msgstr "Изберете метод за селекция на койни (UTXO).  Наличните са:\n\n"
+
+#: gui/qt/installwizard.py:536
+msgid "Choose the number of signatures needed to unlock funds in your wallet:"
+msgstr ""
+
+#: gui/qt/main_window.py:2546
+msgid "Choose which online block explorer to use for functions that open a web browser"
+msgstr "Изберете кой онлайн блок-експлорер да се ползва за функциите, които отварят уеб браузъра"
+
+#: gui/kivy/main_window.py:116
+msgid "Choose your chain"
+msgstr ""
+
+#: gui/qt/installwizard.py:153
+msgid "Choose..."
+msgstr ""
+
+#: gui/qt/main_window.py:1084
+msgid "Clear"
+msgstr "Изчистване"
+
+#: gui/qt/__init__.py:108 gui/qt/main_window.py:1955
+#: gui/qt/main_window.py:2011 gui/qt/util.py:143
+#: gui/qt/transaction_dialog.py:106 gui/qt/qrcodewidget.py:124
+msgid "Close"
+msgstr "Затваряне"
+
+#: gui/qt/main_window.py:147
+msgid "Co&ins"
+msgstr ""
+
+#: gui/qt/main_window.py:2611 gui/kivy/uix/dialogs/settings.py:159
+msgid "Coin selection"
+msgstr "Избор на койни"
+
+#: gui/qt/main_window.py:149
+msgid "Con&sole"
+msgstr ""
+
+#: gui/qt/main_window.py:148
+msgid "Con&tacts"
+msgstr ""
+
+#: gui/qt/password_dialog.py:83
+msgid "Confirm Passphrase:"
+msgstr "Потвърдете тайната фраза:"
+
+#: gui/qt/password_dialog.py:98
+msgid "Confirm Password:"
+msgstr "Потвърдете паролата:"
+
+#: gui/qt/installwizard.py:367 gui/kivy/uix/dialogs/installwizard.py:777
+msgid "Confirm Seed"
+msgstr "Потвърдете сийд"
+
+#: gui/kivy/main_window.py:910
+msgid "Confirm new PIN"
+msgstr "Потвърдете новия ПИН код"
+
+#: gui/qt/network_dialog.py:358
+#, python-format
+msgid "Connected to %d nodes."
+msgstr ""
+
+#: gui/qt/main_window.py:466
+msgid "Contacts"
+msgstr "Контакти"
+
+#: gui/qt/util.py:149 gui/qt/qrcodewidget.py:116
+msgid "Copy"
+msgstr "Копиране"
+
+#: gui/qt/history_list.py:164 gui/qt/contact_list.py:75
+#: gui/qt/invoice_list.py:78 gui/qt/request_list.py:118
+#, python-format
+msgid "Copy %s"
+msgstr "Копиране на %s"
+
+#: gui/qt/request_list.py:119
+msgid "Copy URI"
+msgstr "Копиране на URI"
+
+#: gui/qt/util.py:154
+msgid "Copy and Close"
+msgstr "Копиране и затваряне"
+
+#: gui/qt/util.py:533
+msgid "Copy to clipboard"
+msgstr "Копиране в системния буфер"
+
+#: gui/kivy/main_window.py:389
+msgid "Could not start Barcode Scanner."
+msgstr "Невъзможно стартирането на Баркод скенер."
+
+#: gui/qt/util.py:199
+msgid "Critical Error"
+msgstr "Критична грешка"
+
+#: gui/qt/password_dialog.py:100
+msgid "Current Password:"
+msgstr "Текуща парола:"
+
+#: gui/qt/main_window.py:2881
+msgid "Current fee"
+msgstr "Текуща такса"
+
+#: gui/qt/__init__.py:109
+msgid "Dark/Light"
+msgstr "Тъмна/светла"
+
+#: gui/qt/history_list.py:60 gui/qt/request_list.py:41
+msgid "Date"
+msgstr "Дата"
+
+#: gui/qt/transaction_dialog.py:195
+#, python-format
+msgid "Date: %s"
+msgstr "Дата: %s"
+
+#: gui/qt/main_window.py:2007
+msgid "Decrypt"
+msgstr "Дешифриране"
+
+#: gui/qt/network_dialog.py:217
+msgid "Default Servers"
+msgstr "Сървъри по подразбиране"
+
+#: gui/qt/main_window.py:1682 gui/qt/contact_list.py:79
+#: gui/qt/invoice_list.py:82 gui/qt/request_list.py:121
+msgid "Delete"
+msgstr "Изтриване"
+
+#: gui/qt/main_window.py:1678
+msgid "Delete invoice?"
+msgstr ""
+
+#: gui/kivy/main_window.py:849
+msgid "Delete wallet?"
+msgstr "Изтриване на портфейла?"
+
+#: gui/kivy/uix/dialogs/settings.py:146
+msgid "Denomination"
+msgstr "Деноминация"
+
+#: gui/qt/main_window.py:757 gui/qt/main_window.py:1010
+#: gui/qt/history_list.py:60 gui/qt/invoice_list.py:36
+#: gui/qt/request_list.py:41 gui/qt/transaction_dialog.py:189
+msgid "Description"
+msgstr "Описание"
+
+#: gui/qt/main_window.py:1008
+msgid "Description of the transaction (not mandatory)."
+msgstr "Описание на транзакцията (незадължително)."
+
+#: gui/qt/history_list.py:168 gui/qt/invoice_list.py:79
+msgid "Details"
+msgstr "Подробности"
+
+#: gui/kivy/main_window.py:646
+msgid "Disconnected"
+msgstr ""
+
+#: gui/qt/main_window.py:1082
+msgid "Display the details of your transactions before signing it."
+msgstr "Показване на данните за вашата транзакция преди да я подпишете."
+
+#: gui/qt/seed_dialog.py:45
+msgid "Do not store it electronically."
+msgstr "Не го съхранявай електронно."
+
+#: gui/qt/installwizard.py:262
+#, python-format
+msgid "Do you want to delete '%s'?"
+msgstr "Искате ли да изтриете '%s'?"
+
+#: gui/qt/installwizard.py:240
+msgid "Do you want to delete the old file"
+msgstr "Желаете ли да изтриете старият файл"
+
+#: gui/qt/main_window.py:1585
+msgid "Do you want to remove"
+msgstr "Желаете ли да премахнете"
+
+#: gui/qt/main_window.py:1293
+msgid "Do you wish to continue?"
+msgstr "Искате ли да продължите?"
+
+#: gui/qt/history_list.py:166 gui/qt/contact_list.py:77
+#, python-format
+msgid "Edit %s"
+msgstr "Редактиране на %s"
+
+#: gui/qt/main_window.py:2444
+msgid "Edit fees manually"
+msgstr ""
+
+#: gui/kivy/main_window.py:244
+msgid "Electrum App"
+msgstr "Electrum App"
+
+#: gui/qt/main_window.py:2763
+msgid "Electrum Plugins"
+msgstr "Разширения на Electrum"
+
+#: gui/qt/installwizard.py:485
+msgid "Electrum communicates with remote servers to get information about your transactions and addresses. The servers all fulfil the same purpose only differing in hardware. In most cases you simply want to let Electrum pick one at random.  However if you prefer feel free to select a server manually."
+msgstr "Electrum се свързва с отдалечени сървъри, за да получи информация за вашите транзакции и адреси. Предназначението на сървърите е едно и също, различават се само по хардуера. В повечето случаи оставяте Electrum да избере произволен. Но ако предпочитате, можете да изберете сървъра ръчно."
+
+#: gui/qt/network_dialog.py:272
+msgid "Electrum connects to several nodes in order to download block headers and find out the longest blockchain."
+msgstr ""
+
+#: gui/qt/installwizard.py:23
+msgid "Electrum is generating your addresses, please wait..."
+msgstr "Electrum генерира вашите адреси, моля изчакайте..."
+
+#: gui/qt/main_window.py:492
+msgid "Electrum preferences"
+msgstr "Настройки на Electrum"
+
+#: gui/qt/network_dialog.py:281
+msgid "Electrum sends your wallet addresses to a single server, in order to receive your transaction history."
+msgstr "Electrum изпраща адресите на вашия портфейл към самостоятелен сървър, за да получи историята на трансакциите ви."
+
+#: gui/qt/installwizard.py:168
+msgid "Electrum wallet"
+msgstr ""
+
+#: gui/qt/main_window.py:401
+msgid "Electrum was unable to copy your wallet file to the specified location."
+msgstr "Electrum не успя да копира файла на вашият портфейл в зададеното местоположение."
+
+#: gui/qt/main_window.py:2206
+msgid "Electrum was unable to export your labels."
+msgstr "Electrum не успя да експортира вашите етикети."
+
+#: gui/qt/main_window.py:2193
+msgid "Electrum was unable to import your labels."
+msgstr "Electrum не успя да импортира вашите етикети."
+
+#: gui/qt/main_window.py:2067
+msgid "Electrum was unable to open your transaction file"
+msgstr "Electrum не успя да отвори вашият файл с транзакции"
+
+#: gui/qt/main_window.py:2032
+msgid "Electrum was unable to parse your transaction"
+msgstr "Electrum не успя да анализира вашата транзакция"
+
+#: gui/qt/main_window.py:2158
+msgid "Electrum was unable to produce a private key-export."
+msgstr "Electrum не успя да експортира частния ключ."
+
+#: gui/qt/main_window.py:2230
+msgid "Electrum was unable to produce a transaction export."
+msgstr "Electrum не успя да експортира трансакцията."
+
+#: gui/qt/main_window.py:532
+msgid "Electrum's focus is speed, with low resource usage and simplifying Bitcoin. You do not need to perform regular backups, because your wallet can be recovered from a secret phrase that you can memorize or write on paper. Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the Bitcoin system.\n\n"
+msgstr ""
+
+#: gui/qt/main_window.py:2003
+msgid "Encrypt"
+msgstr "Шифриране"
+
+#: gui/qt/password_dialog.py:120
+msgid "Encrypt wallet file"
+msgstr ""
+
+#: gui/qt/main_window.py:1980
+msgid "Encrypt/decrypt Message"
+msgstr "Шифриране/дешифриране на съобщение"
+
+#: gui/qt/main_window.py:1998
+msgid "Encrypted"
+msgstr "Шифрирано"
+
+#: gui/qt/password_dialog.py:57
+msgid "Enter Passphrase"
+msgstr "Въведете тайната фраза"
+
+#: gui/qt/password_dialog.py:57 gui/qt/password_dialog.py:198
+msgid "Enter Password"
+msgstr "Въведете парола"
+
+#: gui/qt/installwizard.py:360 gui/kivy/uix/dialogs/installwizard.py:564
+msgid "Enter Seed"
+msgstr "Въведете сийд"
+
+#: gui/qt/main_window.py:391
+msgid "Enter a filename for the copy of your wallet"
+msgstr "Въведете името на файла за копието на вашия портфейл"
+
+#: gui/qt/main_window.py:1605
+msgid "Enter a list of outputs in the 'Pay to' field."
+msgstr "Въведете списък с изходи в полето \"Плащане към\"."
+
+#: gui/qt/main_window.py:2352
+msgid "Enter addresses"
+msgstr "Въведете адреси"
+
+#: gui/kivy/main_window.py:825
+msgid "Enter description"
+msgstr "Въведете описание"
+
+#: gui/kivy/main_window.py:907
+msgid "Enter new PIN"
+msgstr "Въведете нов ПИН"
+
+#: gui/qt/main_window.py:2359
+msgid "Enter private keys"
+msgstr "Въведете частни ключове"
+
+#: gui/qt/main_window.py:2289
+msgid "Enter private keys:"
+msgstr "Въведете частни ключове:"
+
+#: gui/qt/installwizard.py:349
+msgid "Enter their master private key (xprv) if you want to be able to sign for them."
+msgstr "Въведете главен частен ключ (xprv) ако искате да можете да се подписвате за тях."
+
+#: gui/kivy/uix/dialogs/wallets.py:59
+msgid "Enter wallet name"
+msgstr "Въведете име на портфейл"
+
+#: gui/kivy/main_window.py:876
+msgid "Enter your PIN code in order to decrypt your seed"
+msgstr "Въведете вашият ПИН код, за да дешифрирате вашият сийд"
+
+#: gui/kivy/main_window.py:855
+#, python-format
+msgid "Enter your PIN code to confirm deletion of %s"
+msgstr "Въведете вашият ПИН код, за да потвърдите изтриването на %s"
+
+#: gui/kivy/main_window.py:894
+msgid "Enter your current PIN:"
+msgstr "Въведете текущия си ПИН:"
+
+#: gui/qt/installwizard.py:190
+msgid "Enter your password or choose another file."
+msgstr ""
+
+#: gui/qt/main_window.py:1369
+msgid "Enter your password to proceed"
+msgstr "Въведете паролата си, за да продължите"
+
+#: gui/qt/installwizard.py:225 gui/qt/installwizard.py:229 gui/qt/util.py:195
+msgid "Error"
+msgstr "Грешка"
+
+#: gui/qt/__init__.py:111
+msgid "Exit Electrum"
+msgstr "Изход от Electrum"
+
+#: gui/qt/transaction_dialog.py:199
+msgid "Expected confirmation time"
+msgstr "Очаквано време за потвърждение"
+
+#: gui/qt/main_window.py:777
+msgid "Expiration date of your request."
+msgstr "Дата на изтичане на заявката ви."
+
+#: gui/qt/util.py:41
+msgid "Expired"
+msgstr "Изтекъл"
+
+#: gui/qt/main_window.py:779
+msgid "Expired requests have to be deleted manually from your list, in order to free the corresponding Bitcoin addresses."
+msgstr "За да се освободят съответните Биткойн адреси, изтеклите заявки трябва да се изтрият ръчно от вашият списък."
+
+#: gui/qt/main_window.py:1666 gui/qt/invoice_list.py:36
+msgid "Expires"
+msgstr "Валидност"
+
+#: gui/qt/main_window.py:2121 gui/qt/main_window.py:2218
+msgid "Export"
+msgstr "Експортиране"
+
+#: gui/qt/main_window.py:2210
+msgid "Export History"
+msgstr "История на експортирането"
+
+#: gui/qt/main_window.py:2108
+msgid "Exposing a single private key can compromise your entire wallet!"
+msgstr "Разкриването на един частен ключ може да компрометира целият ви портфейл!"
+
+#: gui/qt/seed_dialog.py:60
+msgid "Extend this seed with custom words"
+msgstr ""
+
+#: gui/qt/main_window.py:1772
+msgid "Failed to update password"
+msgstr "Неуспешна промяна на парола"
+
+#: gui/qt/main_window.py:1048 gui/qt/transaction_dialog.py:210
+msgid "Fee"
+msgstr "Такса"
+
+#: gui/qt/main_window.py:2854
+msgid "Fee:"
+msgstr ""
+
+#: gui/qt/main_window.py:2701
+msgid "Fees"
+msgstr "Такси"
+
+#: gui/qt/main_window.py:2704
+msgid "Fiat"
+msgstr ""
+
+#: gui/qt/main_window.py:2696
+msgid "Fiat currency"
+msgstr ""
+
+#: gui/qt/util.py:350
+msgid "File"
+msgstr "Файл"
+
+#: gui/qt/main_window.py:2893
+msgid "Final"
+msgstr "Окончателен"
+
+#: gui/qt/main_window.py:476
+msgid "Find"
+msgstr ""
+
+#: gui/qt/network_dialog.py:80
+msgid "Follow this branch"
+msgstr ""
+
+#: gui/qt/util.py:326
+msgid "Format"
+msgstr "Формат"
+
+#: gui/qt/main_window.py:1607
+msgid "Format: address, amount"
+msgstr "Формат: адрес, сума"
+
+#: gui/qt/main_window.py:1015
+msgid "From"
+msgstr "От"
+
+#: gui/qt/installwizard.py:527
+#, python-format
+msgid "From %d cosigners"
+msgstr "От %d съподписани"
+
+#: gui/qt/network_dialog.py:65
+msgid "Height"
+msgstr ""
+
+#: gui/kivy/main_window.py:731
+msgid "Hello World"
+msgstr "Здравей, свят"
+
+#: gui/qt/installwizard.py:475
+msgid "Here is your master public key."
+msgstr "Това е вашият главен публичен ключ."
+
+#: gui/qt/main_window.py:221 gui/qt/main_window.py:480
+msgid "Hide"
+msgstr ""
+
+#: gui/qt/main_window.py:134 gui/qt/address_dialog.py:79
+msgid "History"
+msgstr "История"
+
+#: gui/qt/network_dialog.py:130
+msgid "Host"
+msgstr ""
+
+#: gui/qt/installwizard.py:492
+msgid "How do you want to connect to a server? "
+msgstr "Как желаете да се свържете към сървъра? "
+
+#: gui/qt/seed_dialog.py:72
+msgid "However, BIP39 seeds do not include a version number, which compromises compatibility with future wallet software."
+msgstr ""
+
+#: gui/qt/main_window.py:2705
+msgid "Identity"
+msgstr "Идентичност"
+
+#: gui/qt/network_dialog.py:296
+msgid "If auto-connect is enabled, Electrum will always use a server that is on the longest blockchain."
+msgstr "Ако автоматичното свързване е разрешено, Electrum винаги ще използва сървъра, който е с най-дълга блок-верига."
+
+#: gui/qt/network_dialog.py:297
+msgid "If it is disabled, you have to choose a server you want to use. Electrum will warn you if your server is lagging."
+msgstr ""
+
+#: gui/qt/main_window.py:2456
+msgid "If the fee is low"
+msgstr ""
+
+#: gui/qt/main_window.py:1070
+msgid "If you check this box, your transaction will be marked as non-final,"
+msgstr "Ако изберете тази кутийка, транзакцията ви ще бъде маркирана като неокончателна,"
+
+#: gui/kivy/uix/dialogs/installwizard.py:528
+msgid "If you forget your PIN or lose your device, your seed phrase will be the only way to recover your funds."
+msgstr ""
+
+#: gui/qt/installwizard.py:370
+msgid "If you lose your seed, your money will be permanently lost."
+msgstr ""
+
+#: gui/qt/main_window.py:922
+msgid "If you want to create new addresses, use a deterministic wallet instead."
+msgstr ""
+
+#: gui/qt/main_window.py:468 gui/qt/main_window.py:470
+#: gui/qt/main_window.py:2330
+msgid "Import"
+msgstr "Импортиране"
+
+#: gui/qt/main_window.py:459 gui/qt/main_window.py:2352
+msgid "Import addresses"
+msgstr ""
+
+#: gui/qt/contact_list.py:68
+msgid "Import file"
+msgstr ""
+
+#: gui/qt/main_window.py:2359
+msgid "Import private keys"
+msgstr "Импортиране на частни ключове"
+
+#: gui/qt/seed_dialog.py:75
+msgid "In addition, Electrum does not verify the checksum of BIP39 seeds; make sure you type your seed correctly."
+msgstr ""
+
+#: gui/qt/main_window.py:2109
+msgid "In particular, DO NOT use 'redeem private key' services proposed by third parties."
+msgstr "В случая НЕ ПОЛЗВАЙТЕ услугите 'възстановяване на частен ключ', предлагани от трети лица."
+
+#: gui/qt/main_window.py:2595
+msgid "In some cases, use up to 3 change addresses in order to break up large coin amounts and obfuscate the recipient address."
+msgstr ""
+
+#: gui/qt/history_list.py:172
+msgid "Increase fee"
+msgstr ""
+
+#: gui/qt/main_window.py:378 gui/qt/util.py:203
+msgid "Information"
+msgstr "Информация"
+
+#: gui/qt/main_window.py:2842
+msgid "Input amount"
+msgstr ""
+
+#: gui/qt/main_window.py:2072
+msgid "Input raw transaction"
+msgstr "Внасяне на необработена транзакция"
+
+#: gui/qt/transaction_dialog.py:222
+msgid "Inputs"
+msgstr "Входове"
+
+#: gui/qt/installwizard.py:101
+msgid "Install Wizard"
+msgstr ""
+
+#: gui/qt/main_window.py:2566
+msgid "Install the zbar package to enable this."
+msgstr ""
+
+#: gui/qt/main_window.py:1330
+msgid "Insufficient funds"
+msgstr "Недостатъчно средства"
+
+#: gui/qt/main_window.py:1625
+msgid "Invalid Address"
+msgstr "Невалиден адрес"
+
+#: gui/qt/main_window.py:1309
+msgid "Invalid Amount"
+msgstr "Невалидна сума"
+
+#: gui/qt/main_window.py:1306
+msgid "Invalid Bitcoin Address"
+msgstr "Невалиден биткойн адрес"
+
+#: gui/qt/main_window.py:1286
+msgid "Invalid Lines found:"
+msgstr "Открити са невалидни редове:"
+
+#: gui/kivy/main_window.py:793
+msgid "Invalid PIN"
+msgstr "Невалиден ПИН"
+
+#: gui/qt/main_window.py:1513
+msgid "Invalid bitcoin URI:"
+msgstr "Невалиден биткойн URI адрес:"
+
+#: gui/qt/main_window.py:1652
+msgid "Invoice"
+msgstr "отчет"
+
+#: gui/qt/main_window.py:1675
+msgid "Invoice saved as "
+msgstr ""
+
+#: gui/qt/main_window.py:469 gui/qt/main_window.py:1125
+msgid "Invoices"
+msgstr "Отчети"
+
+#: gui/qt/main_window.py:1026
+msgid "Keyboard shortcut: type \"!\" to send all your coins."
+msgstr "Клавишна комбинация: напишете \"!\" за изпращане на всички ваши койни."
+
+#: plugins/labels/qt.py:30
+msgid "Label Settings"
+msgstr ""
+
+#: gui/qt/main_window.py:2382 gui/kivy/uix/dialogs/settings.py:138
+msgid "Language"
+msgstr "Език"
+
+#: gui/qt/installwizard.py:29
+msgid "Leave this field empty if you want to disable encryption."
+msgstr ""
+
+#: gui/qt/main_window.py:1286
+msgid "Line #"
+msgstr "Ред №"
+
+#: gui/qt/main_window.py:2072
+msgid "Load transaction"
+msgstr "Зареждане на транзакция"
+
+#: gui/qt/main_window.py:2086
+msgid "Lookup transaction"
+msgstr "Търсене на транзакция"
+
+#: gui/qt/main_window.py:376
+msgid "Make sure you own the seed phrase or the private keys, before you request Bitcoins to be sent to this wallet."
+msgstr ""
+
+#: gui/qt/installwizard.py:481 gui/kivy/uix/dialogs/installwizard.py:689
+#: gui/kivy/uix/dialogs/installwizard.py:693
+msgid "Master Public Key"
+msgstr ""
+
+#: gui/qt/main_window.py:1826
+msgid "Master Public Keys"
+msgstr "Главни публични ключове"
+
+#: gui/qt/main_window.py:1038
+msgid "Max"
+msgstr ""
+
+#: gui/qt/main_window.py:2869
+msgid "Max fee exceeded"
+msgstr ""
+
+#: gui/qt/main_window.py:2437
+msgid "Max static fee"
+msgstr ""
+
+#: gui/qt/main_window.py:2437
+msgid "Max value of the static fee slider"
+msgstr ""
+
+#: gui/qt/main_window.py:1661
+msgid "Memo"
+msgstr "Напомняне"
+
+#: gui/qt/main_window.py:1931 gui/qt/main_window.py:1986
+msgid "Message"
+msgstr "Съобщение"
+
+#: gui/qt/main_window.py:1355
+msgid "Mining fee"
+msgstr ""
+
+#: gui/qt/installwizard.py:538
+msgid "Multi-Signature Wallet"
+msgstr ""
+
+#: gui/qt/main_window.py:1801 gui/qt/contact_list.py:42
+msgid "Name"
+msgstr "Име"
+
+#: gui/qt/main_window.py:1745 gui/qt/network_dialog.py:43
+msgid "Network"
+msgstr "Мрежа"
+
+#: gui/qt/main_window.py:2456 gui/qt/invoice_list.py:49
+#: gui/qt/request_list.py:55 gui/qt/util.py:48
+msgid "Never"
+msgstr "Никога"
+
+#: gui/qt/seed_dialog.py:43
+msgid "Never disclose your seed."
+msgstr ""
+
+#: gui/qt/seed_dialog.py:44
+msgid "Never type it on a website."
+msgstr ""
+
+#: gui/qt/main_window.py:793
+msgid "New"
+msgstr "Нов"
+
+#: gui/qt/main_window.py:1791 gui/qt/main_window.py:1793
+msgid "New Contact"
+msgstr "Нов контакт"
+
+#: gui/qt/password_dialog.py:97
+msgid "New Password:"
+msgstr ""
+
+#: gui/qt/contact_list.py:67
+msgid "New contact"
+msgstr "Нов контакт"
+
+#: gui/qt/main_window.py:2882
+msgid "New fee:"
+msgstr ""
+
+#: gui/qt/main_window.py:566
+#, python-format
+msgid "New transaction received. %(amount)s"
+msgstr ""
+
+#: gui/qt/installwizard.py:113
+msgid "Next"
+msgstr "Напред"
+
+#: gui/kivy/main_window.py:630
+msgid "No Wallet"
+msgstr ""
+
+#: gui/qt/main_window.py:527
+msgid "No donation address for this server"
+msgstr ""
+
+#: gui/qt/main_window.py:880
+msgid "No message or amount"
+msgstr "Няма съобщение или сума"
+
+#: gui/qt/main_window.py:920
+msgid "No more addresses in your wallet."
+msgstr "Няма повече адреси в портфейла ви."
+
+#: gui/qt/main_window.py:1298
+msgid "No outputs"
+msgstr "Няма изходящи"
+
+#: gui/qt/installwizard.py:405
+msgid "No transactions found for this seed"
+msgstr "Няма открити транзакции за този сийд"
+
+#: gui/qt/network_dialog.py:65
+msgid "Node"
+msgstr ""
+
+#: gui/qt/main_window.py:2640 gui/qt/network_dialog.py:340
+#: gui/kivy/uix/dialogs/settings.py:164 gui/kivy/uix/dialogs/settings.py:229
+msgid "None"
+msgstr ""
+
+#: gui/qt/main_window.py:702 gui/qt/network_dialog.py:358
+#: gui/kivy/main_window.py:818
+msgid "Not connected"
+msgstr "Няма връзка"
+
+#: gui/qt/main_window.py:1106
+msgid "Not enough funds"
+msgstr "Недостатъчно средства"
+
+#: gui/qt/main_window.py:1025
+msgid "Note that if you have frozen some of your addresses, the available funds will be lower than your total balance."
+msgstr "Забележете, че ако сте замразили някой от адресите си, наличните средства ще бъдат по-малко от общия ви баланс."
+
+#: gui/qt/main_window.py:1072
+msgid "Note that some merchants do not accept non-final transactions until they are confirmed."
+msgstr ""
+
+#: gui/kivy/uix/dialogs/__init__.py:93
+msgid "Nothing set !"
+msgstr ""
+
+#: gui/qt/main_window.py:2401
+msgid "Number of zeros displayed after the decimal point. For example, if this is set to 2, \"1.\" will be displayed as \"1.00\""
+msgstr "Брой нули след десетичния знак. Например: ако зададете 2, \"1.\" ще бъде показвано \"1.00\""
+
+#: gui/qt/installwizard.py:225 gui/qt/installwizard.py:229 gui/qt/util.py:161
+#: gui/qt/util.py:600
+msgid "OK"
+msgstr "ОК"
+
+#: gui/qt/__init__.py:145 gui/qt/main_window.py:670
+#: gui/kivy/main_window.py:633
+msgid "Offline"
+msgstr "Офлайн"
+
+#: gui/qt/main_window.py:1606
+msgid "One output per line."
+msgstr ""
+
+#: gui/qt/main_window.py:2547
+msgid "Online Block Explorer"
+msgstr "Онлайн блок-експлорер"
+
+#: gui/qt/main_window.py:2183
+msgid "Open labels file"
+msgstr "Отваряне на файл с етикети"
+
+#: gui/qt/main_window.py:2467
+msgid "OpenAlias"
+msgstr ""
+
+#: gui/qt/main_window.py:2463
+msgid "OpenAlias record, used to receive coins and to sign payment requests."
+msgstr ""
+
+#: gui/qt/seed_dialog.py:120
+msgid "Options"
+msgstr ""
+
+#: gui/qt/main_window.py:2845
+msgid "Output amount"
+msgstr ""
+
+#: gui/qt/transaction_dialog.py:265
+msgid "Outputs"
+msgstr "Изходящи"
+
+#: gui/qt/network_dialog.py:191
+msgid "Overview"
+msgstr ""
+
+#: gui/kivy/uix/dialogs/installwizard.py:816
+msgid "PIN mismatch"
+msgstr ""
+
+#: gui/qt/util.py:40
+msgid "Paid"
+msgstr "Платени"
+
+#: gui/kivy/main_window.py:890
+msgid "Passphrase"
+msgstr ""
+
+#: gui/qt/password_dialog.py:83
+msgid "Passphrase:"
+msgstr ""
+
+#: gui/qt/main_window.py:1739 gui/qt/installwizard.py:163
+#: gui/qt/network_dialog.py:236 gui/qt/password_dialog.py:205
+msgid "Password"
+msgstr "Парола"
+
+#: gui/qt/password_dialog.py:146
+msgid "Password Strength"
+msgstr "Сложност на паролата"
+
+#: gui/qt/main_window.py:1774
+msgid "Password is disabled, this wallet is not protected"
+msgstr ""
+
+#: gui/qt/main_window.py:1774
+msgid "Password was updated successfully"
+msgstr "Паролата беше успешно променена"
+
+#: gui/qt/password_dialog.py:97
+msgid "Password:"
+msgstr ""
+
+#: gui/qt/invoice_list.py:81
+msgid "Pay Now"
+msgstr "Платете сега"
+
+#: gui/qt/main_window.py:999 gui/qt/contact_list.py:78
+msgid "Pay to"
+msgstr "Плащане към"
+
+#: gui/qt/main_window.py:1610
+msgid "Pay to many"
+msgstr ""
+
+#: gui/qt/qrwindow.py:53
+msgid "Payment Request"
+msgstr ""
+
+#: gui/qt/main_window.py:1277 gui/qt/main_window.py:1416
+#: gui/kivy/main_window.py:290
+msgid "Payment request has expired"
+msgstr "Заявките за плащане са изтекли"
+
+#: gui/qt/main_window.py:1438 gui/kivy/main_window.py:804
+msgid "Payment sent."
+msgstr "Плащането е изпратено."
+
+#: gui/qt/util.py:39
+msgid "Pending"
+msgstr "Чакащи"
+
+#: gui/qt/installwizard.py:26
+msgid "Please enter a seed phrase or a master key (xpub or xprv):"
+msgstr ""
+
+#: gui/qt/installwizard.py:24
+msgid "Please enter a seed phrase, a master key, a list of Bitcoin addresses, or a list of private keys"
+msgstr "Моля, въведете фраза на сийда, главен ключ, списък от Биткойн адреси или списък от частни ключове"
+
+#: gui/qt/installwizard.py:348
+msgid "Please enter the master public key (xpub) of your cosigner."
+msgstr "Моля, въведете главният публичен ключ (xpub) на вашият съподписан портфейл."
+
+#: gui/qt/installwizard.py:27
+#, python-format
+msgid "Please enter the master public key of cosigner #%d:"
+msgstr ""
+
+#: gui/qt/main_window.py:861 gui/qt/password_dialog.py:197
+msgid "Please enter your password"
+msgstr "Моля, въведете паролата си"
+
+#: gui/qt/installwizard.py:31
+msgid "Please enter your seed derivation passphrase. Note: this is NOT your encryption password. Leave this field empty if you did not use one or are unsure."
+msgstr ""
+
+#: gui/qt/installwizard.py:361
+msgid "Please enter your seed phrase in order to restore your wallet."
+msgstr ""
+
+#: gui/kivy/main_window.py:389
+msgid "Please install the Barcode Scanner app from ZXing"
+msgstr ""
+
+#: gui/kivy/uix/dialogs/installwizard.py:790
+msgid "Please paste your cosigners master public key, or scan it using the camera button."
+msgstr ""
+
+#: gui/qt/main_window.py:537
+msgid "Please report any bugs as issues on github:<br/>"
+msgstr ""
+
+#: gui/qt/main_window.py:2736
+msgid "Please restart Electrum to activate the new GUI settings"
+msgstr "Моля, рестартирайте Electrum, за да активирате новите настройки на графичния интерфейс"
+
+#: gui/kivy/uix/dialogs/installwizard.py:778
+msgid "Please retype your seed phrase, to confirm that you properly saved it"
+msgstr ""
+
+#: gui/qt/seed_dialog.py:37
+#, python-format
+msgid "Please save these %d words on paper (order is important). "
+msgstr ""
+
+#: gui/qt/installwizard.py:476
+msgid "Please share it with your cosigners."
+msgstr ""
+
+#: gui/kivy/uix/dialogs/installwizard.py:563
+msgid "Please type your seed phrase using the virtual keyboard."
+msgstr ""
+
+#: gui/qt/util.py:230
+msgid "Please wait"
+msgstr ""
+
+#: gui/qt/installwizard.py:116
+msgid "Please wait..."
+msgstr ""
+
+#: gui/qt/network_dialog.py:130
+msgid "Port"
+msgstr ""
+
+#: gui/qt/main_window.py:492 gui/qt/main_window.py:1742
+#: gui/qt/main_window.py:2372
+msgid "Preferences"
+msgstr "Настройки"
+
+#: gui/qt/installwizard.py:187
+msgid "Press 'Next' to create this wallet, or choose another file."
+msgstr ""
+
+#: gui/qt/installwizard.py:193
+msgid "Press 'Next' to open this wallet."
+msgstr ""
+
+#: gui/kivy/main_window.py:535
+msgid "Press again to exit"
+msgstr ""
+
+#: gui/qt/main_window.py:1081
+msgid "Preview"
+msgstr ""
+
+#: gui/qt/main_window.py:1868 gui/qt/main_window.py:1872
+msgid "Private key"
+msgstr "Частен ключ"
+
+#: gui/qt/main_window.py:2103
+msgid "Private keys"
+msgstr "Частни ключове"
+
+#: gui/qt/main_window.py:2167
+msgid "Private keys exported."
+msgstr "Частните ключове са експортирани."
+
+#: gui/qt/main_window.py:1374
+msgid "Proceed?"
+msgstr ""
+
+#: gui/qt/main_window.py:2454
+msgid "Propose Replace-By-Fee"
+msgstr ""
+
+#: gui/qt/network_dialog.py:192
+msgid "Proxy"
+msgstr ""
+
+#: gui/qt/network_dialog.py:234
+msgid "Proxy user"
+msgstr ""
+
+#: gui/qt/main_window.py:1994
+msgid "Public key"
+msgstr "Публичен ключ"
+
+#: gui/qt/address_dialog.py:63
+msgid "Public keys"
+msgstr ""
+
+#: gui/qt/main_window.py:1851
+msgid "QR code"
+msgstr "QR код"
+
+#: gui/qt/qrcodewidget.py:114
+msgid "QR code copied to clipboard"
+msgstr ""
+
+#: gui/qt/qrcodewidget.py:108
+msgid "QR code saved to file"
+msgstr ""
+
+#: gui/qt/qrtextedit.py:38 gui/qt/qrtextedit.py:63
+msgid "Read QR code"
+msgstr ""
+
+#: gui/qt/qrtextedit.py:37
+msgid "Read file"
+msgstr ""
+
+#: gui/qt/main_window.py:136
+msgid "Receive"
+msgstr "Получаване"
+
+#: gui/qt/main_window.py:750
+msgid "Receiving address"
+msgstr "Адрес за получаване"
+
+#: gui/qt/main_window.py:997
+msgid "Recipient of the funds."
+msgstr "Получател на средствата."
+
+#: gui/qt/installwizard.py:403
+msgid "Recovery successful"
+msgstr "Възстановяването е успешно"
+
+#: gui/qt/address_dialog.py:74
+msgid "Redeem Script"
+msgstr ""
+
+#: gui/qt/main_window.py:1224
+msgid "Remove"
+msgstr "Премахване"
+
+#: gui/qt/main_window.py:1635
+#, python-format
+msgid "Remove %s from your list of contacts?"
+msgstr ""
+
+#: gui/qt/main_window.py:1069
+msgid "Replaceable"
+msgstr ""
+
+#: gui/qt/main_window.py:542
+msgid "Reporting Bugs"
+msgstr "Докладване на грешки"
+
+#: gui/qt/main_window.py:782
+msgid "Request expires"
+msgstr ""
+
+#: gui/qt/main_window.py:911
+msgid "Request saved successfully"
+msgstr "Заявката е успешно запазена"
+
+#: gui/qt/main_window.py:762
+msgid "Requested amount"
+msgstr "Заявена сума"
+
+#: gui/qt/main_window.py:1655 gui/qt/invoice_list.py:36
+msgid "Requestor"
+msgstr "Заявител"
+
+#: gui/qt/main_window.py:807
+msgid "Requests"
+msgstr ""
+
+#: gui/qt/installwizard.py:524
+#, python-format
+msgid "Require %d signatures"
+msgstr ""
+
+#: gui/qt/main_window.py:2814
+msgid "Requires"
+msgstr "Изисква"
+
+#: gui/qt/main_window.py:2505
+msgid "SSL certificate"
+msgstr ""
+
+#: gui/qt/main_window.py:2492
+msgid "SSL certificate used to sign payment requests."
+msgstr ""
+
+#: gui/qt/main_window.py:790 gui/qt/main_window.py:1676
+#: gui/qt/transaction_dialog.py:103 gui/qt/qrcodewidget.py:120
+msgid "Save"
+msgstr "Запазване"
+
+#: gui/qt/request_list.py:120
+msgid "Save as BIP70 file"
+msgstr "Запазване като BIP70 файл"
+
+#: gui/qt/main_window.py:1670
+msgid "Save invoice to file"
+msgstr ""
+
+#: gui/qt/main_window.py:1743 gui/qt/seed_dialog.py:179
+#: gui/kivy/main_window.py:888
+msgid "Seed"
+msgstr "Сийд"
+
+#: gui/qt/seed_dialog.py:147
+msgid "Seed Type"
+msgstr ""
+
+#: gui/qt/main_window.py:2117
+msgid "Select file to export your private keys to"
+msgstr "Изберете файл за експортиране на вашите частни ключове"
+
+#: gui/qt/main_window.py:2214
+msgid "Select file to export your wallet transactions to"
+msgstr "Изберете файл за експортиране на вашите транзакции от портфейла"
+
+#: gui/qt/main_window.py:2200
+msgid "Select file to save your labels"
+msgstr "Изберете файл за съхраняване на вашите етикети"
+
+#: gui/qt/network_dialog.py:204
+msgid "Select server automatically"
+msgstr ""
+
+#: gui/qt/installwizard.py:491
+msgid "Select server manually"
+msgstr "Изберете сървър ръчно"
+
+#: gui/qt/main_window.py:907
+msgid "Select where to save your payment request"
+msgstr "Изберете къде да запазите вашата заявка за плащане"
+
+#: gui/qt/transaction_dialog.py:170
+msgid "Select where to save your signed transaction"
+msgstr "Изберете къде да съхраните вашата подписана транзакция"
+
+#: gui/qt/main_window.py:2381
+msgid "Select which language is used in the GUI (after restart)."
+msgstr "Изберете кой език да се използва в графичния интерфейс (след рестартиране)."
+
+#: gui/qt/main_window.py:2060
+msgid "Select your transaction file"
+msgstr "Изберете вашият файл за транзакцията"
+
+#: gui/qt/main_window.py:135 gui/qt/main_window.py:1083
+msgid "Send"
+msgstr "Изпращане"
+
+#: gui/kivy/main_window.py:815
+msgid "Sending"
+msgstr "Изпращане"
+
+#: gui/qt/network_dialog.py:193 gui/qt/network_dialog.py:213
+#: gui/qt/network_dialog.py:282
+msgid "Server"
+msgstr "Сървър"
+
+#: gui/qt/main_window.py:683
+#, python-format
+msgid "Server is lagging (%d blocks)"
+msgstr "Сървъра изостава (%d блока)"
+
+#: gui/kivy/main_window.py:640
+#, python-format
+msgid "Server lagging (%d blocks)"
+msgstr ""
+
+#: gui/qt/network_dialog.py:217
+msgid "Server peers"
+msgstr ""
+
+#: plugins/labels/qt.py:25
+msgid "Settings"
+msgstr "Настройки"
+
+#: gui/qt/main_window.py:221 gui/qt/main_window.py:480
+msgid "Show"
+msgstr ""
+
+#: gui/qt/address_dialog.py:54
+msgid "Show QR Code"
+msgstr ""
+
+#: gui/qt/transaction_dialog.py:77 gui/qt/qrtextedit.py:14
+#: gui/qt/qrtextedit.py:28
+msgid "Show as QR code"
+msgstr "Показване като QR код"
+
+#: gui/qt/main_window.py:2446
+msgid "Show fee edit box in send tab."
+msgstr ""
+
+#: gui/qt/main_window.py:2697
+msgid "Show history rates"
+msgstr ""
+
+#: gui/qt/__init__.py:107
+msgid "Show/Hide"
+msgstr "Показване/Скриване"
+
+#: gui/qt/main_window.py:1947 gui/qt/transaction_dialog.py:97
+msgid "Sign"
+msgstr "Подпис"
+
+#: gui/qt/main_window.py:1925
+msgid "Sign/verify Message"
+msgstr "Подписване/потвърждаване на съобщение"
+
+#: gui/qt/main_window.py:1663 gui/qt/main_window.py:1941
+msgid "Signature"
+msgstr "Подпис"
+
+#: gui/qt/main_window.py:1919
+msgid "Signature verified"
+msgstr "Подписът е потвърден"
+
+#: gui/qt/main_window.py:1406
+msgid "Signing transaction..."
+msgstr ""
+
+#: gui/qt/transaction_dialog.py:209
+msgid "Size:"
+msgstr ""
+
+#: gui/qt/main_window.py:2698
+msgid "Source"
+msgstr ""
+
+#: gui/qt/main_window.py:2625
+msgid "Spend only confirmed coins"
+msgstr ""
+
+#: gui/qt/main_window.py:2626
+msgid "Spend only confirmed inputs."
+msgstr ""
+
+#: gui/qt/invoice_list.py:36 gui/qt/request_list.py:41
+#: gui/qt/network_dialog.py:276
+msgid "Status"
+msgstr "Състояние"
+
+#: gui/qt/transaction_dialog.py:191
+msgid "Status:"
+msgstr "Състояние:"
+
+#: gui/qt/main_window.py:1775 gui/qt/main_window.py:2736
+msgid "Success"
+msgstr "Успешно"
+
+#: gui/qt/main_window.py:2300
+msgid "Sweep"
+msgstr "Усвояване"
+
+#: gui/qt/main_window.py:2285
+msgid "Sweep private keys"
+msgstr "Усвояване на частни ключове"
+
+#: gui/qt/main_window.py:680 gui/kivy/main_window.py:638
+msgid "Synchronizing..."
+msgstr "Синхронизиране..."
+
+#: gui/kivy/main_window.py:709
+msgid "Text copied to clipboard.\n"
+"Tap again to display it as QR code."
+msgstr ""
+
+#: gui/qt/main_window.py:1046
+msgid "The amount of fee can be decided freely by the sender. However, transactions with low fees take more time to be processed."
+msgstr "Сумата за таксата може да се реши от изпращача без ограничения. Естествено, на транзакциите с ниски такси ще е необходимо повече време за обработка."
+
+#: gui/qt/main_window.py:1024
+msgid "The amount will be displayed in red if you do not have enough funds in your wallet."
+msgstr "Сумата ще бъде показана в червено ако нямате достатъчно средства в портфейла си."
+
+#: gui/qt/main_window.py:780
+msgid "The bitcoin address never expires and will always be part of this electrum wallet."
+msgstr ""
+
+#: gui/qt/main_window.py:1009
+msgid "The description is not sent to the recipient of the funds. It is stored in your wallet file, and displayed in the 'History' tab."
+msgstr "Описанието не се изпраща на получателя на средствата. То се съхранява във файла на вашият портфейл и се вижда в раздел 'История'."
+
+#: gui/qt/main_window.py:1365
+msgid "The fee for this transaction seems unusually high."
+msgstr ""
+
+#: gui/qt/installwizard.py:259
+#, python-format
+msgid "The file '%s' contains an incompletely created wallet.\n"
+"Do you want to complete its creation now?"
+msgstr ""
+
+#: gui/qt/installwizard.py:243 gui/qt/installwizard.py:264
+msgid "The file was removed"
+msgstr ""
+
+#: gui/qt/main_window.py:2343
+msgid "The following addresses were added"
+msgstr "Бяха добавени следните адреси"
+
+#: gui/qt/main_window.py:2464
+msgid "The following alias providers are available:"
+msgstr ""
+
+#: gui/qt/main_window.py:2345
+msgid "The following inputs could not be imported"
+msgstr "Следните входове не могат да бъдат импортирани"
+
+#: gui/qt/installwizard.py:248
+#, python-format
+msgid "The format of your wallet '%s' must be upgraded for Electrum. This change will not be backward compatible"
+msgstr ""
+
+#: gui/qt/installwizard.py:235
+#, python-format
+msgid "The wallet '%s' contains multiple accounts, which are no longer supported in Electrum 2.7.\n\n"
+"Do you want to split your wallet into multiple files?"
+msgstr ""
+
+#: gui/qt/network_dialog.py:273
+msgid "This blockchain is used to verify the transactions sent by your transaction server."
+msgstr ""
+
+#: gui/qt/installwizard.py:186
+msgid "This file does not exist."
+msgstr ""
+
+#: gui/qt/installwizard.py:190
+msgid "This file is encrypted."
+msgstr ""
+
+#: gui/qt/main_window.py:778
+msgid "This information is seen by the recipient if you send them a signed payment request."
+msgstr ""
+
+#: gui/qt/main_window.py:2100
+msgid "This is a watching-only wallet"
+msgstr "Този портфейл е само за наблюдение"
+
+#: gui/qt/network_dialog.py:287
+msgid "This is the height of your local copy of the blockchain."
+msgstr ""
+
+#: gui/qt/main_window.py:2597
+msgid "This may result in higher transactions fees."
+msgstr ""
+
+#: gui/qt/main_window.py:375
+msgid "This means you will not be able to spend Bitcoins with it."
+msgstr ""
+
+#: gui/qt/main_window.py:861
+msgid "This payment request will be signed."
+msgstr ""
+
+#: gui/qt/seed_dialog.py:38
+msgid "This seed will allow you to recover your wallet in case of computer failure."
+msgstr "Този сийд ще ви позволи да възстановите вашият портфейл в случай на сриване на компютъра ви."
+
+#: gui/qt/transaction_dialog.py:141
+msgid "This transaction is not saved. Close anyway?"
+msgstr "Тази транзакция не е записана. Желаете ли да затворите?"
+
+#: gui/qt/main_window.py:1345
+msgid "This transaction requires a higher fee, or it will not be propagated by the network"
+msgstr ""
+
+#: gui/qt/main_window.py:1838
+msgid "This wallet has no seed"
+msgstr "Този портфейл няма сийд"
+
+#: gui/qt/main_window.py:374
+msgid "This wallet is watching-only."
+msgstr ""
+
+#: gui/qt/installwizard.py:412
+msgid "This wallet was restored offline. It may contain more addresses than displayed."
+msgstr "Този портфейл беше възстановен офлайн. Той може да съдържа повече адреси, отколкото са показани."
+
+#: gui/qt/installwizard.py:371
+msgid "To make sure that you have properly saved your seed, please retype it here."
+msgstr "За да сте сигурни, че правилно сте съхранили вашият сийд, моля препишете го тук."
+
+#: gui/qt/main_window.py:2839
+msgid "Total size"
+msgstr ""
+
+#: gui/qt/transaction_dialog.py:69
+msgid "Transaction"
+msgstr "Транзакция"
+
+#: gui/qt/main_window.py:2086
+msgid "Transaction ID"
+msgstr "ID на транзакция"
+
+#: gui/qt/transaction_dialog.py:74
+msgid "Transaction ID:"
+msgstr "ID на транзакция:"
+
+#: gui/qt/transaction_dialog.py:174
+msgid "Transaction saved successfully"
+msgstr "Транзакцията е успешно запазена"
+
+#: gui/qt/transaction_dialog.py:204
+msgid "Transaction unrelated to your wallet"
+msgstr "Транзакция без връзка с вашият портфейл"
+
+#: gui/qt/main_window.py:2072
+msgid "Transaction:"
+msgstr "Транзакция:"
+
+#: gui/qt/main_window.py:2702
+msgid "Transactions"
+msgstr "Транзакция"
+
+#: gui/qt/main_window.py:540
+msgid "Try to explain not only what the bug is, but how it occurs."
+msgstr ""
+
+#: gui/qt/main_window.py:401
+msgid "Unable to create backup"
+msgstr ""
+
+#: gui/qt/main_window.py:2161
+msgid "Unable to create csv"
+msgstr "Невъзможно създаване на csv"
+
+#: gui/qt/main_window.py:2231
+msgid "Unable to export history"
+msgstr "Невъзможно експортиране на историята"
+
+#: gui/qt/main_window.py:2067
+msgid "Unable to read file or no transaction found"
+msgstr "Невъзможно четене на файл или не е открита транзакция"
+
+#: gui/qt/transaction_dialog.py:185
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: gui/qt/network_dialog.py:203
+msgid "Use SSL"
+msgstr "Използване на SSL"
+
+#: gui/qt/network_dialog.py:255
+msgid "Use Tor Proxy"
+msgstr ""
+
+#: gui/qt/network_dialog.py:77 gui/qt/network_dialog.py:140
+msgid "Use as server"
+msgstr ""
+
+#: gui/qt/main_window.py:2573
+msgid "Use change addresses"
+msgstr "Използване на адреси за ресто"
+
+#: gui/qt/main_window.py:2423
+msgid "Use dynamic fees"
+msgstr ""
+
+#: gui/qt/main_window.py:2425
+msgid "Use fees recommended by the server."
+msgstr ""
+
+#: gui/qt/main_window.py:2592
+msgid "Use multiple change addresses"
+msgstr ""
+
+#: gui/qt/main_window.py:2493
+msgid "Use setconfig to set ssl_chain and ssl_privkey."
+msgstr ""
+
+#: gui/kivy/uix/dialogs/installwizard.py:785
+msgid "Use the camera button to scan a QR code."
+msgstr ""
+
+#: gui/qt/password_dialog.py:172
+msgid "Use this dialog to add a password to your wallet."
+msgstr ""
+
+#: gui/qt/password_dialog.py:178
+msgid "Use this dialog to change your password."
+msgstr ""
+
+#: gui/qt/main_window.py:533
+msgid "Uses icons from the Icons8 icon pack (icons8.com)."
+msgstr ""
+
+#: gui/qt/main_window.py:2583
+msgid "Using change addresses makes it more difficult for other people to track your transactions."
+msgstr "Използването на адреси за ресто затруднява другите хора да проследяват вашите транзакции."
+
+#: gui/qt/main_window.py:1951
+msgid "Verify"
+msgstr "Потвърждаване"
+
+#: gui/qt/main_window.py:531
+msgid "Version"
+msgstr "Версия"
+
+#: gui/qt/main_window.py:2567
+msgid "Video Device"
+msgstr "Видео-устройство"
+
+#: gui/qt/history_list.py:178
+msgid "View invoice"
+msgstr ""
+
+#: gui/qt/history_list.py:180 gui/qt/contact_list.py:82
+msgid "View on block explorer"
+msgstr "Преглед в блок-експлорера"
+
+#: gui/qt/seed_dialog.py:41
+msgid "WARNING"
+msgstr "ВНИМАНИЕ"
+
+#: gui/qt/main_window.py:2107
+msgid "WARNING: ALL your private keys are secret."
+msgstr "ВНИМАНИЕ: Всички ваши частни ключове са тайни."
+
+#: gui/qt/main_window.py:1292
+#, python-format
+msgid "WARNING: the alias \"%s\" could not be validated via an additional security check, DNSSEC, and thus may not be correct."
+msgstr ""
+
+#: gui/qt/main_window.py:1162
+msgid "Waiting for fee estimates..."
+msgstr ""
+
+#: gui/qt/installwizard.py:150
+msgid "Wallet"
+msgstr ""
+
+#: gui/qt/main_window.py:399
+msgid "Wallet backup created"
+msgstr ""
+
+#: gui/qt/transaction_dialog.py:229
+msgid "Wallet change address"
+msgstr ""
+
+#: gui/qt/transaction_dialog.py:226
+msgid "Wallet receive address"
+msgstr ""
+
+#: gui/qt/main_window.py:1365 gui/qt/util.py:191 gui/qt/seed_dialog.py:70
+#: gui/qt/transaction_dialog.py:141
+msgid "Warning"
+msgstr "Внимание"
+
+#: gui/qt/main_window.py:926
+msgid "Warning: The next address will not be recovered automatically if you restore your wallet from seed; you may need to add it manually.\n\n"
+"This occurs because you have too many unused addresses in your wallet. To avoid this situation, use the existing addresses first.\n\n"
+"Create anyway?"
+msgstr "Внимание: Следните адреси няма да бъдат възстановени автоматично, ако възстановявате вашият портфейл чрез сийд; може да е необходимо да ги възстановите ръчно.\n\n"
+"Това се случва, защото имате твърде много неизползвани адреси в портфейла си. За да избегнете тази ситуация, ползвайте първо съществуващите адреси.\n\n"
+"Създаване въпреки това?"
+
+#: gui/qt/seed_dialog.py:74
+msgid "We do not guarantee that BIP39 imports will always be supported in Electrum."
+msgstr ""
+
+#: gui/qt/main_window.py:1921
+msgid "Wrong signature"
+msgstr ""
+
+#: gui/qt/network_dialog.py:366
+msgid "You are following branch"
+msgstr ""
+
+#: gui/qt/__init__.py:145
+msgid "You are using Electrum in offline mode; restart Electrum if you want to get connected"
+msgstr ""
+
+#: gui/qt/main_window.py:921
+msgid "You are using a non-deterministic wallet, which cannot create new addresses."
+msgstr ""
+
+#: gui/qt/main_window.py:998
+msgid "You may enter a Bitcoin address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a Bitcoin address)"
+msgstr "Можете да въведете биткойн адрес, етикет от вашия списък с контакти (ще бъде предложен довършителен списък) или псевдоним (адрес, подобен на имейла, който пренасочва към биткойн адрес)"
+
+#: gui/qt/main_window.py:1608
+msgid "You may load a CSV file using the file icon."
+msgstr ""
+
+#: gui/qt/installwizard.py:240
+msgid "Your accounts have been moved to"
+msgstr ""
+
+#: gui/qt/password_dialog.py:175
+msgid "Your bitcoins are password protected. However, your wallet file is not encrypted."
+msgstr ""
+
+#: plugins/labels/qt.py:53
+msgid "Your labels have been synchronised."
+msgstr "Етикетите ви бяха синхронизирани."
+
+#: gui/qt/main_window.py:2204
+msgid "Your labels were exported to"
+msgstr ""
+
+#: gui/qt/main_window.py:2191
+msgid "Your labels were imported from"
+msgstr "Вашите етикети бяха импортирани от"
+
+#: gui/qt/seed_dialog.py:128
+msgid "Your seed extension is"
+msgstr ""
+
+#: gui/qt/installwizard.py:369
+msgid "Your seed is important!"
+msgstr "Вашият сийд е важен!"
+
+#: gui/qt/network_dialog.py:366
+msgid "Your server is on branch"
+msgstr ""
+
+#: gui/qt/installwizard.py:378 gui/qt/seed_dialog.py:182
+msgid "Your wallet generation seed is:"
+msgstr ""
+
+#: gui/qt/main_window.py:2233
+msgid "Your wallet history has been successfully exported."
+msgstr "Историята на вашият портфейл беше успешно експортирана."
+
+#: gui/qt/password_dialog.py:171
+msgid "Your wallet is not protected."
+msgstr ""
+
+#: gui/qt/password_dialog.py:177
+msgid "Your wallet is password protected and encrypted."
+msgstr ""
+
+#: gui/qt/installwizard.py:252
+msgid "Your wallet was upgraded successfully"
+msgstr ""
+
+#: gui/qt/main_window.py:2402
+msgid "Zeros after decimal point"
+msgstr "Нули след десетичната точка"
+
+#: gui/qt/main_window.py:1071
+msgid "and you will have the possiblity, while it is unconfirmed, to replace it with a transaction that pays a higher fee."
+msgstr ""
+
+#: gui/qt/main_window.py:1109
+msgid "are frozen"
+msgstr "са замразени"
+
+#: gui/qt/network_dialog.py:355 gui/qt/network_dialog.py:367
+msgid "blocks"
+msgstr ""
+
+#: gui/qt/main_window.py:1822
+msgid "cosigner"
+msgstr ""
+
+#: gui/qt/main_window.py:1585
+msgid "from your wallet?"
+msgstr "от вашият портфейл?"
+
+#: gui/qt/util.py:332
+msgid "json"
+msgstr "json"
+
+#: gui/kivy/uix/dialogs/fee_dialog.py:95
+msgid "low fee"
+msgstr ""
+
+#: gui/qt/main_window.py:1467
+msgid "please wait..."
+msgstr "моля изчакайте..."
+
+#: gui/qt/main_window.py:2255
+msgid "unconfirmed"
+msgstr ""
+
+#: gui/qt/transaction_dialog.py:210 gui/qt/transaction_dialog.py:258
+msgid "unknown"
+msgstr "неизвестен"
+
+#: gui/qt/transaction_dialog.py:198
+msgid "unknown (low fee)"
+msgstr ""
+
+#: gui/qt/main_window.py:2253
+msgid "unverified"
+msgstr ""
+
+#: gui/qt/main_window.py:363
+msgid "watching only"
+msgstr "само за наблюдение"
+
