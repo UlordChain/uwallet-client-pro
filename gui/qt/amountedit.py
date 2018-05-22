@@ -5,6 +5,7 @@ from PyQt4.QtGui import *
 
 from decimal import Decimal
 from uwallet.util import format_satoshis_plain
+from uwallet.i18n import _
 
 class MyLineEdit(QLineEdit):
     frozen = pyqtSignal()
@@ -13,6 +14,34 @@ class MyLineEdit(QLineEdit):
         self.setReadOnly(b)
         self.setFrame(not b)
         self.frozen.emit()
+
+    def contextMenuEvent(self, e):
+        m = self.createStandardContextMenu()
+        acs = m.actions()
+        for ac in acs:
+            t = ac.text()
+            if "Undo" in t:
+                ac.setText(_("Undo        Ctrl+Z"))
+                continue
+            if "Redo" in t:
+                ac.setText(_("Redo        Ctrl+Y"))
+                continue
+            if "Cu&t" in t:
+                ac.setText(_("Cut         Ctrl+X"))
+                continue
+            if "Copy" in t:
+                ac.setText(_("Copy        Ctrl+C"))
+                continue
+            if "Paste" in t:
+                ac.setText(_("Paste       Ctrl+V"))
+                continue
+            if "Delete" in t:
+                ac.setText(_("Delete"))
+                continue
+            if "Select" in t:
+                ac.setText(_("SelectAll   Ctrl+A"))
+                continue
+        m.exec_(e.globalPos())
 
 class AmountEdit(MyLineEdit):
     shortcut = pyqtSignal()
@@ -78,9 +107,9 @@ class BTCAmountEdit(AmountEdit):
         p = self.decimal_point()
         assert p in [2, 5, 8]
         if p == 8:
-            return 'ULD'
+            return 'UT'
         if p == 5:
-            return 'mULD'
+            return 'mUT'
         if p == 2:
             return 'bits'
         raise Exception('Unknown base unit')

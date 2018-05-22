@@ -304,6 +304,7 @@ class BIP32_KeyStore(Deterministic_KeyStore, Xpub):
     def dump(self):
         d = Deterministic_KeyStore.dump(self)
         d['type'] = 'bip32'
+        d['seed'] = self.seed
         d['xpub'] = self.xpub
         d['xprv'] = self.xprv
         return d
@@ -341,10 +342,11 @@ class BIP32_KeyStore(Deterministic_KeyStore, Xpub):
         self.xprv = xprv
         self.xpub = bitcoin.xpub_from_xprv(xprv)
 
-    def add_xprv_from_seed(self, bip32_seed, derivation):
+    def add_xprv_from_seed(self, bip32_seed, derivation,seed=''):
         xprv, xpub = bip32_root(bip32_seed)
         xprv, xpub = bip32_private_derivation(xprv, "m/", derivation)
         self.add_xprv(xprv)
+        self.add_seed(seed)
 
     def get_private_key(self, sequence, password):
         xprv = self.get_master_private_key(password)

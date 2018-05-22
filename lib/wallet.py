@@ -64,14 +64,6 @@ import paymentrequest
 
 from storage import WalletStorage
 
-TX_STATUS = [
-    _('Replaceable'),
-    _('Unconfirmed parent'),
-    _('Low fee'),
-    _('Unconfirmed'),
-    _('Not Verified'),
-]
-
 
 
 class Abstract_Wallet(PrintError):
@@ -86,6 +78,13 @@ class Abstract_Wallet(PrintError):
         self.uwallet_version = UWallet_VERSION
         self.storage = storage
         self.network = None
+        self.TX_STATUS = [
+    _('Replaceable'),
+    _('Unconfirmed parent'),
+    _('Low fee'),
+    _('Unconfirmed'),
+    _('Not Verified'),
+]
         # verifier (SPV) and synchronizer are started in start_threads
         self.synchronizer = None
         self.verifier = None
@@ -748,7 +747,7 @@ class Abstract_Wallet(PrintError):
         return ''
 
     def fee_per_kb(self, config):
-        b = config.get('dynamic_fees', True)
+        b = config.get('dynamic_fees', False)
         i = config.get('fee_level', 2)
         if b and self.network and self.network.dynfee(i):
             return self.network.dynfee(i)
@@ -780,7 +779,17 @@ class Abstract_Wallet(PrintError):
         else:
             status = 4 + min(conf, 6)
         time_str = format_time(timestamp) if timestamp else _("unknown")
-        status_str = TX_STATUS[status] if status < 5 else time_str
+        status_str = self.TX_STATUS[status] if status < 5 else time_str
+        if status_str=='Unconfirmed':
+            status_str = _('Unconfirmed')
+        elif status_str == 'Replaceable':
+            status_str = _('Replaceable')
+        elif status_str == 'Low fee':
+            status_str = _("Low fee")
+        elif status_str == 'Not Verified':
+            status_str = _('Not Verified')
+        elif status_str == 'Unconfirmed parent':
+            status_str = _('Unconfirmed parent')
         return status, status_str
 
     def relayfee(self):
@@ -1040,7 +1049,7 @@ class Abstract_Wallet(PrintError):
         if not r:
             return
         out = copy.copy(r)
-        out['URI'] = 'bitcoin:' + addr + '?amount=' + util.format_satoshis(out.get('amount'))
+        out['URI'] = 'ulord:' + addr + '?amount=' + util.format_satoshis(out.get('amount'))
         out['status'] = self.get_request_status(addr)
         # check if bip70 file exists
         rdir = config.get('requests_dir')

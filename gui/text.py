@@ -114,7 +114,7 @@ class UWalletGui:
                 except Exception:
                     time_str = "------"
             else:
-                time_str = 'unconfirmed'
+                time_str = _('unconfirmed')
 
             label = self.wallet.get_label(tx_hash)
             if len(label) > 40:
@@ -132,7 +132,7 @@ class UWalletGui:
                 c, u, x =  self.wallet.get_balance()
                 msg = _("Balance")+": %f  "%(Decimal(c) / COIN)
                 if u:
-                    msg += "  [%f unconfirmed]"%(Decimal(u) / COIN)
+                    msg += "  [%f "+_("unconfirmed")+"]"%(Decimal(u) / COIN)
                 if x:
                     msg += "  [%f unmatured]"%(Decimal(x) / COIN)
         else:

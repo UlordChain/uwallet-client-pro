@@ -46,11 +46,11 @@ class AddressDialog(WindowModalDialog):
         self.setMinimumWidth(700)
         vbox = QVBoxLayout()
         self.setLayout(vbox)
-
+        self.setTitleBar(vbox)
         vbox.addWidget(QLabel(_("Address:")))
         self.addr_e = ButtonsLineEdit(self.address)
         self.addr_e.addCopyButton(self.app)
-        self.addr_e.addButton(":icons/qrcode.png", self.show_qr, _("Show QR Code"))
+        # self.addr_e.addButton(":icons/qrcode.png", self.show_qr, _("Show QR Code"))
         self.addr_e.setReadOnly(True)
         vbox.addWidget(self.addr_e)
 

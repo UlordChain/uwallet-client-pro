@@ -21,6 +21,6 @@ if __name__ == '__main__':
     #run(params)
 
     #params = ['-y', '-n=uwallet', 'deterministic.spec']
-    params = ['uwallet','--icon=uwallet.ico','--hidden-import=queue']
+    params = ['uwallet','--icon=uwallet.ico','--hidden-import=queue','-w']
     run(params)
 #qt5.11

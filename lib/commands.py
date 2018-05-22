@@ -633,6 +633,11 @@ class Commands:
         # for the python console
         return sorted(known_commands.keys())
 
+    @command('')
+    def getMaxBlockHeight(self):
+        return self.network.synchronous_get(('blockchain.numblocks.subscribe',[]))
+
+
 param_descriptions = {
     'privkey': 'Private key. Type \'?\' to get a prompt.',
     'destination': 'Bitcoin address, contact or alias',

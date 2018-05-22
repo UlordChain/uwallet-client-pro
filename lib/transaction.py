@@ -571,7 +571,7 @@ class Transaction:
             return addr.encode('hex')
         elif output_type == TYPE_ADDRESS:
             addrtype, hash_160 = bc_address_to_hash_160(addr)
-            if addrtype == 0 or addrtype ==130:#68
+            if addrtype == 0 or addrtype ==68:#68#130
                 script = '76a9'                                      # op_dup, op_hash_160
                 script += push_script(hash_160.encode('hex'))
                 script += '88ac'                                     # op_equalverify, op_checksig
@@ -580,9 +580,9 @@ class Transaction:
                 script += push_script(hash_160.encode('hex') )
                 script += '87'                                       # op_equal
             else:
-                raise
+                raise Exception
         else:
-            raise
+            raise Exception
         return script
 
     @classmethod

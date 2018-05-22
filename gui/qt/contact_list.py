@@ -39,7 +39,9 @@ class ContactList(MyTreeWidget):
     def __init__(self, parent):
         MyTreeWidget.__init__(self, parent, self.create_menu, [_('Name'), _('Address')], 0, [0])
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.setSortingEnabled(True)
+        self.setSortingEnabled(False)
+        self.header().setResizeMode(0, QHeaderView.Fixed)
+        self.setColumnWidth(0, 300)
 
     def on_permit_edit(self, item, column):
         # openalias items shouldn't be editable
@@ -52,6 +54,7 @@ class ContactList(MyTreeWidget):
 
     def create_menu(self, position):
         menu = QMenu()
+        menu.setStyleSheet("QMenu{background-color: white;color: black;border: 0px solid #000;}QMenu::item::selected{color: black;background-color:rgb(255,251,160);}")
         selected = self.selectedItems()
         if not selected:
             menu.addAction(_("New contact"), lambda: self.parent.new_contact_dialog())
@@ -68,9 +71,9 @@ class ContactList(MyTreeWidget):
 
             menu.addAction(_("Pay to"), lambda: self.parent.payto_contacts(keys))
             menu.addAction(_("Delete"), lambda: self.parent.delete_contacts(keys))
-            URLs = [block_explorer_URL(self.config, 'addr', key) for key in filter(is_address, keys)]
-            if URLs:
-                menu.addAction(_("View on block explorer"), lambda: map(webbrowser.open, URLs))
+            # URLs = [block_explorer_URL(self.config, 'addr', key) for key in filter(is_address, keys)]
+            # if URLs:
+            #     menu.addAction(_("View on block explorer"), lambda: map(webbrowser.open, URLs))
 
         run_hook('create_contact_menu', menu, selected)
         menu.exec_(self.viewport().mapToGlobal(position))

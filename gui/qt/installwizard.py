@@ -20,9 +20,9 @@ from password_dialog import PasswordLayout, PW_NEW
 class GoBack(Exception):
     pass
 
-MSG_GENERATING_WAIT = _("UWallet is generating your addresses, please wait...")
+MSG_GENERATING_WAIT = _("UWalletLite is generating your addresses, please wait...")
 MSG_ENTER_ANYTHING = _("Please enter a seed phrase, a master key, a list of "
-                       "Bitcoin addresses, or a list of private keys")
+                       "Ulord addresses, or a list of private keys")
 MSG_ENTER_SEED_OR_MPK = _("Please enter a seed phrase or a master key (xpub or xprv):")
 MSG_COSIGNER = _("Please enter the master public key of cosigner #%d:")
 MSG_ENTER_PASSWORD = _("Choose a password to encrypt your wallet keys.") + '\n'\
@@ -79,15 +79,16 @@ def wizard_dialog(func):
         try:
             out = func(*args, **kwargs)
         except GoBack:
-            wizard.go_back()
+            wizard.go_back() if wizard.can_go_back() else wizard.close()
             return
         except UserCancelled:
             return
-        #if out is None:
+        # if out is None:
         #    out = ()
         if type(out) is not tuple:
             out = (out,)
-        apply(run_next, out)
+        run_next(*out)
+
     return func_wrapper
 
 
@@ -100,9 +101,30 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         BaseWizard.__init__(self, config, network, storage)
         QDialog.__init__(self, None)
 
-        self.setWindowTitle('UWallet  -  ' + _('Install Wizard'))
+        self.MSG_GENERATING_WAIT = _("UWalletLite is generating your addresses, please wait...")
+        self.MSG_ENTER_ANYTHING = _(
+            "Please enter a seed phrase, a master key, a list of Ulord addresses, or a list of private keys")
+        self.MSG_ENTER_SEED_OR_MPK = _("Please enter a seed phrase or a master key (xpub or xprv):")
+        self.MSG_COSIGNER = _("Please enter the master public key of cosigner #%d:")
+        self.MSG_ENTER_PASSWORD = _(
+            "Choose a password to encrypt your wallet keys.Leave this field empty if you want to disable encryption.")
+        self.MSG_RESTORE_PASSPHRASE = \
+            _(
+                "Please enter your seed derivation passphrase.Note: this is NOT your encryption password.Leave this field empty if you did not use one or are unsure.")
+
+        self.setWindowTitle('UWalletLite  -  ' + _('Install Wizard'))
         self.app = app
         self.config = config
+        f = QFile("wallet.qss")
+        # f = QFile("F:\MyProject\Ulord\uwallet-client-pro\gui\qt\ui\wallet.qss")
+        f.open(QFile.ReadOnly)
+        styleSheet = unicode(f.readAll(), encoding='utf8')
+        self.setStyleSheet(styleSheet)
+        f.close()
+        self.setWindowIcon(QIcon(':icons/electrum_light_icon.png'))
+        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setContentsMargins(15, 9, 15, 15)
 
         # Set for base base class
         self.plugins = plugins
@@ -112,6 +134,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         self.title = QLabel()
         self.main_widget = QWidget()
         self.back_button = QPushButton(_("Back"), self)
+        self.back_button.setText(_('Back') if self.can_go_back() else _('Cancel'))
         self.next_button = QPushButton(_("Next"), self)
         self.next_button.setDefault(True)
         self.logo = QLabel()
@@ -123,6 +146,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         self.back_button.clicked.connect(lambda: self.loop.exit(1))
         self.next_button.clicked.connect(lambda: self.loop.exit(2))
         outer_vbox = QVBoxLayout(self)
+        self.setTitleBar(outer_vbox)
         inner_vbox = QVBoxLayout()
         inner_vbox = QVBoxLayout()
         inner_vbox.addWidget(self.title)
@@ -140,10 +164,58 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         hbox.setStretchFactor(inner_vbox, 1)
         outer_vbox.addLayout(hbox)
         outer_vbox.addLayout(Buttons(self.back_button, self.next_button))
-        self.set_icon(':icons/electrum.png')
+        # self.set_icon(':icons/electrum.png')
         self.show()
         self.raise_()
         self.refresh_gui()  # Need for QT on MacOSX.  Lame.
+
+    def setTitleBar(self,vbox):
+        tq = QLabel('UWalletLite  -  ' + _('Install Wizard'))
+        tq.setObjectName("QDialogTitle")
+        tq.setStyleSheet("font-family: \"Arial\";font:bold;font-size:18px;border-bottom: 2px solid #FFD100;border-color:rgb(200,200,200);")
+        self.btn_close = QPushButton()
+        self.btn_close.setMinimumSize(QSize(21, 21))
+        self.btn_close.setMaximumSize(QSize(21, 21))
+        self.btn_close.setObjectName("btn_close1")
+        self.btn_close.clicked.connect(self.close)
+        hbox = QHBoxLayout()
+        hbox.addWidget(tq)
+        hbox.addWidget(self.btn_close)
+        toto = QFrame()
+        toto.setFrameShape(QFrame.HLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        titleVBox = QVBoxLayout()
+        titleVBox.addLayout(hbox)
+        titleVBox.addWidget(toto)
+        vbox.insertLayout(0,titleVBox,1)
+
+
+    def mousePressEvent(self, event):
+        try:
+            self.currentPos = event.pos()
+        except Exception:
+            return
+
+    def mouseMoveEvent(self, event):
+        try:
+            self.move(QPoint(self.pos() + event.pos() - self.currentPos))
+        except Exception:
+            return
+    def paintEvent(self, event):
+        m = 9
+        path = QPainterPath()
+        path.setFillRule(Qt.WindingFill)
+        path.addRect(m, m, self.width() - m * 2, self.height() - m * 2)
+        painter = QPainter(self)
+        painter.fillPath(path, QBrush(Qt.white))
+        color = QColor(100, 100, 100, 30)
+        for i in range(m):
+            path = QPainterPath()
+            path.setFillRule(Qt.WindingFill)
+            path.addRoundRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2, 1, 1)
+            color.setAlpha(90 - math.sqrt(i) * 30)
+            painter.setPen(QPen(color, 1, Qt.SolidLine))
+            painter.drawRoundRect(QRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2), 0, 0)
 
     def run_and_get_wallet(self):
         # Show network dialog if config does not exist
@@ -154,12 +226,13 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         path = self.storage.path
         if self.storage.requires_split():
             self.hide()
-            msg = _("The wallet '%s' contains multiple accounts, which are no longer supported in UWallet 2.7.\n\n"
-                    "Do you want to split your wallet into multiple files?"%path)
+            msg = _("The wallet '%s' contains multiple accounts, which are no longer supported in UWalletLite 2.7.\n\n"
+                    "Do you want to split your wallet into multiple files?" % path)
             if not self.question(msg):
                 return
             file_list = '\n'.join(self.storage.split_accounts())
-            msg = _('Your accounts have been moved to') + ':\n' + file_list + '\n\n'+ _('Do you want to delete the old file') + ':\n' + path
+            msg = _('Your accounts have been moved to') + ':\n' + file_list + '\n\n' + _(
+                'Do you want to delete the old file') + ':\n' + path
             if self.question(msg):
                 os.remove(path)
                 self.show_warning(_('The file was removed'))
@@ -167,7 +240,8 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
 
         if self.storage.requires_upgrade():
             self.hide()
-            msg = _("The format of your wallet '%s' must be upgraded for UWallet. This change will not be backward compatible"%path)
+            msg = _(
+                "The format of your wallet '%s' must be upgraded for UWalletLite. This change will not be backward compatible" % path)
             if not self.question(msg):
                 return
             self.storage.upgrade()
@@ -192,7 +266,6 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
             self.run(action)
             return self.wallet
 
-
     def finished(self):
         """Called in hardware client wrapper, in order to close popups."""
         return
@@ -209,7 +282,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
 
     def set_main_layout(self, layout, title=None, raise_on_cancel=True,
                         next_enabled=True):
-        self.title.setText("<b>%s</b>"%title if title else "")
+        self.title.setText("<b>%s</b>" % title if title else "")
         self.title.setVisible(bool(title))
         # Get rid of any prior layout by assigning it to a temporary widget
         prior_layout = self.main_widget.layout()
@@ -254,10 +327,10 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         vbox.addLayout(slayout.layout())
         if self.opt_ext or self.opt_bip39:
             vbox.addStretch(1)
-            vbox.addWidget(QLabel(_('Options') + ':'))
+            # vbox.addWidget(QLabel(_('Options') + ':'))
         if self.opt_ext:
             cb_pass = QCheckBox(_('Add a passphrase to this seed'))
-            vbox.addWidget(cb_pass)
+            # vbox.addWidget(cb_pass)
         if self.opt_bip39:
             def f(b):
                 if b:
@@ -265,25 +338,66 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
                         '<b>' + _('Warning') + '</b>' + ': ',
                         _('BIP39 seeds may not be supported in the future.'),
                         '<br/><br/>',
-                        _('As technology matures, Bitcoin address generation may change.'),
+                        _('As technology matures, Ulord address generation may change.'),
                         _('However, BIP39 seeds do not include a version number.'),
                         _('As a result, it is not possible to infer your wallet type from a BIP39 seed.'),
                         '<br/><br/>',
-                        _('We do not guarantee that BIP39 seeds will be supported in future versions of UWallet.'),
-                        _('We recommend to use seeds generated by UWallet or compatible wallets.'),
+                        _('We do not guarantee that BIP39 seeds will be supported in future versions of UWalletLite.'),
+                        _('We recommend to use seeds generated by UWalletLite or compatible wallets.'),
                     ])
-                    self.show_warning(msg)
+                    # self.show_warning(msg)
                 slayout.seed_type_label.setVisible(not b)
                 slayout.is_seed = (lambda x: bool(x)) if b else is_seed
                 slayout.on_edit()
+
             cb_bip39 = QCheckBox(_('BIP39 seed'))
             cb_bip39.toggled.connect(f)
-            vbox.addWidget(cb_bip39)
+            f(True)
+            # vbox.addWidget(cb_bip39)
         self.set_main_layout(vbox, title, next_enabled=False)
         seed = slayout.get_seed()
         is_bip39 = cb_bip39.isChecked() if self.opt_bip39 else False
         is_ext = cb_pass.isChecked() if self.opt_ext else False
-        return seed, is_bip39, is_ext
+        return seed, True, is_ext
+
+    def seed_input_bip39(self, title, message, is_seed):
+        slayout = SeedInputLayout(self, message, is_seed)
+        vbox = QVBoxLayout()
+        vbox.addLayout(slayout.layout())
+        if self.opt_ext or self.opt_bip39:
+            vbox.addStretch(1)
+            # vbox.addWidget(QLabel(_('Options') + ':'))
+        if self.opt_ext:
+            cb_pass = QCheckBox(_('Add a passphrase to this seed'))
+            # vbox.addWidget(cb_pass)
+        if self.opt_bip39:
+            def f(b):
+                if b:
+                    msg = ' '.join([
+                        '<b>' + _('Warning') + '</b>' + ': ',
+                        _('BIP39 seeds may not be supported in the future.'),
+                        '<br/><br/>',
+                        _('As technology matures, Ulord address generation may change.'),
+                        _('However, BIP39 seeds do not include a version number.'),
+                        _('As a result, it is not possible to infer your wallet type from a BIP39 seed.'),
+                        '<br/><br/>',
+                        _('We do not guarantee that BIP39 seeds will be supported in future versions of UWalletLite.'),
+                        _('We recommend to use seeds generated by UWalletLite or compatible wallets.'),
+                    ])
+                    # self.show_warning(msg)
+                slayout.seed_type_label.setVisible(not b)
+                slayout.is_seed = (lambda x: bool(x)) if b else is_seed
+                slayout.on_edit()
+
+            cb_bip39 = QCheckBox(_('BIP39 seed'))
+            cb_bip39.toggled.connect(f)
+            f(True)
+            # vbox.addWidget(cb_bip39)
+        self.set_main_layout(vbox, title, next_enabled=False)
+        seed = slayout.get_seed()
+        # is_bip39 = cb_bip39.isChecked() if self.opt_bip39 else False
+        # is_ext = cb_pass.isChecked() if self.opt_ext else False
+        # return seed, True, is_ext
 
     @wizard_dialog
     def add_xpub_dialog(self, title, message, is_valid, run_next):
@@ -291,7 +405,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
 
     @wizard_dialog
     def add_cosigner_dialog(self, run_next, index, is_valid):
-        title = _("Add Cosigner") + " %d"%index
+        title = _("Add Cosigner") + " %d" % index
         message = ' '.join([
             _('Please enter the master public key (xpub) of your cosigner.'),
             _('Enter their master private key (xprv) if you want to be able to sign for them.')
@@ -302,7 +416,18 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
     def restore_seed_dialog(self, run_next, test):
         title = _('Enter Seed')
         message = _('Please enter your seed phrase in order to restore your wallet.')
+        # return self.seed_input(title, message, test)
         return self.seed_input(title, message, test)
+
+    @wizard_dialog
+    def restore_seed_dialog_bip39(self, run_next, test):
+        title = _('Enter Seed')
+        message = ' '.join([
+            _('Your seed is important!'),
+            _('If you lose your seed, your money will be permanently lost.'),
+            _('To make sure that you have properly saved your seed, please retype it here.')
+        ])
+        return self.seed_input_bip39(title, message, test)
 
     @wizard_dialog
     def confirm_seed_dialog(self, run_next, test):
@@ -313,8 +438,8 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
             _('If you lose your seed, your money will be permanently lost.'),
             _('To make sure that you have properly saved your seed, please retype it here.')
         ])
-        self.opt_ext = False
-        self.opt_bip39 = False
+        self.opt_ext = True
+        self.opt_bip39 = True
         seed, is_bip39, is_ext = self.seed_input(title, message, test)
         return seed
 
@@ -324,9 +449,9 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         slayout = CreateSeedLayout(seed_text)
         vbox.addLayout(slayout.layout())
         vbox.addStretch(1)
-        vbox.addWidget(QLabel(_('Option') + ':'))
+        # vbox.addWidget(QLabel(_('Option') + ':'))
         cb_pass = QCheckBox(_('Add a passphrase to this seed'))
-        vbox.addWidget(cb_pass)
+        # vbox.addWidget(cb_pass)
         self.set_main_layout(vbox)
         return cb_pass.isChecked()
 
@@ -337,9 +462,9 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
 
     @wizard_dialog
     def request_password(self, run_next):
-        """Request the user enter a new password and confirm it.  Return
+        """Request the user enter a new password and confirm it.  Return  scatter educate hero fall thunder rough alert knee filter what script book
         the password or None for no password."""
-        return self.pw_layout(MSG_ENTER_PASSWORD, PW_NEW)
+        return self.pw_layout(self.MSG_ENTER_PASSWORD, PW_NEW)
 
     def show_restore(self, wallet, network):
         # FIXME: these messages are shown after the install wizard is
@@ -353,8 +478,9 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
                 else:
                     msg = _("No transactions found for this seed")
                 self.emit(QtCore.SIGNAL('synchronized'), msg)
+
             self.connect(self, QtCore.SIGNAL('synchronized'), self.show_message)
-            t = threading.Thread(target = task)
+            t = threading.Thread(target=task)
             t.daemon = True
             t.start()
         else:
@@ -380,11 +506,13 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         self.emit(QtCore.SIGNAL('accept'))
 
     def waiting_dialog(self, task, msg):
-        self.please_wait.setText(MSG_GENERATING_WAIT)
+        self.please_wait.setText(self.MSG_GENERATING_WAIT)
         self.refresh_gui()
-        t = threading.Thread(target = task)
+        # self.please_wait.hide()
+        t = threading.Thread(target=task)
         t.start()
-
+        t.join()
+#
     @wizard_dialog
     def choice_dialog(self, title, message, choices, run_next):
         c_values = map(lambda x: x[0], choices)
@@ -408,10 +536,12 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
     def line_dialog(self, run_next, title, message, default, test, warning=''):
         vbox = QVBoxLayout()
         vbox.addWidget(WWLabel(message))
-        line = QLineEdit()
+        line = QLineEditEx()
         line.setText(default)
+
         def f(text):
             self.next_button.setEnabled(test(text))
+
         line.textEdited.connect(f)
         vbox.addWidget(line)
         vbox.addWidget(WWLabel(warning))
@@ -431,12 +561,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         return None
 
     def choose_server(self, network):
-        title = _("UWallet communicates with remote servers to get "
-                  "information about your transactions and addresses. The "
-                  "servers all fulfil the same purpose only differing in "
-                  "hardware. In most cases you simply want to let UWallet "
-                  "pick one at random.  However if you prefer feel free to "
-                  "select a server manually.")
+        title = _("UWalletLite communicates with remote servers to get information about your transactions and addresses.\r\n The servers all fulfil the same purpose only differing in hardware. In most cases you simply want to let Uwallet pick one at random.\r\nHowever if you prefer feel free to select a server manually.")
         choices = [_("Auto connect"), _("Select server manually")]
         choices_title = _("How do you want to connect to a server? ")
         clayout = ChoicesLayout(choices_title, choices)
@@ -468,13 +593,16 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         grid.addWidget(n_edit, 0, 1)
         grid.addWidget(m_label, 1, 0)
         grid.addWidget(m_edit, 1, 1)
+
         def on_m(m):
-            m_label.setText(_('Require %d signatures')%m)
+            m_label.setText(_('Require %d signatures') % m)
             cw.set_m(m)
+
         def on_n(n):
-            n_label.setText(_('From %d cosigners')%n)
+            n_label.setText(_('From %d cosigners') % n)
             cw.set_n(n)
             m_edit.setMaximum(n)
+
         n_edit.valueChanged.connect(on_n)
         m_edit.valueChanged.connect(on_m)
         on_n(2)

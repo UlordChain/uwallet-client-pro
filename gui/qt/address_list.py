@@ -36,8 +36,9 @@ from uwallet.bitcoin import is_address
 class AddressList(MyTreeWidget):
 
     def __init__(self, parent=None):
-        MyTreeWidget.__init__(self, parent, self.create_menu, [ _('Address'), _('Label'), _('Balance'), _('Tx')], 1)
-        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        MyTreeWidget.__init__(self, parent, self.create_menu, [ _('Address'), _('Label'), _('Balance')+'                                        ', _('Tx')], 1)
+        # self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.headerItem().setTextAlignment(2,Qt.AlignHCenter | Qt.AlignVCenter)
 
     def on_update(self):
         self.wallet = self.parent.wallet
@@ -46,6 +47,14 @@ class AddressList(MyTreeWidget):
         self.clear()
         receiving_addresses = self.wallet.get_receiving_addresses()
         change_addresses = self.wallet.get_change_addresses()
+        self.headerItem().setTextAlignment(2,Qt.AlignHCenter | Qt.AlignVCenter)
+        self.headerItem().setTextAlignment(3, Qt.AlignLeft | Qt.AlignVCenter)
+        self.header().setResizeMode(1, QHeaderView.Fixed)
+        self.setColumnWidth(1, 170)
+        self.header().setResizeMode(2, QHeaderView.Fixed)
+        self.setColumnWidth(2, 150)
+        self.header().setResizeMode(3, QHeaderView.Fixed)
+        self.setColumnWidth(3, 100)
         if True:
             account_item = self
             sequences = [0,1] if change_addresses else [0]
@@ -118,6 +127,7 @@ class AddressList(MyTreeWidget):
                 return
 
         menu = QMenu()
+        menu.setStyleSheet("QMenu{background-color: white;color: black;border: 0px solid #000;}QMenu::item::selected{color: black;background-color:rgb(255,251,160);}")
         if not multi_select:
             column_title = self.headerItem().text(col)
             menu.addAction(_("Copy %s")%column_title, lambda: self.parent.app.clipboard().setText(item.text(col)))
@@ -133,9 +143,9 @@ class AddressList(MyTreeWidget):
                 menu.addAction(_("Encrypt/decrypt message"), lambda: self.parent.encrypt_message(addr))
             if is_imported:
                 menu.addAction(_("Remove from wallet"), lambda: self.parent.remove_address(addr))
-            addr_URL = block_explorer_URL(self.config, 'addr', addr)
-            if addr_URL:
-                menu.addAction(_("View on block explorer"), lambda: webbrowser.open(addr_URL))
+            # addr_URL = block_explorer_URL(self.config, 'addr', addr)
+            # if addr_URL:
+            #     menu.addAction(_("View on block explorer"), lambda: webbrowser.open(addr_URL))
 
         if any(not self.wallet.is_frozen(addr) for addr in addrs):
             menu.addAction(_("Freeze"), lambda: self.parent.set_frozen_state(addrs, True))

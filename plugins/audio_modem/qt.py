@@ -57,6 +57,7 @@ class Plugin(BasePlugin):
             self.modem_config = amodem.config.bitrates[bitrate]
 
         combo = QComboBox()
+        combo.setView(QListView())
         combo.addItems(map(str, bitrates))
         combo.currentIndexChanged.connect(_index_changed)
         layout.addWidget(combo, 0, 1)

@@ -5,6 +5,7 @@ import traceback, platform
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from uwallet import util
+from uwallet.i18n import _
 
 
 if platform.system() == 'Windows':
@@ -43,7 +44,33 @@ class Console(QtGui.QPlainTextEdit):
         # eval is generally considered bad practice. use it wisely!
         result = eval(script, self.namespace, self.namespace)
 
-
+    def contextMenuEvent(self, e):
+        m = self.createStandardContextMenu()
+        acs = m.actions()
+        for ac in acs:
+            t = ac.text()
+            if "Undo" in t:
+                ac.setText(_("Undo        Ctrl+Z"))
+                continue
+            if "Redo" in t:
+                ac.setText(_("Redo        Ctrl+Y"))
+                continue
+            if "Cu&t" in t:
+                ac.setText(_("Cut         Ctrl+X"))
+                continue
+            if "Copy" in t:
+                ac.setText(_("Copy        Ctrl+C"))
+                continue
+            if "Paste" in t:
+                ac.setText(_("Paste       Ctrl+V"))
+                continue
+            if "Delete" in t:
+                ac.setText(_("Delete"))
+                continue
+            if "Select" in t:
+                ac.setText(_("SelectAll   Ctrl+A"))
+                continue
+        m.exec_(e.globalPos())
 
     def updateNamespace(self, namespace):
         self.namespace.update(namespace)

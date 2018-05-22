@@ -28,8 +28,11 @@
 import os
 import util
 from bitcoin import *
+import mmap
+import contextlib
 
-MAX_TARGET = 0x000fffffff000000000000000000000000000000000000000000000000000000 #0x00000000FFFF0000000000000000000000000000000000000000000000000000 qpc
+CHUNK_SIZE = 20#576#96 #576
+MAX_TARGET = 0x000009b173000000000000000000000000000000000000000000000000000000 #0x00000000FFFF0000000000000000000000000000000000000000000000000000 qpc
 NULL_HASH = '0000000000000000000000000000000000000000000000000000000000000000'
 
 class Blockchain(util.PrintError):
@@ -37,9 +40,12 @@ class Blockchain(util.PrintError):
     def __init__(self, config, network):
         self.config = config
         self.network = network
-        self.headers_url = ''#"https://headers.electrum.org/blockchain_headers" #qpc header_url
+        self.headers_url = 'https://ulord.one/UWalletLite_file/blockchain_headers'#"http://119.27.188.44:8080/downloads/blockchain_headers"
         self.local_height = 0
         self.set_local_height()
+        self.set_step = 0
+        self.height_diff = 0
+        self.downloading = False
 
     def height(self):
         return self.local_height
@@ -57,7 +63,7 @@ class Blockchain(util.PrintError):
         assert int('0x' + _hash, 16) <= target, "insufficient proof of work: %s vs target %s" % (int('0x' + _hash, 16), target)
 
     def verify_chain(self, chain):
-        # first_header = chain[0]
+        # first_header = chain[0]  stadium wide feature answer still emerge pause make melt chapter thank entire
         # prev_header = self.read_header(first_header.get('block_height') - 1)
         # for header in chain:
         #     height = header.get('block_height')
@@ -73,21 +79,53 @@ class Blockchain(util.PrintError):
                 bits, target = self.get_target(height, prev_header, header)
                 self.verify_header(header, prev_header, bits, target)
             prev_header = header
+            try:
+                if self.height_diff>=self.set_step:
+                    self.set_step += 1
+                    print self.set_step,' verify_chain'
+                    # with open("F:/MyProject/Ulord/uwallet-client/process.dat", "w") as f:
+                    with open("process.dat", "w") as f:
+                        f.write('\x00' * 1024)
+                    # with open('F:/MyProject/Ulord/uwallet-client/process.dat', 'r+') as f:
+                    with open('process.dat', 'r+') as f:
+                        with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                                m.seek(0)
+                                s = str(self.set_step)+"/" + str(self.height_diff)
+                                s.rjust(1024, '\x00')
+                                m.write(s)
+                                m.flush()
+            except BaseException, ex:
+                print 'writemmpErro: index:', self.set_step
+                print ex
 
     def verify_chunk(self, index, data):
         prev_header = None
         if index != 0:
-            prev_header = self.read_header(index * 96 - 1)
-        for i in range(96):
+            prev_header = self.read_header(index * CHUNK_SIZE - 1)
+        for i in range(CHUNK_SIZE):
+            raw_header = data[i * 140:(i + 1) * 140]
+            header = self.deserialize_header(raw_header)
+            bits, target = self.get_target(index * CHUNK_SIZE + i, prev_header, header)
+            if header is not None:
+                self.verify_header(header, prev_header, bits, target)
+            prev_header = header
             try:
-                raw_header = data[i * 140:(i + 1) * 140]
-                header = self.deserialize_header(raw_header)
-                bits, target = self.get_target(index * 96 + i, prev_header, header)
-                if header is not None:
-                    self.verify_header(header, prev_header, bits, target)
-                prev_header = header
-            except BaseException ,ex:
-                print 'verify_chunk_err: index:',index,'i:',i
+                if self.height_diff >= self.set_step:
+                    self.set_step += 1
+                    print self.set_step, ' verify_chunk'
+                    # with open("F:/MyProject/Ulord/uwallet-client/process.dat", "w") as f:
+                    with open("process.dat", "w") as f:
+                        f.write('\x00' * 1024)
+                    # with open('F:/MyProject/Ulord/uwallet-client/process.dat', 'r+') as f:
+                    with open('process.dat', 'r+') as f:
+                        with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                            m.seek(0)
+                            s = str(self.set_step) + "/" + str(self.height_diff)
+                            s.rjust(1024, '\x00')
+                            m.write(s)
+                            m.flush()
+            except BaseException, ex:
+                print 'writemmpErro: index:', index, 'i:', i
                 print ex
 
     def serialize_header(self, res):
@@ -138,9 +176,11 @@ class Blockchain(util.PrintError):
         try:
             import urllib, socket
             socket.setdefaulttimeout(30)
+            self.downloading =True
             self.print_error("downloading ", self.headers_url)
             urllib.urlretrieve(self.headers_url, filename)
             self.print_error("done.")
+            print 'done.'
         except Exception:
             self.print_error("download failed. creating file", filename)
             open(filename, 'wb+').close()
@@ -148,7 +188,7 @@ class Blockchain(util.PrintError):
     def save_chunk(self, index, chunk):
         filename = self.path()
         f = open(filename, 'rb+')
-        f.seek(index * 96 * 140) #qpc
+        f.seek(index * CHUNK_SIZE * 140) #qpc
         h = f.write(chunk)
         f.close()
         self.set_local_height()
@@ -184,37 +224,8 @@ class Blockchain(util.PrintError):
 
     def get_target(self, index,first, last, chain='main'):
         if index == 0:
-            return 0x1f0fffff, MAX_TARGET #qpc
-        # first = self.read_header((index-1) * 96) #qpc
-        # last = self.read_header(index*96 - 1) #qpc
-        # if last is None:
-        #     for h in chain:
-        #         if h.get('block_height') == index*96 - 1: #qpc
-        #             last = h
-        # assert last is not None
-        # # bits to target
-        # bits = last.get('bits')
-        # bitsN = (bits >> 24) & 0xff
-        # assert bitsN >= 0x03 and bitsN <= 0x1d, "First part of bits should be in [0x03, 0x1d]"
-        # bitsBase = bits & 0xffffff
-        # assert bitsBase >= 0x8000 and bitsBase <= 0x7fffff, "Second part of bits should be in [0x8000, 0x7fffff]"
-        # target = bitsBase << (8 * (bitsN-3))
-        # # new target
-        # nActualTimespan = last.get('timestamp') - first.get('timestamp')
-        # nTargetTimespan = 14 * 24 * 60 * 60
-        # nActualTimespan = max(nActualTimespan, nTargetTimespan / 4)
-        # nActualTimespan = min(nActualTimespan, nTargetTimespan * 4)
-        # new_target = min(MAX_TARGET, (target*nActualTimespan) / nTargetTimespan)
-        # # convert new target to bits
-        # c = ("%064x" % new_target)[2:]
-        # while c[:2] == '00' and len(c) > 6:
-        #     c = c[2:]
-        # bitsN, bitsBase = len(c) / 2, int('0x' + c[:6], 16)
-        # if bitsBase >= 0x800000:
-        #     bitsN += 1
-        #     bitsBase >>= 8
-        # new_bits = bitsN << 24 | bitsBase
-        # return new_bits, bitsBase << (8 * (bitsN-3)) #qpc
+            return 0x1e09b173, MAX_TARGET #qpc
+
         assert last is not None, "Last shouldn't be none"
         # bits to target
         bits = last.get('bits')
@@ -241,37 +252,26 @@ class Blockchain(util.PrintError):
         return bnNew.GetCompact(), bnNew._value
 
     def connect_header(self, chain, header):
-        '''Builds a header chain until it connects.  Returns True if it has
-        successfully connected, False if verification failed, otherwise the
-        height of the next header needed.'''
-        # chain.append(header)  # Ordered by decreasing height
-        # previous_height = header['block_height'] - 1
-        # previous_header = self.read_header(previous_height)
-        #
-        # # Missing header, request it
-        # if not previous_header:
-        #     return previous_height
-        #
-        # # Does it connect to my chain?
-        # prev_hash = self.hash_header(previous_header)
-        # if prev_hash != header.get('prev_block_hash'):
-        #     self.print_error("reorg")
-        #     return previous_height
-        #
-        # # The chain is complete.  Reverse to order by increasing height
-        # chain.reverse()
-        # try:
-        #     self.verify_chain(chain)
-        #     self.print_error("new height:", previous_height + len(chain))
-        #     for header in chain:
-        #         self.save_header(header)
-        #     return True
-        # except BaseException as e:
-        #     self.print_error(str(e))
-        #     return False #qpc
         chain.append(header)  # Ordered by decreasing height
         height = header['block_height']
         if height > 0 and self.need_previous(header):
+            try:
+                if self.height_diff>=self.set_step:
+                    self.set_step += 1
+                    print self.set_step,' rallback'
+                    # with open("F:/MyProject/Ulord/uwallet-client/process.dat", "w") as f:
+                    with open("process.dat", "w") as f:
+                        f.write('\x00' * 1024)
+                    # with open('F:/MyProject/Ulord/uwallet-client/process.dat', 'r+') as f:
+                    with open('process.dat', 'r+') as f:
+                        with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                                m.seek(0)
+                                s = str(self.set_step)+"/" + str(self.height_diff)
+                                s.rjust(1024, '\x00')
+                                m.write(s)
+                                m.flush()
+            except Exception,ex:
+                print ex
             return height - 1
         # The chain is complete so we can save it
         return self.save_chain(chain, height)

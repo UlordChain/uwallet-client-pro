@@ -46,7 +46,7 @@ class SeedLayoutBase(object):
             logo = QLabel()
             logo.setPixmap(QPixmap(":icons/seed.png").scaledToWidth(64))
             logo.setMaximumWidth(60)
-            hbox.addWidget(logo)
+            # hbox.addWidget(logo)
         hbox.addWidget(self.seed_e)
         if not title:
             return hbox
@@ -76,11 +76,11 @@ def seed_warning_msg(seed):
         _("This seed will allow you to recover your wallet in case "
           "of computer failure."),
         "</p>",
-        "<b>" + _("WARNING") + ":</b>",
+        "<b><font color=red>" + _("WARNING") + ":</font></b>",
         "<ul>",
-        "<li>" + _("Never disclose your seed.") + "</li>",
-        "<li>" + _("Never type it on a website.") + "</li>",
-        "<li>" + _("Do not store it electronically.") + "</li>",
+        "<li list-style-type:none;><font color=red>" + _("Never disclose your seed.") + "</font></li>",
+        "<li><font color=red>" + _("Never type it on a website.") + "</font></li>",
+        "<li><font color=red>" + _("Do not store it electronically.") + "</font></li>",
         "</ul>"
     ]) % len(seed.split())
 
@@ -142,14 +142,14 @@ class SeedInputLayout(SeedLayoutBase):
 
 
 class ShowSeedLayout(SeedLayoutBase):
-
+#team decline soap baby term dragon gaze staff all assist useful ivory
     def __init__(self, seed, passphrase):
         title =  _("Your wallet generation seed is:")
         vbox = QVBoxLayout()
         vbox.addLayout(self._seed_layout(seed=seed, title=title))
         if passphrase:
             hbox = QHBoxLayout()
-            passphrase_e = QLineEdit()
+            passphrase_e = QLineEditEx()
             passphrase_e.setText(passphrase)
             passphrase_e.setReadOnly(True)
             hbox.addWidget(QLabel('Your seed passphrase is'))
@@ -162,8 +162,9 @@ class ShowSeedLayout(SeedLayoutBase):
 
 class SeedDialog(WindowModalDialog):
     def __init__(self, parent, seed, passphrase):
-        WindowModalDialog.__init__(self, parent, ('UWallet - ' + _('Seed')))
+        WindowModalDialog.__init__(self, parent, ('UWalletLite - ' + _('Seed')))
         self.setMinimumWidth(400)
         vbox = QVBoxLayout(self)
+        self.setTitleBar(vbox)
         vbox.addLayout(ShowSeedLayout(seed, passphrase).layout())
         vbox.addLayout(Buttons(CloseButton(self)))

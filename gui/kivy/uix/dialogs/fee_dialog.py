@@ -60,7 +60,7 @@ class FeeDialog(Factory.Popup):
         self.app = app
         self.config = config
         self.callback = callback
-        self.dynfees = self.config.get('dynamic_fees', True)
+        self.dynfees = self.config.get('dynamic_fees', False)
         self.ids.dynfees.active = self.dynfees
         self.update_slider()
         self.update_text()

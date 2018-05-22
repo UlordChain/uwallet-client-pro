@@ -38,11 +38,15 @@ protocol_letters = 'ts'
 class NetworkDialog(WindowModalDialog):
     def __init__(self, network, config, parent):
         WindowModalDialog.__init__(self, parent, _('Network'))
+
         self.setMinimumSize(375, 20)
         self.nlayout = NetworkChoiceLayout(network, config)
         vbox = QVBoxLayout(self)
+        self.setTitleBar(vbox)
         vbox.addLayout(self.nlayout.layout())
         vbox.addLayout(Buttons(CancelButton(self), OkButton(self)))
+
+
 
     def do_exec(self):
         result = self.exec_()
@@ -83,10 +87,10 @@ class NetworkChoiceLayout(object):
         hbox.addWidget(l)
         hbox.addWidget(QLabel(status))
         hbox.addStretch(50)
-        msg = _("UWallet sends your wallet addresses to a single server, in order to receive your transaction history.") + "\n\n" \
-            + _("In addition, UWallet connects to several nodes in order to download block headers and find out the longest blockchain.") + " " \
+        msg = _("UWalletLite sends your wallet addresses to a single server, in order to receive your transaction history.") + "\n\n" \
+            + _("In addition, UWalletLite connects to several nodes in order to download block headers and find out the longest blockchain.") + " " \
             + _("This blockchain is used to verify the transactions sent by the address server.")
-        hbox.addWidget(HelpButton(msg))
+        # hbox.addWidget(HelpButton(msg))
         vbox.addLayout(hbox)
         vbox.addSpacing(15)
 
@@ -96,9 +100,9 @@ class NetworkChoiceLayout(object):
         vbox.addLayout(grid)
 
         # server
-        self.server_host = QLineEdit()
+        self.server_host = QLineEditEx()
         self.server_host.setFixedWidth(200)
-        self.server_port = QLineEdit()
+        self.server_port = QLineEditEx()
         self.server_port.setFixedWidth(60)
 
         grid.addWidget(QLabel(_('Server') + ':'), 0, 0)
@@ -116,12 +120,13 @@ class NetworkChoiceLayout(object):
         self.autoconnect_cb.setChecked(auto_connect)
         grid.addWidget(self.autoconnect_cb, 1, 1, 1, 3)
         self.autoconnect_cb.setEnabled(self.config.is_modifiable('auto_connect'))
-        msg = _("If auto-connect is enabled, UWallet will always use a server that is on the longest blockchain.") + "\n" \
-            + _("If it is disabled, UWallet will warn you if your server is lagging.")
+        msg = _("If auto-connect is enabled, UWalletLite will always use a server that is on the longest blockchain.") + "\n" \
+            + _("If it is disabled, UWalletLite will warn you if your server is lagging.")
         self.autoconnect_cb.setToolTip(msg)
 
         label = _('Active Servers') if network.is_connected() else _('Default Servers')
         self.servers_list_widget = QTreeWidget()
+        self.servers_list_widget.setSortingEnabled(False)
         self.servers_list_widget.setHeaderLabels( [ label, _('Limit') ] )
         self.servers_list_widget.setMaximumHeight(150)
         self.servers_list_widget.setColumnWidth(0, 240)
@@ -148,9 +153,10 @@ class NetworkChoiceLayout(object):
 
         # proxy setting
         self.proxy_mode = QComboBox()
-        self.proxy_host = QLineEdit()
+        self.proxy_mode.setView(QListView())
+        self.proxy_host = QLineEditEx()
         self.proxy_host.setFixedWidth(200)
-        self.proxy_port = QLineEdit()
+        self.proxy_port = QLineEditEx()
         self.proxy_port.setFixedWidth(60)
         self.proxy_mode.addItems(['NONE', 'SOCKS4', 'SOCKS5', 'HTTP'])
 

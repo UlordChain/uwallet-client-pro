@@ -348,28 +348,8 @@ def time_difference(distance_in_time, include_seconds):
         return "over %d years" % (round(distance_in_minutes / 525600))
 
 block_explorer_info = {
-    'Biteasy.com': ('https://www.biteasy.com/blockchain',
-                        {'tx': 'transactions', 'addr': 'addresses'}),
-    'Bitflyer.jp': ('https://chainflyer.bitflyer.jp',
-                        {'tx': 'Transaction', 'addr': 'Address'}),
     'Blockchain.info': ('https://blockchain.info',
-                        {'tx': 'tx', 'addr': 'address'}),
-    'blockchainbdgpzk.onion': ('https://blockchainbdgpzk.onion',
-                        {'tx': 'tx', 'addr': 'address'}),
-    'Blockr.io': ('https://btc.blockr.io',
-                        {'tx': 'tx/info', 'addr': 'address/info'}),
-    'Blocktrail.com': ('https://www.blocktrail.com/BTC',
-                        {'tx': 'tx', 'addr': 'address'}),
-    'BTC.com': ('https://chain.btc.com',
-                        {'tx': 'tx', 'addr': 'address'}),
-    'Chain.so': ('https://www.chain.so',
-                        {'tx': 'tx/BTC', 'addr': 'address/BTC'}),
-    'Insight.is': ('https://insight.bitpay.com',
-                        {'tx': 'tx', 'addr': 'address'}),
-    'TradeBlock.com': ('https://tradeblock.com/blockchain',
-                        {'tx': 'tx', 'addr': 'address'}),
-    'system default': ('blockchain:',
-                        {'tx': 'tx', 'addr': 'address'}),
+                        {'tx': 'tx', 'addr': 'address'})
 }
 
 def block_explorer(config):
@@ -402,8 +382,8 @@ def parse_URI(uri, on_pr=None):
         return {'address': uri}
 
     u = urlparse.urlparse(uri)
-    if u.scheme != 'bitcoin':
-        raise BaseException("Not a bitcoin URI")
+    # if u.scheme != 'bitcoin':
+    #     raise BaseException("Not a bitcoin URI")
     address = u.path
 
     # python for android fails to parse query
@@ -471,7 +451,7 @@ def create_URI(addr, amount, message):
         if type(message) == unicode:
             message = message.encode('utf8')
         query.append('message=%s'%urllib.quote(message))
-    p = urlparse.ParseResult(scheme='bitcoin', netloc='', path=addr, params='', query='&'.join(query), fragment='')
+    p = urlparse.ParseResult(scheme='', netloc='', path=addr, params='', query='&'.join(query), fragment='')
     return urlparse.urlunparse(p)
 
 

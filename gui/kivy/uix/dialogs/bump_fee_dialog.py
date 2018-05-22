@@ -73,7 +73,7 @@ class BumpFeeDialog(Factory.Popup):
         self.tx_size = size
         self.callback = callback
         self.config = app.uwallet_config
-        self.dynfees = self.config.get('dynamic_fees', True) and self.app.network
+        self.dynfees = self.config.get('dynamic_fees', False) and self.app.network
         self.ids.old_fee.value = self.app.format_amount_and_units(self.init_fee)
         self.update_slider()
         self.update_text()

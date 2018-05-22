@@ -43,7 +43,7 @@ import aes
 ################################## transactions
 
 FEE_STEP = 10000
-RECOMMENDED_FEE = 50000
+RECOMMENDED_FEE = 20000
 COINBASE_MATURITY = 100
 COIN = 100000000
 
@@ -178,7 +178,9 @@ def is_new_seed(x, prefix=version.SEED_PREFIX):
 
 
 def is_old_seed(seed):
-    import old_mnemonic
+    import old_mnemonic,mnemonic
+    seed = mnemonic.normalize_text(seed)
+
     words = seed.strip().split()
     try:
         old_mnemonic.mn_decode(words)
@@ -191,7 +193,23 @@ def is_old_seed(seed):
     except Exception:
         is_hex = False
     return is_hex or (uses_uwallet_words and (len(words) == 12 or len(words) == 24))
+    # from . import old_mnemonic, mnemonic
+    # seed = mnemonic.normalize_text(seed)
+    # words = seed.split()
+    # try:
+    #     # checks here are deliberately left weak for legacy reasons, see #3149
+    #     old_mnemonic.mn_decode(words)
+    #     uses_electrum_words = True
+    # except Exception:
+    #     uses_electrum_words = False
+    # try:
+    #     seed = bfh(seed)
+    #     is_hex = (len(seed) == 16 or len(seed) == 32)
+    # except Exception:
+    #     is_hex = False
+    # return is_hex or (uses_electrum_words and (len(words) == 12 or len(words) == 24))
 
+bfh = bytearray.fromhex
 
 def seed_type(x):
     if is_old_seed(x):
@@ -242,7 +260,7 @@ def public_key_to_bc_address(public_key):
     h160 = hash_160(public_key)
     return hash_160_to_bc_address(h160)
 
-def hash_160_to_bc_address(h160, addrtype = 130): #68
+def hash_160_to_bc_address(h160, addrtype = 68): #68#130
     vh160 = chr(addrtype) + h160
     h = Hash(vh160)
     addr = vh160 + h[0:4]
@@ -392,7 +410,7 @@ def is_address(addr):
         addrtype, h = bc_address_to_hash_160(addr)
     except Exception:
         return False
-    if addrtype not in [0, 130]:#68
+    if addrtype not in [0, 68]:#68#130
         return False
     return addr == hash_160_to_bc_address(h, addrtype)
 

@@ -54,10 +54,13 @@ class HistoryList(MyTreeWidget):
         self.refresh_headers()
         self.setColumnHidden(1, True)
 
+
     def refresh_headers(self):
-        headers = ['', '', _('Date'), _('Description') , _('Amount'), _('Balance')]
+        headers = ['', '', _('Date'), _('Description') , _('Amount')+'          ', _('Balance')+'           ',_(' ')]
         run_hook('history_tab_headers', headers)
         self.update_headers(headers)
+        self.headerItem().setTextAlignment(4,Qt.AlignRight | Qt.AlignVCenter)
+        self.headerItem().setTextAlignment(5, Qt.AlignRight | Qt.AlignVCenter)
 
     def get_domain(self):
         '''Replaced in address_dialog.py'''
@@ -70,6 +73,15 @@ class HistoryList(MyTreeWidget):
         current_tx = item.data(0, Qt.UserRole).toString() if item else None
         self.clear()
         run_hook('history_tab_update_begin')
+        # if(len(h)==0):
+        self.header().setResizeMode(2, QHeaderView.Fixed)
+        self.setColumnWidth(2, 170)
+        self.header().setResizeMode(3, QHeaderView.Fixed)
+        self.setColumnWidth(3, 120)
+        self.header().setResizeMode(4, QHeaderView.Fixed)
+        self.setColumnWidth(4, 120)
+        self.header().setResizeMode(5, QHeaderView.Fixed)
+        self.setColumnWidth(5, 180)
         for h_item in h:
             tx_hash, height, conf, timestamp, value, balance = h_item
             status, status_str = self.wallet.get_tx_status(tx_hash, height, conf, timestamp)
@@ -83,12 +95,12 @@ class HistoryList(MyTreeWidget):
             item.setIcon(0, icon)
             for i in range(len(entry)):
                 if i>3:
-                    item.setTextAlignment(i, Qt.AlignRight)
-                if i!=2:
-                    item.setFont(i, QFont(MONOSPACE_FONT))
+                    item.setTextAlignment(i, Qt.AlignRight|Qt.AlignVCenter)
+                # if i!=2:
+                #     item.setFont(i, QFont("Arial Black"))#MONOSPACE_FONT
             if value < 0:
-                item.setForeground(3, QBrush(QColor("#BC1E1E")))
-                item.setForeground(4, QBrush(QColor("#BC1E1E")))
+                # item.setForeground(3, QBrush(QColor("red")))
+                item.setForeground(4, QBrush(QColor("red")))
             if tx_hash:
                 item.setData(0, Qt.UserRole, tx_hash)
             self.insertTopLevelItem(0, item)
@@ -126,7 +138,8 @@ class HistoryList(MyTreeWidget):
         is_relevant, is_mine, v, fee = self.wallet.get_wallet_delta(tx)
         rbf = is_mine and height <=0 and tx and not tx.is_final()
         menu = QMenu()
-
+        menu.setStyleSheet(
+            "QMenu{background-color: white;color: black;border: 0px solid #000;}QMenu::item::selected{color: black;background-color:rgb(255,251,160);}")
         menu.addAction(_("Copy %s")%column_title, lambda: self.parent.app.clipboard().setText(column_data))
         if column in self.editable_columns:
             menu.addAction(_("Edit %s")%column_title, lambda: self.editItem(item, column))
@@ -134,6 +147,6 @@ class HistoryList(MyTreeWidget):
         menu.addAction(_("Details"), lambda: self.parent.show_transaction(tx))
         if rbf:
             menu.addAction(_("Increase fee"), lambda: self.parent.bump_fee_dialog(tx))
-        if tx_URL:
-            menu.addAction(_("View on block explorer"), lambda: webbrowser.open(tx_URL))
+        # if tx_URL:
+        #     menu.addAction(_("View on block explorer"), lambda: webbrowser.open(tx_URL))
         menu.exec_(self.viewport().mapToGlobal(position))

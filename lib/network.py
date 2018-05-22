@@ -39,7 +39,7 @@ import json
 import util
 from bitcoin import *
 from interface import Connection, Interface
-from blockchain import Blockchain
+from blockchain import Blockchain,CHUNK_SIZE
 from version import UWallet_VERSION, PROTOCOL_VERSION
 
 FEE_TARGETS = [25, 10, 5, 2]
@@ -47,7 +47,10 @@ FEE_TARGETS = [25, 10, 5, 2]
 DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
 
 DEFAULT_SERVERS = {
-         '114.67.37.2': {'t': '10579'},
+         'wallet1.ulord.one': {'t': '10579'},
+         'wallet2.ulord.one': {'t': '10579'}
+# '114.67.37.2': {'t': '10579'},
+#          '118.190.145.8': {'t': '10579'}
         #'47.75.4.172':{'t': '50001', 's':'50002'},
         #'erbium1.sytes.net':{'t':'50001', 's':'50002'}
 }#qpc
@@ -158,7 +161,9 @@ class Network(util.DaemonThread):
         util.DaemonThread.__init__(self)
         self.config = SimpleConfig(config) if type(config) == type({}) else config
         self.num_server = 8 if not self.config.get('oneserver') else 0
+        self.max_block_height = 0
         self.blockchain = Blockchain(self.config, self)
+
         # A deque of interface header requests, processed left-to-right
         self.bc_requests = deque()
         # Server for addresses and transactions
@@ -212,6 +217,7 @@ class Network(util.DaemonThread):
         self.socket_queue = Queue.Queue()
         self.start_network(deserialize_server(self.default_server)[2],
                            deserialize_proxy(self.config.get('proxy')))
+
 
     def register_callback(self, callback, events):
         with self.lock:
@@ -507,7 +513,6 @@ class Network(util.DaemonThread):
         result = response.get('result')
         method = response.get('method')
         params = response.get('params')
-
         # We handle some responses; return the rest to the client.
         if method == 'server.version':
             interface.server_version = result
@@ -520,6 +525,7 @@ class Network(util.DaemonThread):
                 self.notify('servers')
         elif method == 'server.banner':
             if error is None:
+                # self.blockchain.max_block_height = result #the vertify_header will rallback by maxheight
                 self.banner = result
                 self.notify('banner')
         elif method == 'server.donation_address':
@@ -663,7 +669,6 @@ class Network(util.DaemonThread):
                 self.new_interface(server, socket)
             else:
                 self.connection_down(server)
-
         # Send pings and shut down stale interfaces
         for interface in self.interfaces.values():
             if interface.has_timed_out():
@@ -716,6 +721,7 @@ class Network(util.DaemonThread):
         #             self.request_chunk(interface, data, idx) #qpc
         req_if, data = self.bc_requests[0]
         req_idx = data.get('chunk_idx')
+        # self.set_max_height = data['if_height']
         # Ignore unsolicited chunks
         if req_if == interface and req_idx == response['params'][0]:
             idx = self.blockchain.connect_chunk(req_idx, response['result'])
@@ -731,7 +737,7 @@ class Network(util.DaemonThread):
         return self.get_local_height() >= data['if_height']
 
     def _need_chunk_from_interface(self, data):
-        return self.get_local_height() + 96 <= data['if_height']
+        return self.get_local_height() + CHUNK_SIZE <= data['if_height']
 
     def request_header(self, interface, data, height):
         interface.print_error("requesting header %d" % height)
@@ -767,10 +773,16 @@ class Network(util.DaemonThread):
         if necessary.
         '''
         local_height, if_height = self.get_local_height(), data['if_height']
+        self.max_block_height = if_height
+        dif =  if_height - local_height
+        if dif < CHUNK_SIZE:
+            self.blockchain.height_diff = dif*2-1
+        else:
+            self.blockchain.height_diff = dif + dif%CHUNK_SIZE-1
         if if_height <= local_height:
             return False
         elif if_height > local_height + 50:
-            self.request_chunk(interface, data, (local_height + 1) / 96) #qpc
+            self.request_chunk(interface, data, (local_height + 1) / CHUNK_SIZE) #qpc
         else:
             self.request_header(interface, data, if_height)
         return True
@@ -818,6 +830,39 @@ class Network(util.DaemonThread):
             interface.send_requests()
         for interface in rout:
             self.process_responses(interface)
+
+    # def runNow(self):
+    #     now = self.synchronous_get_now(('blockchain.numblocks.subscribe', []))
+    #
+    # def synchronous_get_now(self, request, timeout=30):
+    #     self.maintain_sockets()
+    #     queue = Queue.Queue()
+    #     self.send([request], queue.put)
+    #     for messages, callback in self.pending_sends:
+    #         for method, params in messages:
+    #             r = None
+    #             if method.endswith('.subscribe'):
+    #                 k = self.get_index(method, params)
+    #                 # add callback to list
+    #                 l = self.subscriptions.get(k, [])
+    #                 if callback not in l:
+    #                     l.append(callback)
+    #                 self.subscriptions[k] = l
+    #                 # check cached response for subscriptions
+    #                 r = self.sub_cache.get(k)
+    #             if r is not None:
+    #                 util.print_error("cache hit", k)
+    #                 callback(r)
+    #             else:
+    #                 message_id = self.queue_request(method, params)
+    #                 self.unanswered_requests[message_id] = method, params, callback
+    #     try:
+    #         r = queue.get(True, timeout)
+    #     except Queue.Empty:
+    #         raise BaseException('Server did not answer')
+    #     if r.get('error'):
+    #         raise BaseException(r.get('error'))
+    #     return r.get('result')
 
     def run(self):
         self.blockchain.init()

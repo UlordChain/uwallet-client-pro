@@ -7,6 +7,7 @@ import platform
 import Queue
 from collections import namedtuple
 from functools import partial
+import math
 
 from uwallet.i18n import _
 from PyQt4.QtGui import *
@@ -111,7 +112,8 @@ class HelpLabel(QLabel):
         self.font = QFont()
 
     def mouseReleaseEvent(self, x):
-        QMessageBox.information(self, 'Help', self.help_text, 'OK')
+        qm = QMessageBoxEx(_("Help"), self.help_text, self)
+        qm.exec_()
 
     def enterEvent(self, event):
         self.font.setUnderline(True)
@@ -135,7 +137,8 @@ class HelpButton(QPushButton):
         self.clicked.connect(self.onclick)
 
     def onclick(self):
-        QMessageBox.information(self, 'Help', self.help_text, 'OK')
+        qm = QMessageBoxEx(_("Help"), self.help_text, self)
+        qm.exec_()
 
 class Buttons(QHBoxLayout):
     def __init__(self, *buttons):
@@ -176,7 +179,7 @@ class CancelButton(QPushButton):
 class MessageBoxMixin(object):
     def top_level_window_recurse(self, window=None):
         window = window or self
-        classes = (WindowModalDialog, QMessageBox)
+        classes = (WindowModalDialog, QMessageBoxEx)
         for n, child in enumerate(window.children()):
             # Test for visibility as old closed dialogs may not be GC-ed
             if isinstance(child, classes) and child.isVisible():
@@ -187,44 +190,324 @@ class MessageBoxMixin(object):
         return self.top_level_window_recurse()
 
     def question(self, msg, parent=None, title=None, icon=None):
-        Yes, No = QMessageBox.Yes, QMessageBox.No
-        return self.msg_box(icon or QMessageBox.Question,
-                            parent, title or '',
-                            msg, buttons=Yes|No, defaultButton=No) == Yes
+        return self.msg_box("question",
+                            parent, title or _('Question'),
+                            msg)
 
     def show_warning(self, msg, parent=None, title=None):
-        return self.msg_box(QMessageBox.Warning, parent,
+        return self.msg_box("warm", parent,
                             title or _('Warning'), msg)
 
     def show_error(self, msg, parent=None):
-        return self.msg_box(QMessageBox.Warning, parent,
+        return self.msg_box("warm", parent,
                             _('Error'), msg)
 
     def show_critical(self, msg, parent=None, title=None):
-        return self.msg_box(QMessageBox.Critical, parent,
+        return self.msg_box("warm", parent,
                             title or _('Critical Error'), msg)
 
     def show_message(self, msg, parent=None, title=None):
-        return self.msg_box(QMessageBox.Information, parent,
+        return self.msg_box("info", parent,
                             title or _('Information'), msg)
 
-    def msg_box(self, icon, parent, title, text, buttons=QMessageBox.Ok,
-                defaultButton=QMessageBox.NoButton):
+    def msg_box(self, icon, parent, title, text):
         parent = parent or self.top_level_window()
-        d = QMessageBox(icon, title, text, buttons, parent)
-        d.setWindowModality(Qt.WindowModal)
-        d.setDefaultButton(defaultButton)
+        d = QMessageBoxEx(title,text,parent,icon)
         return d.exec_()
+
 
 class WindowModalDialog(QDialog, MessageBoxMixin):
     '''Handy wrapper; window modal dialogs are better for our multi-window
     daemon model as other wallet windows can still be accessed.'''
-    def __init__(self, parent, title=None):
+    def __init__(self, parent,title=None):
         QDialog.__init__(self, parent)
-        self.setWindowModality(Qt.WindowModal)
+        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setContentsMargins(15, 9, 15, 15)
         if title:
-            self.setWindowTitle(title)
+            self.titleStr= title
 
+    def setTitleBar(self,vbox):
+        tq = QLabel(self.titleStr)
+        tq.setStyleSheet("font-family: \"Arial\";font:bold;font-size:15px;border-bottom: 2px solid #FFD100;border-color:rgb(200,200,200);")
+        self.btn_close = QPushButton()
+        self.btn_close.setMinimumSize(QSize(21, 21))
+        self.btn_close.setMaximumSize(QSize(21, 21))
+        self.btn_close.setObjectName("btn_close1")
+        self.btn_close.clicked.connect(self.close)
+        hbox = QHBoxLayout()
+        hbox.addWidget(tq)
+        hbox.addWidget(self.btn_close)
+        toto = QFrame()
+        toto.setFrameShape(QFrame.HLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        titleVBox = QVBoxLayout()
+        titleVBox.addLayout(hbox)
+        titleVBox.addWidget(toto)
+        if type(vbox).__name__ == 'QGridLayout':
+            vbox.addLayout(titleVBox, 0,0,1,1)
+        else:
+            vbox.insertLayout(0,titleVBox,1)
+
+
+    def mousePressEvent(self, event):
+        try:
+            self.currentPos = event.pos()
+        except Exception:
+            return
+
+    def mouseMoveEvent(self, event):
+        try:
+            self.move(QPoint(self.pos() + event.pos() - self.currentPos))
+        except Exception:
+            return
+    def paintEvent(self, event):
+        m = 9
+        path = QPainterPath()
+        path.setFillRule(Qt.WindingFill)
+        path.addRect(m, m, self.width() - m * 2, self.height() - m * 2)
+        painter = QPainter(self)
+        painter.fillPath(path, QBrush(Qt.white))
+        color = QColor(100, 100, 100, 30)
+        for i in range(m):
+            path = QPainterPath()
+            path.setFillRule(Qt.WindingFill)
+            path.addRoundRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2, 1, 1)
+            color.setAlpha(90 - math.sqrt(i) * 30)
+            painter.setPen(QPen(color, 1, Qt.SolidLine))
+            painter.drawRoundRect(QRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2), 0, 0)
+
+class QProgressDialogEx(QProgressDialog):
+    def __init__(self,parent,title):
+        super(QProgressDialog, self).__init__(parent)
+        self.setWindowFlags(Qt.Dialog|Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.titleStr= title
+        self.setMinimumWidth(400)
+        self.setMinimumHeight(130)
+
+
+    def setTitleBar(self,vbox):
+        mainBox=QVBoxLayout()
+        self.setLayout(mainBox)
+        self.tq = QLabel()
+        self.tq.setStyleSheet(
+            "font-family: \"Arial\";font:bold;font-size:15px;border-bottom: 2px solid #FFD100;border-color:rgb(200,200,200);")
+        self.btn_close = QPushButton()
+        self.btn_close.setMinimumSize(QSize(21, 21))
+        self.btn_close.setMaximumSize(QSize(21, 21))
+        self.btn_close.setObjectName("btn_close1")
+        self.btn_close.clicked.connect(self.close)
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.tq)
+        hbox.addWidget(self.btn_close)
+        toto = QFrame()
+        toto.setFrameShape(QFrame.HLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        titleVBox = QVBoxLayout()
+        titleVBox.addLayout(hbox)
+        titleVBox.addWidget(toto)
+        mainBox.addLayout(titleVBox)
+        mainBox.addLayout(vbox)
+        self.setContentsMargins(15, 9, 15, 15)
+
+    def setTile(self, text):
+        self.tq.setText(text)
+
+    def mousePressEvent(self, event):
+        try:
+            self.currentPos = event.pos()
+        except Exception:
+            return
+
+    def mouseMoveEvent(self, event):
+        try:
+            self.move(QPoint(self.pos() + event.pos() - self.currentPos))
+        except Exception:
+            return
+
+    def paintEvent(self, event):
+        m = 9
+        path = QPainterPath()
+        path.setFillRule(Qt.WindingFill)
+        path.addRect(m, m, self.width() - m * 2, self.height() - m * 2)
+        painter = QPainter(self)
+        painter.fillPath(path, QBrush(Qt.white))
+        color = QColor(100, 100, 100, 30)
+        for i in range(m):
+            path = QPainterPath()
+            path.setFillRule(Qt.WindingFill)
+            path.addRoundRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2, 1, 1)
+            color.setAlpha(90 - math.sqrt(i) * 30)
+            painter.setPen(QPen(color, 1, Qt.SolidLine))
+            painter.drawRoundRect(QRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2), 0, 0)
+
+class QInPutDialogEx(QInputDialog):
+    def __init__(self, parent,title=None):
+        QInputDialog.__init__(self, parent)
+        self.setWindowFlags(Qt.Dialog|Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setContentsMargins(15, 9, 15, 15)
+        if title:
+            self.titleStr= title
+
+    def setTitleBar(self,vbox):
+        tq = QLabel(self.titleStr)
+        tq.setStyleSheet("font-family: \"Arial\";font:bold;font-size:15px;border-bottom: 2px solid #FFD100;border-color:rgb(200,200,200);")
+        self.btn_close = QPushButton()
+        self.btn_close.setMinimumSize(QSize(21, 21))
+        self.btn_close.setMaximumSize(QSize(21, 21))
+        self.btn_close.setObjectName("btn_close1")
+        self.btn_close.clicked.connect(self.close)
+        hbox = QHBoxLayout()
+        hbox.addWidget(tq)
+        hbox.addWidget(self.btn_close)
+        toto = QFrame()
+        toto.setFrameShape(QFrame.HLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        titleVBox = QVBoxLayout()
+        titleVBox.addLayout(hbox)
+        titleVBox.addWidget(toto)
+        if type(vbox).__name__ == 'QGridLayout':
+            vbox.addLayout(titleVBox, 0,0,1,1)
+        else:
+            vbox.insertLayout(0,titleVBox,1)
+
+    def mousePressEvent(self, event):
+        try:
+            self.currentPos = event.pos()
+        except Exception:
+            return
+
+    def mouseMoveEvent(self, event):
+        try:
+            self.move(QPoint(self.pos() + event.pos() - self.currentPos))
+        except Exception:
+            return
+
+    def paintEvent(self, event):
+        m = 9
+        path = QPainterPath()
+        path.setFillRule(Qt.WindingFill)
+        path.addRect(m, m, self.width() - m * 2, self.height() - m * 2)
+        painter = QPainter(self)
+        painter.fillPath(path, QBrush(Qt.white))
+        color = QColor(100, 100, 100, 30)
+        for i in range(m):
+            path = QPainterPath()
+            path.setFillRule(Qt.WindingFill)
+            path.addRoundRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2, 1, 1)
+            color.setAlpha(90 - math.sqrt(i) * 30)
+            painter.setPen(QPen(color, 1, Qt.SolidLine))
+            painter.drawRoundRect(QRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2), 0, 0)
+
+class QMessageBoxEx(QDialog):
+    def __init__(self,title,text,parent,iconType="info"):
+        QDialog.__init__(self,parent)
+        self.setWindowFlags(Qt.Dialog|Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setMaximumWidth(700)
+        self.setContentsMargins(15, 9, 15, 15)
+        self.titleStr= title
+
+        vbox = QVBoxLayout(self)
+        self.setTitleBar(vbox)
+        mdlHbox=QHBoxLayout()
+        vbox.addLayout(mdlHbox)
+        btmHbox= QHBoxLayout()
+        vbox.addLayout(btmHbox)
+
+        ico = QLabel()
+        ico.setScaledContents(True)
+        str = iconType
+        if iconType == "question":
+            str ="prompt"
+        if iconType == "info":
+            str = "prompt"
+        if iconType == "warm":
+            str = "caveat"
+        if iconType == "icon":
+            str = "electrum_light_icon"
+        ico.setMinimumHeight(32)
+        ico.setMinimumWidth(32)
+        ico.setMaximumHeight(32)
+        ico.setMaximumWidth(32)
+        ico.setStyleSheet("border-image:url(:/icons/"+str+") center no-repeat;")
+        # ico.setScaledContents(True)
+        mdlHbox.addWidget(ico)
+
+        txt = QLabel()
+        txt.setScaledContents(True)
+        txt.setText(text)
+        txt.adjustSize()
+        txt.setGeometry(QRect(328, 240, 329, 27 * 4))
+        txt.setWordWrap(True)
+        txt.setAlignment(Qt.AlignTop)
+        spacerItem2 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        mdlHbox.addItem(spacerItem2)
+        mdlHbox.addWidget(txt)
+
+        spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Expanding)
+        btmHbox.addItem(spacerItem1)
+        if iconType == "question":
+            buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+            buttonBox.button(QDialogButtonBox.Ok).setDefault(True)
+            buttonBox.button(QDialogButtonBox.Ok).setText(_("OK"))
+            buttonBox.button(QDialogButtonBox.Cancel).setText(_("Cancel"))
+            btmHbox.addWidget(buttonBox)
+            self.connect(buttonBox, SIGNAL("accepted()"), self, SLOT("accept()"))  #
+            self.connect(buttonBox, SIGNAL("rejected()"), self, SLOT("reject()"))  #
+        else:
+            bt = QPushButton(_("OK"))
+            bt.clicked.connect(self.close)
+            btmHbox.addWidget(bt)
+
+
+    def setTitleBar(self,vbox):
+        tq = QLabel(self.titleStr)
+        tq.setStyleSheet("font-family: \"Arial\";font:bold;font-size:15px;border-bottom: 2px solid #FFD100;border-color:rgb(200,200,200);")
+        self.btn_close = QPushButton()
+        self.btn_close.setMinimumSize(QSize(21, 21))
+        self.btn_close.setMaximumSize(QSize(21, 21))
+        self.btn_close.setObjectName("btn_close1")
+        self.btn_close.clicked.connect(self.close)
+        hbox = QHBoxLayout()
+        hbox.addWidget(tq)
+        hbox.addWidget(self.btn_close)
+        toto = QFrame()
+        toto.setFrameShape(QFrame.HLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        titleVBox = QVBoxLayout()
+        titleVBox.addLayout(hbox)
+        titleVBox.addWidget(toto)
+        vbox.insertLayout(0,titleVBox,1)
+
+    def mousePressEvent(self, event):
+        try:
+            self.currentPos = event.pos()
+        except Exception:
+            return
+
+    def mouseMoveEvent(self, event):
+        try:
+            self.move(QPoint(self.pos() + event.pos() - self.currentPos))
+        except Exception:
+            return
+    def paintEvent(self, event):
+        m = 9
+        path = QPainterPath()
+        path.setFillRule(Qt.WindingFill)
+        path.addRect(m, m, self.width() - m * 2, self.height() - m * 2)
+        painter = QPainter(self)
+        painter.fillPath(path, QBrush(Qt.white))
+        color = QColor(100, 100, 100, 30)
+        for i in range(m):
+            path = QPainterPath()
+            path.setFillRule(Qt.WindingFill)
+            path.addRoundRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2, 1, 1)
+            color.setAlpha(90 - math.sqrt(i) * 30)
+            painter.setPen(QPen(color, 1, Qt.SolidLine))
+            painter.drawRoundRect(QRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2), 0, 0)
 
 class WaitingDialog(WindowModalDialog):
     '''Shows a please wait dialog whilst runnning a task.  It is not
@@ -235,6 +518,7 @@ class WaitingDialog(WindowModalDialog):
             parent = parent.top_level_window()
         WindowModalDialog.__init__(self, parent, _("Please wait"))
         vbox = QVBoxLayout(self)
+        self.setTitleBar(vbox)
         vbox.addWidget(QLabel(message))
         self.accepted.connect(self.on_accepted)
         self.show()
@@ -247,14 +531,86 @@ class WaitingDialog(WindowModalDialog):
     def on_accepted(self):
         self.thread.stop()
 
+class QTextEditEx(QTextEdit):
+    def __init__(self):
+        QTextEdit.__init__(self)
+
+    def contextMenuEvent(self, e):
+        m = self.createStandardContextMenu()
+        acs = m.actions()
+        for ac in acs:
+            t = ac.text()
+            if "Undo" in t:
+                ac.setText(_("Undo        Ctrl+Z"))
+                continue
+            if "Redo" in t:
+                ac.setText(_("Redo        Ctrl+Y"))
+                continue
+            if "Cu&t" in t:
+                ac.setText(_("Cut         Ctrl+X"))
+                continue
+            if "Copy" in t:
+                ac.setText(_("Copy        Ctrl+C"))
+                continue
+            if "Paste" in t:
+                ac.setText(_("Paste       Ctrl+V"))
+                continue
+            if "Delete" in t:
+                ac.setText(_("Delete"))
+                continue
+            if "Select" in t:
+                ac.setText(_("SelectAll   Ctrl+A"))
+                continue
+        m.exec_(e.globalPos())
+
+class QLineEditEx(QLineEdit):
+    def __init__(self,text=None):
+        QLineEdit.__init__(self,text)
+
+    def contextMenuEvent(self, e):
+        m = self.createStandardContextMenu()
+        acs = m.actions()
+        for ac in acs:
+            t = ac.text()
+            if "Undo" in t:
+                ac.setText(_("Undo        Ctrl+Z"))
+                continue
+            if "Redo" in t:
+                ac.setText(_("Redo        Ctrl+Y"))
+                continue
+            if "Cu&t" in t:
+                ac.setText(_("Cut         Ctrl+X"))
+                continue
+            if "Copy" in t:
+                ac.setText(_("Copy        Ctrl+C"))
+                continue
+            if "Paste" in t:
+                ac.setText(_("Paste       Ctrl+V"))
+                continue
+            if "Delete" in t:
+                ac.setText(_("Delete"))
+                continue
+            if "Select" in t:
+                ac.setText(_("SelectAll   Ctrl+A"))
+                continue
+        m.exec_(e.globalPos())
+
+class QSpinBoxEx(QSpinBox):
+    def __init__(self):
+        QSpinBox.__init__(self)
+
+    def contextMenuEvent(self, e):
+        return
+
 
 def line_dialog(parent, title, label, ok_label, default=None):
     dialog = WindowModalDialog(parent, title)
     dialog.setMinimumWidth(500)
     l = QVBoxLayout()
+    dialog.setTitleBar(l)
     dialog.setLayout(l)
     l.addWidget(QLabel(label))
-    txt = QLineEdit()
+    txt = QLineEditEx()
     if default:
         txt.setText(default)
     l.addWidget(txt)
@@ -267,6 +623,7 @@ def text_dialog(parent, title, label, ok_label, default=None):
     dialog = WindowModalDialog(parent, title)
     dialog.setMinimumWidth(500)
     l = QVBoxLayout()
+    dialog.setTitleBar(l)
     dialog.setLayout(l)
     l.addWidget(QLabel(label))
     txt = ScanQRTextEdit()
@@ -283,7 +640,11 @@ class ChoicesLayout(object):
         if len(msg) > 50:
             vbox.addWidget(WWLabel(msg))
             msg = ""
-        gb2 = QGroupBox(msg)
+        gb2 = QGroupBox()
+        gb2.setStyleSheet("margin-bottom:6px;")
+        msgLabel = QLabel(msg)
+        msgLabel.setStyleSheet("padding-left:8px;")
+        vbox.addWidget(msgLabel)
         vbox.addWidget(gb2)
 
         vbox2 = QVBoxLayout()
@@ -312,7 +673,7 @@ class ChoicesLayout(object):
 
 def address_field(addresses):
     hbox = QHBoxLayout()
-    address_e = QLineEdit()
+    address_e = QLineEditEx()
     if addresses:
         address_e.setText(addresses[0])
     def func():
@@ -343,7 +704,7 @@ def filename_field(parent, config, defaultname, select_msg):
 
     directory = config.get('io_dir', unicode(os.path.expanduser('~')))
     path = os.path.join( directory, defaultname )
-    filename_e = QLineEdit()
+    filename_e = QLineEditEx()
     filename_e.setText(path)
 
     def func():
@@ -378,6 +739,7 @@ class MyTreeWidget(QTreeWidget):
     def __init__(self, parent, create_menu, headers, stretch_column=None,
                  editable_columns=None):
         QTreeWidget.__init__(self, parent)
+
         self.parent = parent
         self.config = self.parent.config
         self.stretch_column = stretch_column
@@ -401,14 +763,17 @@ class MyTreeWidget(QTreeWidget):
     def update_headers(self, headers):
         self.setColumnCount(len(headers))
         self.setHeaderLabels(headers)
-        self.header().setStretchLastSection(False)
+        self.header().setSortIndicatorShown(False)
+        self.header().setStretchLastSection(True)
+        self.header().setMovable(False)
         for col in range(len(headers)):
             sm = QHeaderView.Stretch if col == self.stretch_column else QHeaderView.ResizeToContents
-            self.header().setResizeMode(col, sm)
+            self.header().setResizeMode(col, QHeaderView.ResizeToContents)
 
     def editItem(self, item, column):
         if column in self.editable_columns:
             self.editing_itemcol = (item, column, unicode(item.text(column)))
+
             # Calling setFlags causes on_changed events for some reason
             item.setFlags(item.flags() | Qt.ItemIsEditable)
             QTreeWidget.editItem(self, item, column)
@@ -442,8 +807,39 @@ class MyTreeWidget(QTreeWidget):
                                                        parent, option, index)
         self.editor.connect(self.editor, SIGNAL("editingFinished()"),
                             self.editing_finished)
+
+        self.editor.setContextMenuPolicy(Qt.CustomContextMenu)
+
+        self.editor.customContextMenuRequested.connect(self.create_standard_menu)
         return self.editor
 
+    def create_standard_menu(self, position):
+        m = self.editor.createStandardContextMenu()
+        acs = m.actions()
+        for ac in acs:
+            t = ac.text()
+            if "Undo" in t:
+                ac.setText(_("Undo        Ctrl+Z"))
+                continue
+            if "Redo" in t:
+                ac.setText(_("Redo        Ctrl+Y"))
+                continue
+            if "Cu&t" in t:#
+                ac.setText(_("Cut         Ctrl+X"))
+                continue
+            if "Copy" in t:
+                ac.setText(_("Copy        Ctrl+C"))
+                continue
+            if "Paste" in t:
+                ac.setText(_("Paste       Ctrl+V"))
+                continue
+            if "Delete" in t:
+                ac.setText(_("Delete"))
+                continue
+            if "Select" in t:
+                ac.setText(_("SelectAll   Ctrl+A"))
+                continue
+        m.exec_(QCursor.pos())
     def editing_finished(self):
         # Long-time QT bug - pressing Enter to finish editing signals
         # editingFinished twice.  If the item changed the sequence is
@@ -519,7 +915,8 @@ class ButtonsWidget(QWidget):
     def addButton(self, icon_name, on_click, tooltip):
         button = QToolButton(self)
         button.setIcon(QIcon(icon_name))
-        button.setStyleSheet("QToolButton { border: none; hover {border: 1px} pressed {border: 1px} padding: 0px; }")
+        button.setStyleSheet(
+            "QToolButton { border: none; hover {border: 1px;border-image:ic_folder_pre.png;} pressed {border: 1px} padding: 0px; }")
         button.setVisible(True)
         button.setToolTip(tooltip)
         button.clicked.connect(on_click)
@@ -529,7 +926,9 @@ class ButtonsWidget(QWidget):
     def addCopyButton(self, app):
         self.app = app
         f = lambda: self.app.clipboard().setText(str(self.text()))
-        self.addButton(":icons/copy.png", f, _("Copy to clipboard"))
+        button=self.addButton(":icons/ic_library_books_pre.png", f, _("Copy to clipboard"))
+        button.setStyleSheet(
+            "QToolButton { border: none; hover {border: 1px;border-image:ic_folder_pre.png;} pressed {border: 1px} padding: 0px; }")
 
 class ButtonsLineEdit(QLineEdit, ButtonsWidget):
     def __init__(self, text=None):
@@ -540,6 +939,34 @@ class ButtonsLineEdit(QLineEdit, ButtonsWidget):
         o = QLineEdit.resizeEvent(self, e)
         self.resizeButtons()
         return o
+
+    def contextMenuEvent(self, e):
+        m = self.createStandardContextMenu()
+        acs = m.actions()
+        for ac in acs:
+            t = ac.text()
+            if "Undo" in t:
+                ac.setText(_("Undo        Ctrl+Z"))
+                continue
+            if "Redo" in t:
+                ac.setText(_("Redo        Ctrl+Y"))
+                continue
+            if "Cu&t" in t:
+                ac.setText(_("Cut         Ctrl+X"))
+                continue
+            if "Copy" in t:
+                ac.setText(_("Copy        Ctrl+C"))
+                continue
+            if "Paste" in t:
+                ac.setText(_("Paste       Ctrl+V"))
+                continue
+            if "Delete" in t:
+                ac.setText(_("Delete"))
+                continue
+            if "Select" in t:
+                ac.setText(_("SelectAll   Ctrl+A"))
+                continue
+        m.exec_(e.globalPos())
 
 class ButtonsTextEdit(QPlainTextEdit, ButtonsWidget):
     def __init__(self, text=None):
@@ -553,6 +980,33 @@ class ButtonsTextEdit(QPlainTextEdit, ButtonsWidget):
         self.resizeButtons()
         return o
 
+    def contextMenuEvent(self, e):
+        m = self.createStandardContextMenu()
+        acs = m.actions()
+        for ac in acs:
+            t = ac.text()
+            if "Undo" in t:
+                ac.setText(_("Undo        Ctrl+Z"))
+                continue
+            if "Redo" in t:
+                ac.setText(_("Redo        Ctrl+Y"))
+                continue
+            if "Cu&t" in t:
+                ac.setText(_("Cut         Ctrl+X"))
+                continue
+            if "Copy" in t:
+                ac.setText(_("Copy        Ctrl+C"))
+                continue
+            if "Paste" in t:
+                ac.setText(_("Paste       Ctrl+V"))
+                continue
+            if "Delete" in t:
+                ac.setText(_("Delete"))
+                continue
+            if "Select" in t:
+                ac.setText(_("SelectAll   Ctrl+A"))
+                continue
+        m.exec_(e.globalPos())
 
 class TaskThread(QThread):
     '''Thread that runs background tasks.  Callbacks are guaranteed
@@ -596,6 +1050,6 @@ class TaskThread(QThread):
 
 if __name__ == "__main__":
     app = QApplication([])
-    t = WaitingDialog(None, 'testing ...', lambda: [time.sleep(1)], lambda x: QMessageBox.information(None, 'done', "done", _('OK')))
+    t = WaitingDialog(None, 'testing ...', lambda: [time.sleep(1)], lambda x: QMessageBoxEx.information(None, 'done', "done", _('OK')))
     t.start()
     app.exec_()

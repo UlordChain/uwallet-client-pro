@@ -402,10 +402,10 @@ class TrustedCoinPlugin(BasePlugin):
         wizard.confirm_dialog(title='', message=msg, run_next = lambda x: wizard.run('create_remote_key'))
 
     def restore_wallet(self, wizard):
-        wizard.opt_bip39 = False
+        wizard.opt_bip39 = True
         wizard.opt_ext = True
         title = _("Restore two-factor Wallet")
-        f = lambda seed, is_bip39, is_ext: wizard.run('on_restore_seed', seed, is_ext)
+        f = lambda seed, True, is_ext: wizard.run('on_restore_seed', seed, is_ext)
         wizard.restore_seed_dialog(run_next=f, test=self.is_valid_seed)
 
     def on_restore_seed(self, wizard, seed, is_ext):

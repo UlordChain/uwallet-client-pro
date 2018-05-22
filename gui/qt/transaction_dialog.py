@@ -36,6 +36,7 @@ from uwallet import transaction
 from uwallet.bitcoin import base_encode
 from uwallet.i18n import _
 from uwallet.plugins import run_hook
+from uwallet import util
 
 from util import *
 
@@ -57,6 +58,17 @@ class TxDialog(QDialog, MessageBoxMixin):
         # Take a copy; it might get updated in the main window by
         # e.g. the FX plugin.  If this happens during or after a long
         # sign operation the signatures are lost.
+        # f = QFile("F:\MyProject\Ulord\uwallet-client-pro\gui\qt\ui\wallet.qss")
+        f = QFile("wallet.qss")
+        f.open(QFile.ReadOnly)
+        styleSheet = unicode(f.readAll(), encoding='utf8')
+        self.setStyleSheet(styleSheet)
+        f.close()
+
+        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setContentsMargins(15, 9, 15, 15)
+
         self.tx = copy.deepcopy(tx)
         self.tx.deserialize()
         self.main_window = parent
@@ -69,12 +81,14 @@ class TxDialog(QDialog, MessageBoxMixin):
         self.setWindowTitle(_("Transaction"))
 
         vbox = QVBoxLayout()
+
+        self.setTitleBar(vbox)
         self.setLayout(vbox)
 
         vbox.addWidget(QLabel(_("Transaction ID:")))
         self.tx_hash_e  = ButtonsLineEdit()
-        qr_show = lambda: parent.show_qrcode(str(self.tx_hash_e.text()), 'Transaction ID', parent=self)
-        self.tx_hash_e.addButton(":icons/qrcode.png", qr_show, _("Show as QR code"))
+        qr_show = lambda: parent.show_qrcode(str(self.tx_hash_e.text()), _('Transaction ID'), parent=self)
+        # self.tx_hash_e.addButton(":icons/ic_qr_code.png", qr_show, _("Show as QR code"))
         self.tx_hash_e.setReadOnly(True)
         vbox.addWidget(self.tx_hash_e)
         self.tx_desc = QLabel()
@@ -106,9 +120,10 @@ class TxDialog(QDialog, MessageBoxMixin):
         b.setDefault(True)
 
         self.qr_button = b = QPushButton()
-        b.setIcon(QIcon(":icons/qrcode.png"))
+        # b.setIcon(QIcon(":icons/ic_qr_code.png"))
         b.clicked.connect(self.show_qr)
-
+        self.qr_button.setStyleSheet(
+            "QPushButton{background-color: white;border:0px;image: url(:icons/ic_qr_code.png)center no-repeat;}QPushButton:hover{image: url(:icons/ic_qr_code_pre.png) center no-repeat;}")
         self.copy_button = CopyButton(lambda: str(self.tx), parent.app)
 
         # Action buttons
@@ -124,6 +139,54 @@ class TxDialog(QDialog, MessageBoxMixin):
         hbox.addLayout(Buttons(*self.buttons))
         vbox.addLayout(hbox)
         self.update()
+
+    def setTitleBar(self,vbox):
+        tq = QLabel(_("Transaction"))
+        tq.setObjectName("QDialogTitle")
+        tq.setStyleSheet("font-family: \"Arial\";font:bold;font-size:18px;border-bottom: 2px solid #FFD100;border-color:rgb(200,200,200);")
+        self.btn_close = QPushButton()
+        self.btn_close.setMinimumSize(QSize(21, 21))
+        self.btn_close.setMaximumSize(QSize(21, 21))
+        self.btn_close.setObjectName("btn_close1")
+        self.btn_close.clicked.connect(self.close)
+        hbox = QHBoxLayout()
+        hbox.addWidget(tq)
+        hbox.addWidget(self.btn_close)
+        toto = QFrame()
+        toto.setFrameShape(QFrame.HLine)
+        toto.setFrameShadow(QFrame.Sunken)
+        titleVBox = QVBoxLayout()
+        titleVBox.addLayout(hbox)
+        titleVBox.addWidget(toto)
+        vbox.insertLayout(0,titleVBox,1)
+
+
+    def mousePressEvent(self, event):
+        try:
+            self.currentPos = event.pos()
+        except Exception:
+            return
+
+    def mouseMoveEvent(self, event):
+        try:
+            self.move(QPoint(self.pos() + event.pos() - self.currentPos))
+        except Exception:
+            return
+    def paintEvent(self, event):
+        m = 9
+        path = QPainterPath()
+        path.setFillRule(Qt.WindingFill)
+        path.addRect(m, m, self.width() - m * 2, self.height() - m * 2)
+        painter = QPainter(self)
+        painter.fillPath(path, QBrush(Qt.white))
+        color = QColor(100, 100, 100, 30)
+        for i in range(m):
+            path = QPainterPath()
+            path.setFillRule(Qt.WindingFill)
+            path.addRoundRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2, 1, 1)
+            color.setAlpha(90 - math.sqrt(i) * 30)
+            painter.setPen(QPen(color, 1, Qt.SolidLine))
+            painter.drawRoundRect(QRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2), 0, 0)
 
     def do_broadcast(self):
         self.main_window.push_top_level_window(self)
@@ -146,7 +209,7 @@ class TxDialog(QDialog, MessageBoxMixin):
         text = str(self.tx).decode('hex')
         text = base_encode(text, base=43)
         try:
-            self.main_window.show_qrcode(text, 'Transaction', parent=self)
+            self.main_window.show_qrcode(text, _('Transaction'), parent=self)
         except Exception as e:
             self.show_message(str(e))
 
@@ -240,7 +303,7 @@ class TxDialog(QDialog, MessageBoxMixin):
         def format_amount(amt):
             return self.main_window.format_amount(amt, whitespaces = True)
 
-        i_text = QTextEdit()
+        i_text = QTextEditEx()
         i_text.setFont(QFont(MONOSPACE_FONT))
         i_text.setReadOnly(True)
         i_text.setMaximumHeight(100)
@@ -267,7 +330,7 @@ class TxDialog(QDialog, MessageBoxMixin):
 
         vbox.addWidget(i_text)
         vbox.addWidget(QLabel(_("Outputs") + ' (%d)'%len(self.tx.outputs())))
-        o_text = QTextEdit()
+        o_text = QTextEditEx()
         o_text.setFont(QFont(MONOSPACE_FONT))
         o_text.setReadOnly(True)
         o_text.setMaximumHeight(100)

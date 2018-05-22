@@ -86,12 +86,14 @@ class QRDialog(WindowModalDialog):
 
     def __init__(self, data, parent=None, title = "", show_text=False):
         WindowModalDialog.__init__(self, parent, title)
-
+        self.setStyle(parent.style())
         vbox = QVBoxLayout()
+        self.titleStr=_("QR code")
+        self.setTitleBar(vbox)
         qrw = QRCodeWidget(data)
         vbox.addWidget(qrw, 1)
         if show_text:
-            text = QTextEdit()
+            text = QTextEditEx()
             text.setText(data)
             text.setReadOnly(True)
             vbox.addWidget(text)

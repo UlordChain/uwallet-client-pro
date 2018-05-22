@@ -72,16 +72,17 @@ class BaseWizard(object):
 
     def new(self):
         name = os.path.basename(self.storage.path)
-        title = _("Welcome to the UWallet installation wizard.")
+        # title = _("Welcome to the Uwallet installation wizard.")
+        title = ''
         message = '\n'.join([
-            _("The wallet '%s' does not exist.") % name,
+            # _("The wallet '%s' does not exist.") % name,
             _("What kind of wallet do you want to create?")
         ])
         wallet_kinds = [
             ('standard',  _("Standard wallet")),
-            ('2fa', _("Wallet with two-factor authentication")),
-            ('multisig',  _("Multi-signature wallet")),
-            ('imported',  _("Watch Bitcoin addresses")),
+            # ('2fa', _("Wallet with two-factor authentication")),
+            # ('multisig',  _("Multi-signature wallet")),
+            ('imported',  _("Watch Ulord addresses")),
         ]
         choices = [pair for pair in wallet_kinds if pair[0] in wallet_types]
         self.choice_dialog(title=title, message=message, choices=choices, run_next=self.on_wallet_type)
@@ -123,8 +124,8 @@ class BaseWizard(object):
                 ('restore_from_seed', _('I already have a seed')),
                 ('restore_from_key', _('Use public or private keys')),
             ]
-            if not self.is_kivy:
-                choices.append(('choose_hw_device',  _('Use a hardware device')))
+            # if not self.is_kivy:
+            #     choices.append(('choose_hw_device',  _('Use a hardware device')))
         else:
             message = _('Add a cosigner to your multi-sig wallet')
             choices = [
@@ -134,12 +135,13 @@ class BaseWizard(object):
             if not self.is_kivy:
                 choices.append(('choose_hw_device',  _('Cosign with hardware device')))
 
+
         self.choice_dialog(title=title, message=message, choices=choices, run_next=self.run)
 
     def import_addresses(self):
         v = keystore.is_address_list
-        title = _("Import Bitcoin Addresses")
-        message = _("Enter a list of Bitcoin addresses. This will create a watching-only wallet.")
+        title = _("Import Ulord Addresses")
+        message = _("Enter a list of Ulord addresses. This will create a watching-only wallet.")
         self.add_xpub_dialog(title=title, message=message, run_next=self.on_import_addresses, is_valid=v)
 
     def on_import_addresses(self, text):
@@ -268,7 +270,8 @@ class BaseWizard(object):
 
     def on_restore_seed(self, seed, is_bip39, is_ext):
         if is_bip39:
-            f = lambda passphrase: self.on_restore_bip39(seed, passphrase)
+            f = lambda x: self.run('on_bip44', seed, '', int('0'))
+            # f = lambda passphrase: self.on_restore_bip39(seed, passphrase)
             self.passphrase_dialog(run_next=f) if is_ext else f('')
         else:
             seed_type = bitcoin.seed_type(seed)
@@ -285,7 +288,7 @@ class BaseWizard(object):
                     self.load_2fa()
                     self.run('on_restore_seed', seed, is_ext)
             else:
-                raise
+                raise Exception
 
     def on_restore_bip39(self, seed, passphrase):
         f = lambda x: self.run('on_bip44', seed, passphrase, int(x))
@@ -299,7 +302,7 @@ class BaseWizard(object):
         k = keystore.BIP32_KeyStore({})
         bip32_seed = keystore.bip39_to_seed(seed, passphrase)
         derivation = "m/44'/0'/%d'"%account_id
-        k.add_xprv_from_seed(bip32_seed, derivation)
+        k.add_xprv_from_seed(bip32_seed, derivation,seed)
         self.on_keystore(k)
 
     def on_keystore(self, k):
@@ -354,9 +357,12 @@ class BaseWizard(object):
         self.on_keystore(k)
 
     def create_seed(self):
-        from uwallet.mnemonic import Mnemonic
-        seed = Mnemonic('en').make_seed()
-        self.opt_bip39 = False
+        from uwallet.mnemonic_bip39 import Mnemonic_bip39
+        seed = Mnemonic_bip39('english').generate()
+        self.opt_bip39 = True
+        # from uwallet.mnemonic import Mnemonic
+        # seed = Mnemonic('en').make_seed()
+        # self.opt_bip39 = False
         f = lambda x: self.request_passphrase(seed, x)
         self.show_seed_dialog(run_next=f, seed_text=seed)
 
@@ -368,8 +374,16 @@ class BaseWizard(object):
             self.run('confirm_seed', seed, '')
 
     def confirm_seed(self, seed, passphrase):
-        f = lambda x: self.confirm_passphrase(seed, passphrase)
-        self.confirm_seed_dialog(run_next=f, test=lambda x: x==seed)
+        # f = lambda x: self.confirm_passphrase(seed, passphrase) era culture staff advance tobacco taxi buddy female zero earn thing save
+        # self.confirm_seed_dialog(run_next=f, test=lambda x: x==seed)
+
+        self.opt_bip39 = True
+        self.opt_ext = True
+        self.app.clipboard().clear()
+        f = lambda x: self.run('on_bip44', seed, passphrase, int('0'))
+        test = bitcoin.is_seed if self.wallet_type == 'standard' else bitcoin.is_new_seed
+        self.restore_seed_dialog_bip39(run_next=f, test=test)
+        # self.restore_seed_dialog(run_next=self.on_restore_seed, test=test)
 
     def confirm_passphrase(self, seed, passphrase):
         f = lambda x: self.run('create_keystore', seed, x)
@@ -377,11 +391,11 @@ class BaseWizard(object):
             title = _('Confirm Passphrase')
             message = '\n'.join([
                 _('Your passphrase must be saved together with your seed.'),
-                _('Please type it here.'),
+                _('Please type it here.'),#
             ])
             self.line_dialog(run_next=f, title=title, message=message, default='', test=lambda x: x==passphrase)
         else:
-            f('')
+            f('')#
 
     def create_addresses(self):
         def task():
@@ -390,3 +404,4 @@ class BaseWizard(object):
             self.terminate()
         msg = _("UWallet is generating your addresses, please wait.")
         self.waiting_dialog(task, msg)
+        self.refresh_gui()

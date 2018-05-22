@@ -36,12 +36,18 @@ from util import MyTreeWidget, pr_tooltips, pr_icons
 class RequestList(MyTreeWidget):
 
     def __init__(self, parent):
-        MyTreeWidget.__init__(self, parent, self.create_menu, [_('Date'), _('Address'), '', _('Description'), _('Amount'), _('Status')], 3)
+        MyTreeWidget.__init__(self, parent, self.create_menu, ['        '+_('Date'), _('Address'), '', _('Description'), _('Amount'), _('Status')], 3)
+        self.pr_tooltips = {
+            PR_UNPAID: _('Pending'),
+            PR_PAID: _('Paid'),
+            PR_EXPIRED: _('Expired')
+        }
         self.currentItemChanged.connect(self.item_changed)
         self.itemClicked.connect(self.item_changed)
         self.setSortingEnabled(True)
-        self.setColumnWidth(0, 180)
+        # self.setColumnWidth(0, 180)
         self.hideColumn(1)
+        self.hideColumn(5)
 
     def item_changed(self, item):
         if item is None:
@@ -57,19 +63,19 @@ class RequestList(MyTreeWidget):
         self.parent.receive_message_e.setText(message)
         self.parent.receive_amount_e.setAmount(amount)
         self.parent.expires_combo.hide()
-        self.parent.expires_label.show()
+        # self.parent.expires_label.show()
         self.parent.expires_label.setText(expires)
-        self.parent.new_request_button.setEnabled(True)
+        # self.parent.new_request_button.setEnabled(True)
 
     def on_update(self):
         self.wallet = self.parent.wallet
         # hide receive tab if no receive requests available
         b = len(self.wallet.receive_requests) > 0
         self.setVisible(b)
-        self.parent.receive_requests_label.setVisible(b)
+        # self.parent.receive_requests_label.setVisible(b)
         if not b:
             self.parent.expires_label.hide()
-            self.parent.expires_combo.show()
+            # self.parent.expires_combo.show()
 
         # update the receive address if necessary
         current_address = self.parent.receive_address_e.text()
@@ -77,7 +83,15 @@ class RequestList(MyTreeWidget):
         addr = self.wallet.get_unused_address()
         if not current_address in domain and addr:
             self.parent.set_receive_address(addr)
-        self.parent.new_request_button.setEnabled(addr != current_address)
+        # self.parent.new_request_button.setEnabled(addr != current_address)
+        self.header().setResizeMode(0, QHeaderView.Fixed)
+        self.setColumnWidth(0, 170)
+        self.header().setResizeMode(3, QHeaderView.Fixed)
+        self.setColumnWidth(3, 170)
+        self.header().setResizeMode(4, QHeaderView.Fixed)
+        self.setColumnWidth(4, 170)
+        self.header().setResizeMode(5, QHeaderView.Fixed)
+        self.setColumnWidth(5, 170)
 
         # clear the list and fill it again
         self.clear()
@@ -94,9 +108,9 @@ class RequestList(MyTreeWidget):
             signature = req.get('sig')
             requestor = req.get('name', '')
             amount_str = self.parent.format_amount(amount) if amount else ""
-            item = QTreeWidgetItem([date, address, '', message, amount_str, pr_tooltips.get(status,'')])
+            item = QTreeWidgetItem([date, address, '', message, amount_str, self.pr_tooltips.get(status,'')])
             if signature is not None:
-                item.setIcon(2, QIcon(":icons/seal.png"))
+                # item.setIcon(2, QIcon(":icons/seal.png"))
                 item.setToolTip(2, 'signed by '+ requestor)
             if status is not PR_UNKNOWN:
                 item.setIcon(6, QIcon(pr_icons.get(status)))

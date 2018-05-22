@@ -73,7 +73,7 @@ setup(
         'uwallet': [
             'www/index.html',
             'wordlist/*.txt',
-            'locale/*/LC_MESSAGES/uwallet.mo',
+            'locale/*/LC_MESSAGES/ulord.mo',
         ]
     },
     scripts=['uwallet'],
@@ -82,6 +82,6 @@ setup(
     author="Thomas Voegtlin",
     author_email="",
     license="MIT Licence",
-    url="http://www.ulord.org/",
+    url="http://www.ulord.one/",
     long_description="""Lightweight Bitcoin Wallet"""
 )

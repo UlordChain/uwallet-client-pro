@@ -74,7 +74,7 @@ class OpenFileEventFilter(QObject):
 class UWalletGui:
 
     def __init__(self, config, daemon, plugins):
-        set_language(config.get('language'))
+        set_language(config.get('language','zh_CN'))
         # Uncomment this call to verify objects are being properly
         # GC-ed when windows are closed
         #network.add_jobs([DebugMem([Abstract_Wallet, SPV, Synchronizer,
@@ -87,13 +87,35 @@ class UWalletGui:
         self.app = QApplication(sys.argv)
         self.app.installEventFilter(self.efilter)
         self.timer = Timer()
+
+
+        # translator = QTranslator();
+        # translator.load(QString("widgets.qm"));
+        # self.app.installTranslator(translator)
+
+        # translator2 = QTranslator()
+        # translator2.load(QString("qt_zh_CN.qm"))
+        # self.app.installTranslator(translator2)
+        # translator3 = QTranslator()
+        # translator3.load(QString("c:/qt_help_zh_CN.qm"))
+        # self.app.installTranslator(translator3)
+        # translator4 = QTranslator()
+        # translator4.load(QString("c:/designer_zh_CN.qm"))
+        # self.app.installTranslator(translator4)
+        # translator5 = QTranslator()
+        # translator5.load(QString("c:/linguist_zh_CN.qm"))
+        # self.app.installTranslator(translator5)
+        # translator6 = QTranslator()
+        # translator6.load(QString("c:/assistant_zh_CN.qm"))
+        # self.app.installTranslator(translator6)
+
         # shared objects
         self.invoices = InvoiceStore(self.config)
         self.contacts = Contacts(self.config)
         # init tray
         self.dark_icon = self.config.get("dark_icon", False)
         self.tray = QSystemTrayIcon(self.tray_icon(), None)
-        self.tray.setToolTip('UWallet')
+        self.tray.setToolTip('UWalletLite')
         self.tray.activated.connect(self.tray_activated)
         self.build_tray_menu()
         self.tray.show()
@@ -108,9 +130,9 @@ class UWalletGui:
             submenu = m.addMenu(window.wallet.basename())
             submenu.addAction(_("Show/Hide"), window.show_or_hide)
             submenu.addAction(_("Close"), window.close)
-        m.addAction(_("Dark/Light"), self.toggle_tray_icon)
+        # m.addAction(_("Dark/Light"), self.toggle_tray_icon)
         m.addSeparator()
-        m.addAction(_("Exit UWallet"), self.close)
+        m.addAction(_("Exit UWalletLite"), self.close)
         self.tray.setContextMenu(m)
 
     def tray_icon(self):

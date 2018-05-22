@@ -50,13 +50,13 @@ class QR_Window(QWidget):
     def __init__(self, win):
         QWidget.__init__(self)
         self.win = win
-        self.setWindowTitle('UWallet - '+_('Payment Request'))
+        self.setWindowTitle('UWalletLite - '+_('Payment Request'))
         self.setMinimumSize(800, 250)
         self.address = ''
         self.label = ''
         self.amount = 0
         self.setFocusPolicy(QtCore.Qt.NoFocus)
-
+        self.setStyleSheet("background-color:white;")
         main_box = QHBoxLayout()
 
         self.qrw = QRCodeWidget()

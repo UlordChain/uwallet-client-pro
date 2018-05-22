@@ -1,4 +1,7 @@
 <RCC>
+  <qresource prefix="/gui/qt/ui/">
+    <file alias="wallet">gui/qt/ui/wallet.qss</file>
+  </qresource>
   <qresource prefix="/" >
     <file>icons/electrum.png</file>
     <file>icons/clock1.png</file>
@@ -19,7 +22,6 @@
     <file>icons/ledger_unpaired.png</file>
     <file>icons/lock.png</file>
     <file>icons/microphone.png</file>
-    <file>icons/network.png</file>
     <file>icons/qrcode.png</file>
     <file>icons/preferences.png</file>
     <file>icons/seed.png</file>
@@ -37,5 +39,56 @@
     <file>icons/unlock.png</file>
     <file>icons/warning.png</file>
     <file>icons/zoom.png</file>
+    <file>icons/ic_clear.png</file>
+    <file>icons/ic_crop_5_4.png</file>
+    <file>icons/ic_crop_5_4_pre.png</file>
+    <file>icons/ic_remove.png</file>
+    <file>icons/ic_remove_pre.png</file>
+    <file>icons/options_box_pre.png</file>
+    <file>icons/previous_page.png</file>
+    <file>icons/previous_page_pre.png</file>
+    <file>icons/right.png</file>
+    <file>icons/Slider.png</file>
+    <file>icons/last_page.png</file>
+    <file>icons/last_page_pre.png</file>
+    <file>icons/network.png</file>
+    <file>icons/network_green.png</file>
+    <file>icons/network_red.png</file>
+    <file>icons/network_yellow.png</file>
+    <file>icons/next_page.png</file>
+    <file>icons/next_page_pre.png</file>
+    <file>icons/options.png</file>
+    <file>icons/options_box.png</file>
+    <file>icons/options_pre.png</file>
+    <file>icons/page.png</file>
+    <file>icons/adjust_the_value.png</file>
+    <file>icons/caveat.png</file>
+    <file>icons/drop_down.png</file>
+    <file>icons/first_page.png</file>
+    <file>icons/first_page_pre.png</file>
+    <file>icons/ic_clear_pre.png</file>
+    <file>icons/ic_folder.png</file>
+    <file>icons/ic_folder_pre.png</file>
+    <file>icons/ic_library_books.png</file>
+    <file>icons/ic_library_books_pre.png</file>
+    <file>icons/ic_lock_open.png</file>
+    <file>icons/ic_lock_open_pre.png</file>
+    <file>icons/ic_qr_code.png</file>
+    <file>icons/ic_qr_code_pre.png</file>
+    <file>icons/ic_search.png</file>
+    <file>icons/ic_settings.png</file>
+    <file>icons/ic_settings_pre.png</file>
+    <file>icons/ic_spa.png</file>
+    <file>icons/ic_spa_pre.png</file>
+    <file>icons/small_window.png</file>
+    <file>icons/small_window_pre.png</file>
+    <file>icons/ic_lock_colse.png</file>
+    <file>icons/ic_lock_colse_pre.png</file>
+    <file>icons/ic_query_0.png</file>
+    <file>icons/ic_down.png</file>
+    <file>icons/ic_up.png</file>
+    <file>icons/prompt.png</file>
+    <file>icons/caveat.png</file>
+    <file>icons/ic_clear_copy_pre.png</file>
   </qresource>
 </RCC>

@@ -251,10 +251,10 @@ class SendScreen(CScreen):
         else:
             address = str(self.screen.address)
             if not address:
-                self.app.show_error(_('Recipient not specified.') + ' ' + _('Please scan a Bitcoin address or a payment request'))
+                self.app.show_error(_('Recipient not specified.') + ' ' + _('Please scan a Ulord address or a payment request'))
                 return
             if not bitcoin.is_address(address):
-                self.app.show_error(_('Invalid Bitcoin Address') + ':\n' + address)
+                self.app.show_error(_('Invalid Ulord Address') + ':\n' + address)
                 return
             try:
                 amount = self.app.get_amount(self.screen.amount)

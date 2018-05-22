@@ -94,7 +94,7 @@ class UWalletGui:
                 except Exception:
                     time_str = "unknown"
             else:
-                time_str = 'unconfirmed'
+                time_str = _('unconfirmed')
 
             label = self.wallet.get_label(tx_hash)
             messages.append( format_str%( time_str, label, format_satoshis(value, whitespaces=True), format_satoshis(balance, whitespaces=True) ) )
