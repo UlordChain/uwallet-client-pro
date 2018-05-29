@@ -89,7 +89,7 @@ class Abstract_Wallet(PrintError):
         self.synchronizer = None
         self.verifier = None
 
-        self.gap_limit_for_change = 6 # constant
+        self.gap_limit_for_change = 5 #6# constant
         # saved fields
         self.use_change            = storage.get('use_change', True)
         self.multiple_change       = storage.get('multiple_change', False)
@@ -1316,7 +1316,7 @@ class Deterministic_Wallet(Abstract_Wallet):
 
     def __init__(self, storage):
         Abstract_Wallet.__init__(self, storage)
-        self.gap_limit = storage.get('gap_limit', 20)
+        self.gap_limit = storage.get('gap_limit', 1)#20
 
     def has_seed(self):
         return self.keystore.has_seed()
@@ -1392,7 +1392,7 @@ class Deterministic_Wallet(Abstract_Wallet):
         return address
 
     def synchronize_sequence(self, for_change):
-        limit = self.gap_limit_for_change if for_change else self.gap_limit
+        limit = self.gap_limit_for_change if for_change else self.gap_limit#limit address change 5 gap 5 by qpc
         while True:
             addresses = self.get_change_addresses() if for_change else self.get_receiving_addresses()
             if len(addresses) < limit:

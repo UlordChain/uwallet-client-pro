@@ -39,7 +39,7 @@ import json
 import util
 from bitcoin import *
 from interface import Connection, Interface
-from blockchain import Blockchain,CHUNK_SIZE
+from blockchain import Blockchain
 from version import UWallet_VERSION, PROTOCOL_VERSION
 
 FEE_TARGETS = [25, 10, 5, 2]
@@ -47,13 +47,10 @@ FEE_TARGETS = [25, 10, 5, 2]
 DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
 
 DEFAULT_SERVERS = {
-         'wallet1.ulord.one': {'t': '10579'},
-         'wallet2.ulord.one': {'t': '10579'}
-# '114.67.37.2': {'t': '10579'},
-#          '118.190.145.8': {'t': '10579'}
-        #'47.75.4.172':{'t': '50001', 's':'50002'},
-        #'erbium1.sytes.net':{'t':'50001', 's':'50002'}
-}#qpc
+'wallet3-1.ulord.one': {'t': '10579'},
+'wallet3-2.ulord.one': {'t': '10578'},
+'wallet3-3.ulord.one': {'t': '10577'}
+}
 
 NODES_RETRY_INTERVAL = 60
 SERVER_RETRY_INTERVAL = 10
@@ -163,7 +160,7 @@ class Network(util.DaemonThread):
         self.num_server = 8 if not self.config.get('oneserver') else 0
         self.max_block_height = 0
         self.blockchain = Blockchain(self.config, self)
-
+        self.cli_version = ''
         # A deque of interface header requests, processed left-to-right
         self.bc_requests = deque()
         # Server for addresses and transactions
@@ -377,10 +374,12 @@ class Network(util.DaemonThread):
             for s in self.recent_servers:
                 try:
                     host, port, protocol = deserialize_server(s)
+                    out[host] = {protocol: port}
                 except:
                     continue
-                if host not in out:
+                if host  in out:
                     out[host] = { protocol:port }
+
         return out
 
     def start_interface(self, server):
@@ -500,8 +499,8 @@ class Network(util.DaemonThread):
 
     def add_recent_server(self, server):
         # list is ordered
-        if server in self.recent_servers:
-            self.recent_servers.remove(server)
+        # if server in self.recent_servers:
+        #     self.recent_servers.remove(server)
         self.recent_servers.insert(0, server)
         self.recent_servers = self.recent_servers[0:20]
         self.save_recent_servers()
@@ -525,7 +524,10 @@ class Network(util.DaemonThread):
                 self.notify('servers')
         elif method == 'server.banner':
             if error is None:
-                # self.blockchain.max_block_height = result #the vertify_header will rallback by maxheight
+                reuslts = result.split(',', 1)
+                if len(reuslts)==2:
+                    self.cli_version = reuslts[0]
+                    self.blockchain.CHUNK_SIZE = int(reuslts[1])
                 self.banner = result
                 self.notify('banner')
         elif method == 'server.donation_address':
@@ -729,15 +731,18 @@ class Network(util.DaemonThread):
                 self.bc_requests.popleft()
                 self.notify('updated')
             elif self._need_chunk_from_interface(data):
+                # print idx
                 self.request_chunk(interface, data, idx)
             else:
                 self.request_header(interface, data, data['if_height'])
+                # self.bc_requests.popleft()
+                # self.notify('updated')
 
     def _caught_up_to_interface(self, data):
         return self.get_local_height() >= data['if_height']
 
     def _need_chunk_from_interface(self, data):
-        return self.get_local_height() + CHUNK_SIZE <= data['if_height']
+        return self.get_local_height()  < data['if_height']
 
     def request_header(self, interface, data, height):
         interface.print_error("requesting header %d" % height)
@@ -775,14 +780,15 @@ class Network(util.DaemonThread):
         local_height, if_height = self.get_local_height(), data['if_height']
         self.max_block_height = if_height
         dif =  if_height - local_height
-        if dif < CHUNK_SIZE:
-            self.blockchain.height_diff = dif*2-1
-        else:
-            self.blockchain.height_diff = dif + dif%CHUNK_SIZE-1
+        self.blockchain.height_diff = dif
+        # if dif < self.blockchain.CHUNK_SIZE:
+        #     self.blockchain.height_diff = dif*2-1
+        # else:
+        #     self.blockchain.height_diff = dif + dif%self.blockchain.CHUNK_SIZE-1
         if if_height <= local_height:
             return False
         elif if_height > local_height + 50:
-            self.request_chunk(interface, data, (local_height + 1) / CHUNK_SIZE) #qpc
+            self.request_chunk(interface, data, (local_height + 1) / self.blockchain.CHUNK_SIZE) #qpc
         else:
             self.request_header(interface, data, if_height)
         return True
@@ -803,7 +809,7 @@ class Network(util.DaemonThread):
                 # Request headers if it is ahead of our blockchain
                 if not self.bc_request_headers(interface, data):
                     continue
-            elif time.time() - req_time > 10:
+            elif time.time() - req_time > 20:
                 interface.print_error("blockchain request timed out")
                 self.connection_down(interface.server)
                 continue
@@ -865,7 +871,7 @@ class Network(util.DaemonThread):
     #     return r.get('result')
 
     def run(self):
-        self.blockchain.init()
+        #self.blockchain.init()
         while self.is_running():
             self.maintain_sockets()
             self.wait_on_sockets()

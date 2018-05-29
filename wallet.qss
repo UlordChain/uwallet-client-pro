@@ -7,7 +7,7 @@ QWidget
     /*不仅对文本框选中有效果, 对dock拖动时的半透明背景也有效果(第二点不支持渐变色,应该是BUG)*/
     selection-background-color:rgb(200,200,200);
     font-family: \"Arial\";
-
+    font-size:12px;
 }
 QDialog
 {

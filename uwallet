@@ -27,6 +27,7 @@
 import os
 import sys
 import time
+import shutil
 
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -269,6 +270,12 @@ def init_plugins(config, gui_name):
     from uwallet.plugins import Plugins
     return Plugins(config, is_bundle or is_local or is_android, gui_name)
 
+def get_FileSize(filePath):
+    filePath = unicode(filePath,'utf8')
+    fsize = os.path.getsize(filePath)
+    fsize = fsize/float(1024*1024)
+    return round(fsize,2)
+
 if __name__ == '__main__':
 
     # on osx, delete Process Serial Number arg generated for apps launched in Finder
@@ -336,6 +343,26 @@ if __name__ == '__main__':
 
     if cmdname == 'gui':
         fd, server = daemon.get_fd_or_server(config)
+        # p = os.path.join(os.environ["APPDATA"], "UWallet")
+        # path = os.path.join(p, "blockchain_headers")
+        # newP = os.path.join(p, "newheader.h")
+        # if os.path.exists(path) and not os.path.exists(newP):
+        #     os.remove(path)
+        # if not os.path.exists(newP):
+        #     os.makedirs(newP)
+        localheader = "blockchain_headers"
+        p = os.path.join(os.environ["APPDATA"], "UWallet")
+        path = os.path.join(p, "blockchain_headers")
+        cpath = os.path.join(p, "recent_servers")
+        if os.path.exists(cpath):
+            os.remove(cpath)
+        if not os.path.exists(path):
+            if os.path.exists(localheader):
+                shutil.copyfile(localheader, path)
+        else:
+            if os.path.exists(localheader):
+                if get_FileSize(localheader)>get_FileSize(path):
+                    shutil.copyfile(localheader, path)
         if fd is not None:
             plugins = init_plugins(config, config.get('uwallet_gui', 'qt'))
             d = daemon.Daemon(config, fd)

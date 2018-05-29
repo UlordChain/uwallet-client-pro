@@ -51,7 +51,8 @@ from uwallet import Transaction, mnemonic
 from uwallet import util, bitcoin, commands, coinchooser
 from uwallet import SimpleConfig, paymentrequest
 from uwallet.wallet import Wallet, Multisig_Wallet
-from uwallet.blockchain import Blockchain,CHUNK_SIZE
+from uwallet.blockchain import Blockchain
+from uwallet.version import UWallet_VERSION
 
 from amountedit import BTCAmountEdit, MyLineEdit, BTCkBEdit
 from network_dialog import NetworkDialog
@@ -99,7 +100,6 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         styleSheet = unicode(f.readAll(), encoding='utf8')
         self.setStyleSheet(styleSheet)
         f.close()
-
         self.languages = {
             '': _('Default'),
             'zh_CN': _('Chinese'),
@@ -128,6 +128,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.config = config = gui_object.config
         self.network = gui_object.daemon.network
         slpcount = 0
+
         while self.network.blockchain.height_diff==0 and slpcount<100:
             if self.network.blockchain.downloading:
                 break
@@ -136,7 +137,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             print "sleep"
         if self.network.blockchain.downloading==False:
             try:
-                if self.network.blockchain.height_diff > CHUNK_SIZE-1:
+                if self.network.blockchain.height_diff > self.network.blockchain.CHUNK_SIZE-1:
                     with open("process.dat", "w") as f:
                         f.write('\x00' * 1024)
                     with open('process.dat', 'r+') as f:
@@ -150,8 +151,8 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                     si = subprocess.STARTUPINFO()
                     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
                     subprocess.call('progressbarWindow.exe', startupinfo=si)
-                    if (self.network.max_block_height - self.network.blockchain.local_height) > CHUNK_SIZE-1:
-                        sys.exit(0)
+                    # if (self.network.max_block_height - self.network.blockchain.local_height) > self.network.blockchain.CHUNK_SIZE-1:
+                    #     sys.exit(0)
             except Exception,ex:
                 print ex
 
@@ -232,15 +233,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.connect(self, QtCore.SIGNAL('network'), self.on_network_qt)
             interests = ['updated', 'new_transaction', 'status',
                          'banner', 'verified']
-            # To avoid leaking references to "self" that prevent the
-            # window from being GC-ed when closed, callbacks should be
-            # methods of this class only, and specifically not be
-            # partials, lambdas or methods of subobjects.  Hence...
             self.network.register_callback(self.on_network, interests)
-            # set initial message
-            # self.console.showMessage(self.network.banner)
-
-
 
         self.is_max = False
         self.payment_request = None
@@ -254,6 +247,16 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.tl_windows = []
         self.load_wallet(wallet)
         self.connect_slots(gui_object.timer)
+        self.is_show_warning =False
+        self.warn_version()
+
+    def warn_version(self):
+        if self.network.cli_version !='' and UWallet_VERSION!=self.network.cli_version:
+            if not self.is_show_warning:
+                self.is_show_warning = True
+                if self.question(_('Your wallet version is too old, please go to ulord. One to download the new wallet.')):
+                    f = lambda: webbrowser.open("http://ulord.one/download.html")
+                    f()
 
     def resizeEvent(self,event):
         print "resizeEvent isHiden:",self.is_hidden()
@@ -595,6 +598,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         # help_menu.addAction(_("&Report Bug"), self.show_report_bug)
         help_menu.addSeparator()
         # help_menu.addAction(_("&Donate to server"), self.donate_to_server)
+        # menubar.setMaximumWidth(350)
         return menubar
         # self.setMenuBar(menubar)
 
@@ -673,6 +677,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.connect(sender, QtCore.SIGNAL('timersignal'), self.timer_actions)
 
     def timer_actions(self):
+        self.warn_version()
         # Note this runs in the GUI thread
         if self.need_update.is_set():
             self.need_update.clear()
@@ -1291,6 +1296,11 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                         self.wallet.check_password(password)
                     break
                 except Exception as e:
+                    title = "UWalletLite"
+                    text = _("Incorrect password")
+                    icontype = "warm"
+                    qm = QMessageBoxEx(title, text, self, icontype)
+                    qm.exec_()
                     self.show_error(str(e), parent=parent)
                     continue
 
@@ -1928,6 +1938,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             mnemonic = keystore.get_mnemonic(password)
             passphrase = keystore.get_passphrase(password)
         except BaseException as e:
+
             self.show_error(str(e))
             return
         from seed_dialog import SeedDialog

@@ -2097,7 +2097,7 @@ msgid 'Replaceable'
 msgstr "可替换"
 
 msgid 'Not Verified'
-msgstr"无法确认"
+msgstr"未确认"
 
 msgid "unmatured"
 msgstr "未成熟"
@@ -2647,3 +2647,12 @@ msgstr '账号'
 
 msgid 'File exists'
 msgstr '钱包文件已存在'
+
+msgid "Disconnected from server"
+msgstr '已从服务器断开连接'
+
+msgid "If it is disabled, UWalletLite will warn you if your server is lagging."
+msgstr "如果禁用该选项并且你的服务器是区块头同步是滞后的,UWalletLite将会对您发出警告."
+
+msgid 'Your wallet version is too old, please go to ulord. One to download the new wallet.'
+msgstr '您的钱包版本太旧,请前往ulord.one下载新的钱包!'

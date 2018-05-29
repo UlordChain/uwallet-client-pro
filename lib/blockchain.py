@@ -31,7 +31,7 @@ from bitcoin import *
 import mmap
 import contextlib
 
-CHUNK_SIZE = 20#576#96 #576
+#576#96 #576
 MAX_TARGET = 0x000009b173000000000000000000000000000000000000000000000000000000 #0x00000000FFFF0000000000000000000000000000000000000000000000000000 qpc
 NULL_HASH = '0000000000000000000000000000000000000000000000000000000000000000'
 
@@ -46,6 +46,7 @@ class Blockchain(util.PrintError):
         self.set_step = 0
         self.height_diff = 0
         self.downloading = False
+        self.CHUNK_SIZE = 96#2016#1152
 
     def height(self):
         return self.local_height
@@ -99,13 +100,14 @@ class Blockchain(util.PrintError):
                 print ex
 
     def verify_chunk(self, index, data):
+        num = len(data) // 140
         prev_header = None
         if index != 0:
-            prev_header = self.read_header(index * CHUNK_SIZE - 1)
-        for i in range(CHUNK_SIZE):
+            prev_header = self.read_header(index * self.CHUNK_SIZE - 1)
+        for i in range(num):
             raw_header = data[i * 140:(i + 1) * 140]
             header = self.deserialize_header(raw_header)
-            bits, target = self.get_target(index * CHUNK_SIZE + i, prev_header, header)
+            bits, target = self.get_target(index * self.CHUNK_SIZE + i, prev_header, header)
             if header is not None:
                 self.verify_header(header, prev_header, bits, target)
             prev_header = header
@@ -188,7 +190,7 @@ class Blockchain(util.PrintError):
     def save_chunk(self, index, chunk):
         filename = self.path()
         f = open(filename, 'rb+')
-        f.seek(index * CHUNK_SIZE * 140) #qpc
+        f.seek(index * self.CHUNK_SIZE * 140) #qpc
         h = f.write(chunk)
         f.close()
         self.set_local_height()
@@ -309,6 +311,7 @@ class Blockchain(util.PrintError):
             return idx + 1
         except BaseException as e:
             self.print_error('verify_chunk failed', str(e))
+            print('verify_chunk failed', str(e))
             return idx - 1
 
     def check_bits(self, bits):

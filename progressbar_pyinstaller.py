@@ -21,6 +21,6 @@ if __name__ == '__main__':
     #run(params)
 
     #params = ['-y', '-n=uwallet', 'deterministic.spec']
-    params = ['progressbarWindow.py','--icon=uwallet.ico','--hidden-import=queue','-w']
+    params = ['progressbarWindow.py','--icon=uwallet.ico','--hidden-import=queue','-w','-y']
     run(params)
 #qt5.11

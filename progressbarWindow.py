@@ -15,7 +15,7 @@ class ProgressBar(QWidget):
         QWidget.__init__(self, parent)
         # self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('ProgressBar')
-
+        self.setWindowIcon(QIcon('Uwallet.ico'))
         self.setWindowFlags(Qt.Dialog|Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setMinimumWidth(500)
