@@ -179,7 +179,7 @@ class Plugins(DaemonThread):
 
     def run(self):
         while self.is_running():
-            #time.sleep(0.1)
+            time.sleep(0.1)
             self.run_jobs()
         self.on_stop()
 

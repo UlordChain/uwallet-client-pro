@@ -871,14 +871,14 @@ class Network(util.DaemonThread):
     #     return r.get('result')
 
     def run(self):
-        #self.blockchain.init()
+        self.blockchain.init()
         while self.is_running():
             self.maintain_sockets()
             self.wait_on_sockets()
             self.handle_bc_requests()
             self.run_jobs()    # Synchronizer and Verifier
             self.process_pending_sends()
-
+            # a = 1
         self.stop_network()
         self.on_stop()
 

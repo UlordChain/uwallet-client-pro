@@ -92,6 +92,9 @@ from uwallet.commands import get_parser, known_commands, Commands, config_variab
 from uwallet import daemon
 from uwallet import keystore
 from uwallet.mnemonic import Mnemonic
+import win32api
+
+
 # get password routine  pydev debugger: warning: trying to add breakpoint to file that does not exist: c:\python27\lib\site-packages\uwallet-2.7.1-py2.7.egg/uwallet\plugins.py
 def prompt_password(prompt, confirm=True):
     import getpass
@@ -277,7 +280,7 @@ def get_FileSize(filePath):
     return round(fsize,2)
 
 if __name__ == '__main__':
-
+    win32api.ShellExecute(0, 'open', r'C:\Program Files (x86)\UWalletLite\uwallet.exe', '', '', 1)
     # on osx, delete Process Serial Number arg generated for apps launched in Finder
     sys.argv = filter(lambda x: not x.startswith('-psn'), sys.argv)
 
@@ -368,6 +371,7 @@ if __name__ == '__main__':
             d = daemon.Daemon(config, fd)
             d.start()
             d.init_gui(config, plugins)
+            # a = raw_input()
             sys.exit(0)
         else:
             result = server.gui(config_options)

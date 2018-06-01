@@ -248,7 +248,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.load_wallet(wallet)
         self.connect_slots(gui_object.timer)
         self.is_show_warning =False
-        self.warn_version()
+        # self.warn_version()
 
     def warn_version(self):
         if self.network.cli_version !='' and UWallet_VERSION!=self.network.cli_version:
@@ -297,7 +297,10 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
     def slot_maximize(self):
         if self.ismaxsize:
             self.setContentsMargins(9, 9, 9, 9)
+            self.geo.setWidth(800)
+            self.geo.setHeight(530)
             self.setGeometry(self.geo)
+            # self.setGeometry(QRect(800, 530))
             self.ismaxsize = False
             # self.max_button.setStyleSheet("QPushButton{image:url(:/icons/ic_crop_5_4_pre) center no - repeat;}QPushButton:hover{background:url(:/icons/ic_crop_5_4) center no - repeat;}QPushButton:pressed{background:url(:/icons/ic_crop_5_4_pre) centerno - repeat;}")
         else:
@@ -677,7 +680,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.connect(sender, QtCore.SIGNAL('timersignal'), self.timer_actions)
 
     def timer_actions(self):
-        self.warn_version()
+        # self.warn_version()
         # Note this runs in the GUI thread
         if self.need_update.is_set():
             self.need_update.clear()
