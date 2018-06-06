@@ -2656,3 +2656,9 @@ msgstr "如果禁用该选项并且你的服务器是区块头同步是滞后的
 
 msgid 'Your wallet version is too old, please go to ulord. One to download the new wallet.'
 msgstr '您的钱包版本太旧,请前往ulord.one下载新的钱包!'
+
+msgid 'Invalid Fee'
+msgstr '费用错误'
+
+msgid 'New version found. Is it updated?'
+msgstr '发现新版本,是否立即更新?'

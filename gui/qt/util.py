@@ -795,6 +795,14 @@ class MyTreeWidget(QTreeWidget):
     def on_doubleclick(self, item, column):
         if self.permit_edit(item, column):
             self.editItem(item, column)
+        else:
+            tx_hash = str(item.data(0, Qt.UserRole).toString())
+            if not tx_hash:
+                return
+            if len(tx_hash)!=64:
+                return
+            tx = self.wallet.transactions.get(tx_hash)
+            self.parent.show_transaction(tx)
 
     def on_activated(self, item, column):
         # on 'enter' we show the menu

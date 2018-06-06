@@ -66,6 +66,7 @@ import math
 import mmap
 import contextlib
 import subprocess
+import win32api
 
 class StatusBarButton(QPushButton):
     def __init__(self, icon, tooltip, func):
@@ -88,6 +89,27 @@ class StatusBarButton(QPushButton):
 
 from uwallet.paymentrequest import PR_UNPAID, PR_PAID, PR_UNKNOWN, PR_EXPIRED
 
+def getLocalVersion():
+    info = win32api.GetFileVersionInfo('F:\MyProject\Ulord\uwallet-client-pro\dist\uwallet\uwallet.exe', os.sep)
+    ms = info['FileVersionMS']
+    ls = info['FileVersionLS']
+    version = '%d.%d.%d.%04d' % (win32api.HIWORD(ms), win32api.LOWORD(ms), win32api.HIWORD(ls), win32api.LOWORD(ls))
+    return version
+
+def getRemoteVersion():
+    try:
+        while True:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('wallet1.ulord.one', 57888))  # 118.190.145.8
+            name = 'get_version'
+            sock.sendall(name)
+            response = sock.recv(8192)
+            # todo:equal this app version if different set down = True
+            sock.sendall('bye')
+            sock.close()
+            return str(response).strip()
+    except:
+        return ''
 
 class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
@@ -128,6 +150,12 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.config = config = gui_object.config
         self.network = gui_object.daemon.network
         slpcount = 0
+
+        rVersion = getRemoteVersion()
+        if rVersion != getLocalVersion() and rVersion != '':
+            if self.question(_("New version found. Is it updated?"),self):
+                win32api.ShellExecute(0, 'open', r'UpdateAppClient.exe', '', '', 1)
+                sys.exit(0)
 
         while self.network.blockchain.height_diff==0 and slpcount<100:
             if self.network.blockchain.downloading:

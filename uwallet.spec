@@ -23,7 +23,7 @@ exe = EXE(pyz,
           debug=False,
           strip=False,
           upx=True,
-          console=False , icon='uwallet.ico')
+          console=False , version='version', icon='uwallet.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

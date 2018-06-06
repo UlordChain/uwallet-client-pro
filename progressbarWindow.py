@@ -140,6 +140,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     icon = ProgressBar()
     icon.show()
-
     sys.exit(app.exec_())
 

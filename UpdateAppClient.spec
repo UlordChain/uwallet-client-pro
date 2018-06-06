@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['progressbarWindow.py'],
+a = Analysis(['UpdateAppClient.py'],
              pathex=['F:\\MyProject\\Ulord\\uwallet-client-pro'],
              binaries=[],
              datas=[],
@@ -19,15 +19,15 @@ pyz = PYZ(a.pure, a.zipped_data,
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='progressbarWindow',
+          name='UpdateAppClient',
           debug=False,
           strip=False,
           upx=True,
-          console=False , version='version', icon='uwallet.ico')
+          console=False , icon='uwallet.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=False,
                upx=True,
-               name='progressbarWindow')
+               name='UpdateAppClient')

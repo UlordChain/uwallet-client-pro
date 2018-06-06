@@ -54,7 +54,6 @@ class HistoryList(MyTreeWidget):
         self.refresh_headers()
         self.setColumnHidden(1, True)
 
-
     def refresh_headers(self):
         headers = ['', '', _('Date'), _('Description') , _('Amount')+'          ', _('Balance')+'           ',_(' ')]
         run_hook('history_tab_headers', headers)

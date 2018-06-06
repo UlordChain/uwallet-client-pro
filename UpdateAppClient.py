@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 # ：UpdateAppClient.py
+# @Author       : QuPengcheng
+# @Email        : 4514348@qq.com
+# @Date         : 2018/06/04
 import socket, time
 import sys
 from PyQt4.QtGui import *
@@ -11,8 +14,13 @@ import json
 import zipfile
 import shutil
 import win32api
+import thread
+
+down =0
+all = 0
 
 class ProgressBar(QWidget):
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.setWindowTitle('ProgressBar')
@@ -31,17 +39,14 @@ class ProgressBar(QWidget):
         self.step = 0
         self.onStart()
         self.center()
-        self.down = 0
-        self.all = 0
-        self.init_cntitle = QString.fromUtf8("正在更新程序，请稍后...")
-        self.init_egtile = QString.fromUtf8("Downloadding...")
-        self.prog_cntitle = QString.fromUtf8("正在更新程序，请稍后...(%d/%d)" % (self.down, self.all))
-        self.prog_egtile = QString.fromUtf8("Downloadding...(%d/%d)" % (self.down, self.all))
+        global down
+        global all
+
+
 
     def closeEvent(self, event):
-
-        print 'open uwallet'
-        # win32api.ShellExecute(0, 'open', r'uwallet.exe', '', '', 1)
+        # print 'open uwallet'
+        win32api.ShellExecute(0, 'open', r'uwallet.exe', '', '', 1)
         sys.exit(0)
 
 
@@ -64,18 +69,16 @@ class ProgressBar(QWidget):
 
 
     def timerEvent(self, event):
-        if self.down==0:
-            if self.language=="zh_CN":
-                self.tq.setText(self.init_cntitle)
-            else:
-                self.tq.setText(self.init_egtile)
-        # self.setWindowTitle()
-        self.pbar.setMaximum(self.all)
-        self.pbar.setValue(self.down)
+        self.pbar.setMaximum(all)
+        self.pbar.setValue(down)
         if self.language=="zh_CN":
-            self.tq.setText(self.prog_cntitle)
+            self.tq.setText(QString.fromUtf8("正在更新程序，请稍后...(%dm/%dm)" % (float(down)/1024.00/1024.00,float(all)/1024.00/1024.00)))
         else:
-            self.tq.setText(self.prog_egtile)
+            self.tq.setText(QString.fromUtf8("Downloadding...(%dm/%dm)" % (float(down)/1024.00/1024.00,float(all)/1024.00/1024.00)))
+        if down >= all:
+            self.pbar.setMaximum(self.pbar.maximum())
+            self.timer.stop()
+            self.close()
 
     def onStart(self):
         if self.timer.isActive():
@@ -134,63 +137,37 @@ class ProgressBar(QWidget):
 
 class UpdateAppClient:
 
-    def __init__(self,progr):
+    def __init__(self):
         self.state = "new"
-        self.progress = progr
         print 'Prepare for connecting...'
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect(('118.190.145.8', 57888))#118.190.145.8
+        self.bfsize =1024
 
-    def connect(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('118.190.145.8', 57888))#118.190.145.8
-        self.down =False
+    def update(self):
+        global all
+        global down
+        file_name = 'temp.zip'
+        self.sock.sendall('down')
 
         while True:
-            self.name = 'get_version'
-            sock.sendall(self.name)
-            self.response = sock.recv(8192)
-            print 'verson is:',self.response
-            #todo:equal this app version if different set down = True
-            with open("version") as f:
-                version = f.readline()
-                if version != str(self.response):
-                    self.down = True
-                    self.name = 'get_size'
-                    sock.sendall(self.name)
-                    self.response = sock.recv(8192)
-                    print 'size is:',self.response
-                    maxSize = int(self.response)
-                    break
-        if not self.down:
-            print 'open uwallet1'
-            # win32api.ShellExecute(0, 'open', r'uwallet.exe', '', '', 1)
-            sock.sendall('bye')
-            sock.close()
-            sys.exit(0)
-        else:
-            file_name = 'temp.zip'
-            sock.sendall('down')
-            self.progress.all = maxSize
-            # self.progress.show()
+            f = open(file_name, 'wb')
             while True:
-                f = open(file_name, 'wb')
-                while True:
-                    data = sock.recv(1024)
-                    self.progress.down += 1024
-                    if data == 'EOF':
-                        break
-                    f.write(data)
-                f.flush()
-                f.close()
-                print 'download finished'
-                break
-            sock.sendall('bye')
-            sock.close()
-        self.down =0
-        self.all = 0
-        self.init_cntitle = QString.fromUtf8("正在解压程序，请稍后...")
-        self.init_egtile = QString.fromUtf8("Unzipping...")
-        self.prog_cntitle = QString.fromUtf8("正在解压程序，请稍后...(%d/%d)" % (self.down, self.all))
-        self.prog_egtile = QString.fromUtf8("Unzipping...(%d/%d)" % (self.down, self.all))
+                data = self.sock.recv(self.bfsize)
+                if not data:
+                    print 'null data'
+                    continue
+                if data == 'EOF':
+                    break
+                f.write(data)
+
+                down += len(data)
+            f.flush()
+            f.close()
+            print 'download finished'
+            break
+        self.closeConnet()
+
         """unzip zip file"""
         zip_file = zipfile.ZipFile(file_name)
         tempdir= "/temp_files"
@@ -209,34 +186,64 @@ class UpdateAppClient:
             removeDir()
         else:
             os.mkdir(tempdir)
-        self.all = zip_file.namelist().__len__()*2
         for names in zip_file.namelist():
             zip_file.extract(names, tempdir)
-            self.down += 1
+            down += 1
         zip_file.close()
 
+        sourceDir = r"/temp_files"
+        targetDir = r"./"
+        # copyFileCounts = 0
+        def copyFiles(sourceDir, targetDir):
+            global down
+            print sourceDir
+            for f in os.listdir(sourceDir):
+                sourceF = os.path.join(sourceDir, f)
+                targetF = os.path.join(targetDir, f)
+                if os.path.isfile(sourceF):
+                    if not os.path.exists(targetDir):
+                        os.makedirs(targetDir)
+                    down += 1
+                    open(targetF, "wb").write(open(sourceF, "rb").read())
+                if os.path.isdir(sourceF):
+                    copyFiles(sourceF, targetF)
+        copyFiles(sourceDir,targetDir)
 
+    def closeConnet(self):
+        try:
+            self.sock.sendall('bye')
+            self.sock.close()
+        except:
+            return
 
-        def copyfile(folder):
-            folder = os.path.abspath(folder)
-            os.chdir(folder)
-            newFolder = os.path.abspath('..')
-            for foldernames, subfolders, filenames in os.walk(folder):
-                for filename in filenames:
-                    self.down += 1
-                    shutil.copy(filename, newFolder)
+    def InitNewVersion(self):
+        global all
+        while True:
+            try:
+                self.name = 'get_size'
+                self.sock.sendall(self.name)
+                self.response = self.sock.recv(8192)
+                print 'size is:', self.response
+                maxSize = int(self.response)
 
-        # copyfile("/temp_files")
-        copyfile("C:/zip")
-        self.progress.timer.stop()
-        self.progress.close()
-        sys.exit(0)
-
+                self.name = 'get_file_count'
+                self.sock.sendall(self.name)
+                self.response = self.sock.recv(8192)
+                print 'size is:', self.response
+                fileCount = int(self.response)
+                all = maxSize + fileCount * 2
+                break
+            except:
+                raise Exception
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    progress = ProgressBar()
-    progress.show()
-    # client = UpdateAppClient(progress)
-    # client.connect()
-    sys.exit(app.exec_())
+    try:
+        progress = ProgressBar()
+        socketClient = UpdateAppClient()
+        socketClient.InitNewVersion()
+        progress.show()
+        thread.start_new_thread(socketClient.update,())
+        sys.exit(app.exec_())
+    except:
+        win32api.ShellExecute(0, 'open', r'uwallet.exe', '', '', 1)
