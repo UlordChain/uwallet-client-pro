@@ -89,15 +89,15 @@ class StatusBarButton(QPushButton):
 
 from uwallet.paymentrequest import PR_UNPAID, PR_PAID, PR_UNKNOWN, PR_EXPIRED
 
-def getLocalVersion():
-    try:
-        info = win32api.GetFileVersionInfo('uwallet.exe', os.sep)
-        ms = info['FileVersionMS']
-        ls = info['FileVersionLS']
-        version = '%d.%d.%d.%04d' % (win32api.HIWORD(ms), win32api.LOWORD(ms), win32api.HIWORD(ls), win32api.LOWORD(ls))
-    except:
-        version = '1.0.0.0000'
-    return version
+# def getLocalVersion():
+#     try:
+#         info = win32api.GetFileVersionInfo('uwallet.exe', os.sep)
+#         ms = info['FileVersionMS']
+#         ls = info['FileVersionLS']
+#         version = '%d.%d.%d.%04d' % (win32api.HIWORD(ms), win32api.LOWORD(ms), win32api.HIWORD(ls), win32api.LOWORD(ls))
+#     except:
+#         version = '1.0.0'
+#     return version
 
 def getRemoteVersion():
     try:
@@ -155,7 +155,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         slpcount = 0
 
         rVersion = getRemoteVersion()
-        if rVersion != getLocalVersion() and rVersion != '':
+        if rVersion != UWallet_VERSION and rVersion != '':
             if self.question(_("New version found. Is it updated?"),self):
                 win32api.ShellExecute(0, 'open', r'UpdateAppClient.exe', '', '', 1)
                 sys.exit(0)
@@ -204,6 +204,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         tabs.addTab(self.create_send_tab(), _('Send') )
         tabs.addTab(self.create_receive_tab(), _('Receive') )
         self.addresses_tab = self.create_addresses_tab()
+
         # if self.config.get('show_addresses_tab', False):
         #     tabs.addTab(self.addresses_tab, _('Addresses'))
         tabs.addTab(self.addresses_tab, _('Addresses'))
@@ -280,7 +281,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.load_wallet(wallet)
         self.connect_slots(gui_object.timer)
         self.is_show_warning =False
-        # self.warn_version()
+        self.set_receive_address()
 
     def warn_version(self):
         if self.network.cli_version !='' and UWallet_VERSION!=self.network.cli_version:
@@ -646,7 +647,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.show_error(_('No donation address for this server'))
 
     def show_about(self):
-        title = "UWalletLite V"+ str(getLocalVersion())[0:5]
+        title = "UWalletLite V"+  UWallet_VERSION#str(getLocalVersion())[0:5]
         text = _("UWalletLite's focus is speed, with low resource usage and simplifying UT. You do not need to perform regular backups, because your wallet can be recovered from a secret phrase that you can memorize or write on paper. Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the ULORD system.")
         icontype = "icon"
         qm = QMessageBoxEx(title,text,self,icontype)
@@ -1013,14 +1014,14 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             if not self.question(_("Warning: The next address will not be recovered automatically if you restore your wallet from seed; you may need to add it manually.\n\nThis occurs because you have too many unused addresses in your wallet. To avoid this situation, use the existing addresses first.\n\nCreate anyway?")):
                 return
             addr = self.wallet.create_new_address(False)
-        self.set_receive_address(addr)
+        self.set_receive_address()
         self.expires_label.hide()
         # self.expires_combo.show()
         # self.new_request_button.setEnabled(False)
         self.receive_message_e.setFocus(1)
 
-    def set_receive_address(self, addr):
-        self.receive_address_e.setText(addr)
+    def set_receive_address(self):
+        self.receive_address_e.setText(self.wallet.get_receiving_addresses()[0])
         self.receive_message_e.setText('')
         self.receive_amount_e.setAmount(None)
 
