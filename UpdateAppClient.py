@@ -230,6 +230,9 @@ class UpdateAppClient:
                 self.sock.sendall(self.name)
                 self.response = self.sock.recv(8192)
                 print 'size is:', self.response
+
+
+
                 fileCount = int(self.response)
                 all = maxSize + fileCount * 2
                 break

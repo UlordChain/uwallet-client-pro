@@ -891,7 +891,7 @@ msgstr "特别是,不要使用由第三方服务提供的“赎回私钥”."
 
 #: gui/qt/main_window.py:2595
 msgid "In some cases, use up to 3 change addresses in order to break up large coin amounts and obfuscate the recipient address."
-msgstr "在某些情况下,最多可以使用3个更改地址来分散大量资金,并混淆收件人地址."
+msgstr "在某些情况下,最多可以使用3个找零地址来分散大量资金,并混淆收件人地址."
 
 #: gui/qt/history_list.py:172
 msgid "Increase fee"
@@ -1849,7 +1849,7 @@ msgstr "用作服务器"
 
 #: gui/qt/main_window.py:2573
 msgid "Use change addresses"
-msgstr "变更收款地址"
+msgstr "使用找零地址"
 
 #: gui/qt/main_window.py:2423
 msgid "Use dynamic fees"
@@ -1891,7 +1891,7 @@ msgstr "使用Icons8图标包（icons8.com）中的图标."
 
 #: gui/qt/main_window.py:2583
 msgid "Using change addresses makes it more difficult for other people to track your transactions."
-msgstr "使用更改地址以防止他人跟踪您的交易."
+msgstr "使用找零地址以防止他人跟踪您的交易."
 
 #: gui/qt/main_window.py:1951
 msgid "Verify"

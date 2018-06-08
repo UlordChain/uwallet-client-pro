@@ -90,10 +90,13 @@ class StatusBarButton(QPushButton):
 from uwallet.paymentrequest import PR_UNPAID, PR_PAID, PR_UNKNOWN, PR_EXPIRED
 
 def getLocalVersion():
-    info = win32api.GetFileVersionInfo('F:\MyProject\Ulord\uwallet-client-pro\dist\uwallet\uwallet.exe', os.sep)
-    ms = info['FileVersionMS']
-    ls = info['FileVersionLS']
-    version = '%d.%d.%d.%04d' % (win32api.HIWORD(ms), win32api.LOWORD(ms), win32api.HIWORD(ls), win32api.LOWORD(ls))
+    try:
+        info = win32api.GetFileVersionInfo('uwallet.exe', os.sep)
+        ms = info['FileVersionMS']
+        ls = info['FileVersionLS']
+        version = '%d.%d.%d.%04d' % (win32api.HIWORD(ms), win32api.LOWORD(ms), win32api.HIWORD(ls), win32api.LOWORD(ls))
+    except:
+        version = '1.0.0.0000'
     return version
 
 def getRemoteVersion():
@@ -204,7 +207,8 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         # if self.config.get('show_addresses_tab', False):
         #     tabs.addTab(self.addresses_tab, _('Addresses'))
         tabs.addTab(self.addresses_tab, _('Addresses'))
-        tabs.addTab(self.create_contacts_tab(), _('Contacts') )
+        self.create_contacts_tab()
+        # tabs.addTab(self.create_contacts_tab(), _('Contacts') )
         # ctab = self.create_console_tab()
         # ctab.setVisible(False)
         # tabs.addTab(ctab, _('Console'))
@@ -364,7 +368,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.tabs.removeTab(i)
 
     def push_top_level_window(self, window):
-        '''Used for e.g. tx dialog box to ensure new dialogs are appropriately
+        '''Usecd for e.g. tx dialog box to ensure new dialogs are appropriately
         parented.  This used to be done by explicitly providing the parent
         window, but that isn't something hardware wallet prompts know.'''
         self.tl_windows.append(window)
@@ -580,7 +584,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         file_menu.addAction(_("&Quit"), self.close)
 
         wallet_menu = menubar.addMenu(_("&Wallet"))
-        wallet_menu.addAction(_("&New contact"), self.new_contact_dialog)
+        # wallet_menu.addAction(_("&New contact"), self.new_contact_dialog)
         wallet_menu.addSeparator()
 
         self.password_menu = wallet_menu.addAction(_("&Password"), self.change_password_dialog)
@@ -642,7 +646,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.show_error(_('No donation address for this server'))
 
     def show_about(self):
-        title = "UWalletLite"
+        title = "UWalletLite V"+ str(getLocalVersion())[0:5]
         text = _("UWalletLite's focus is speed, with low resource usage and simplifying UT. You do not need to perform regular backups, because your wallet can be recovered from a secret phrase that you can memorize or write on paper. Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the ULORD system.")
         icontype = "icon"
         qm = QMessageBoxEx(title,text,self,icontype)
@@ -802,7 +806,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.history_list.update()
         self.request_list.update()
         self.address_list.update()
-        self.contact_list.update()
+        # self.contact_list.update()
         self.invoice_list.update()
         self.update_completions()
 
@@ -2534,7 +2538,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         try:
             self.need_restart = False
             d = WindowModalDialog(self, _('Preferences'))
-            d.setMinimumWidth(347)
+            d.setMinimumWidth(380)
             vbox = QVBoxLayout()
             d.setTitleBar(vbox)
             tabs = QTabWidget()

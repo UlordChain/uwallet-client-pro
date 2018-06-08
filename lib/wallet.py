@@ -1398,10 +1398,13 @@ class Deterministic_Wallet(Abstract_Wallet):
             if len(addresses) < limit:
                 self.create_new_address(for_change)
                 continue
-            if map(lambda a: self.address_is_old(a), addresses[-limit:] ) == limit*[False]:
-                break
             else:
-                self.create_new_address(for_change)
+                break
+            ## this create new address if address is old
+            # if map(lambda a: self.address_is_old(a), addresses[-limit:] ) == limit*[False]:
+            #     break
+            # else:
+            #     self.create_new_address(for_change)
 
     def synchronize(self):
         with self.lock:

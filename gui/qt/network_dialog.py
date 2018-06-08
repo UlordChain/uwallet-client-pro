@@ -112,7 +112,7 @@ class NetworkChoiceLayout(object):
         # use SSL
         self.ssl_cb = QCheckBox(_('Use SSL'))
         self.ssl_cb.setChecked(auto_connect)
-        grid.addWidget(self.ssl_cb, 3, 1, 1, 3)
+        # grid.addWidget(self.ssl_cb, 3, 1, 1, 3)
         self.ssl_cb.stateChanged.connect(self.change_protocol)
 
         # auto connect
@@ -127,7 +127,8 @@ class NetworkChoiceLayout(object):
         label = _('Active Servers') if network.is_connected() else _('Default Servers')
         self.servers_list_widget = QTreeWidget()
         self.servers_list_widget.setSortingEnabled(False)
-        self.servers_list_widget.setHeaderLabels( [ label, _('Limit') ] )
+        # self.servers_list_widget.setHeaderLabels( [ label, _('Limit') ] )
+        self.servers_list_widget.setHeaderLabels([label, _(' ')])
         self.servers_list_widget.setMaximumHeight(150)
         self.servers_list_widget.setColumnWidth(0, 240)
 
@@ -177,10 +178,10 @@ class NetworkChoiceLayout(object):
         self.proxy_host.setText(proxy_config.get("host"))
         self.proxy_port.setText(proxy_config.get("port"))
 
-        grid.addWidget(QLabel(_('Proxy') + ':'), 4, 0)
-        grid.addWidget(self.proxy_mode, 4, 1)
-        grid.addWidget(self.proxy_host, 4, 2)
-        grid.addWidget(self.proxy_port, 4, 3)
+        # grid.addWidget(QLabel(_('Proxy') + ':'), 4, 0)
+        # grid.addWidget(self.proxy_mode, 4, 1)
+        # grid.addWidget(self.proxy_host, 4, 2)
+        # grid.addWidget(self.proxy_port, 4, 3)
         self.layout_ = vbox
 
     def layout(self):
@@ -191,7 +192,8 @@ class NetworkChoiceLayout(object):
         for _host, d in sorted(self.servers.items()):
             if d.get(self.protocol):
                 pruning_level = d.get('pruning','')
-                self.servers_list_widget.addTopLevelItem(QTreeWidgetItem( [ _host, pruning_level ] ))
+                # self.servers_list_widget.addTopLevelItem(QTreeWidgetItem( [ _host, pruning_level ] ))
+                self.servers_list_widget.addTopLevelItem(QTreeWidgetItem([_host, '']))
 
 
     def set_protocol(self, protocol):
