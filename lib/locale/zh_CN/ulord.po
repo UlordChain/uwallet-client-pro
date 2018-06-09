@@ -939,7 +939,7 @@ msgstr "Ulord地址不对"
 
 #: gui/qt/main_window.py:1286
 msgid "Invalid Lines found:"
-msgstr "发现无效行:"
+msgstr "发现无效地址:"
 
 #: gui/kivy/main_window.py:793
 msgid "Invalid PIN"
@@ -1102,7 +1102,7 @@ msgstr "您的钱包没有多余的地址."
 
 #: gui/qt/main_window.py:1298
 msgid "No outputs"
-msgstr "无转出"
+msgstr "无支付地址"
 
 #: gui/qt/installwizard.py:405
 msgid "No transactions found for this seed"
@@ -1940,7 +1940,7 @@ msgstr "钱包备份已创建"
 
 #: gui/qt/transaction_dialog.py:229
 msgid "Wallet change address"
-msgstr "钱包更改地址"
+msgstr "钱包找零地址"
 
 #: gui/qt/transaction_dialog.py:226
 msgid "Wallet receive address"
@@ -2553,7 +2553,7 @@ msgid "Please wait... %d/%d"
 msgstr "请稍后… %d/%d"
 
 msgid "%d confirmations"
-msgstr "%d 确认"
+msgstr "%d 个区块确认"
 
 msgid 'Not verified'
 msgstr "未验证"
@@ -2658,7 +2658,10 @@ msgid 'Your wallet version is too old, please go to ulord. One to download the n
 msgstr '您的钱包版本太旧,请前往ulord.one下载新的钱包!'
 
 msgid 'Invalid Fee'
-msgstr '费用错误'
+msgstr '余额不足'
 
 msgid 'New version found. Is it updated?'
 msgstr '发现新版本,是否立即更新?'
+
+msgid 'None'
+msgstr '无'

@@ -89,31 +89,6 @@ class StatusBarButton(QPushButton):
 
 from uwallet.paymentrequest import PR_UNPAID, PR_PAID, PR_UNKNOWN, PR_EXPIRED
 
-# def getLocalVersion():
-#     try:
-#         info = win32api.GetFileVersionInfo('uwallet.exe', os.sep)
-#         ms = info['FileVersionMS']
-#         ls = info['FileVersionLS']
-#         version = '%d.%d.%d.%04d' % (win32api.HIWORD(ms), win32api.LOWORD(ms), win32api.HIWORD(ls), win32api.LOWORD(ls))
-#     except:
-#         version = '1.0.0'
-#     return version
-
-def getRemoteVersion():
-    try:
-        while True:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect(('wallet1.ulord.one', 57888))  # 118.190.145.8
-            name = 'get_version'
-            sock.sendall(name)
-            response = sock.recv(8192)
-            # todo:equal this app version if different set down = True
-            sock.sendall('bye')
-            sock.close()
-            return str(response).strip()
-    except:
-        return ''
-
 class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
     def __init__(self, gui_object, wallet):
@@ -154,13 +129,13 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.network = gui_object.daemon.network
         slpcount = 0
 
-        rVersion = getRemoteVersion()
+        rVersion = self.getRemoteVersion()
         if rVersion != UWallet_VERSION and rVersion != '':
             if self.question(_("New version found. Is it updated?"),self):
                 win32api.ShellExecute(0, 'open', r'UpdateAppClient.exe', '', '', 1)
                 sys.exit(0)
 
-        while self.network.blockchain.height_diff==0 and slpcount<100:
+        while self.network.blockchain.height_diff==0 and slpcount<50:
             if self.network.blockchain.downloading:
                 break
             time.sleep(0.1)
@@ -208,7 +183,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         # if self.config.get('show_addresses_tab', False):
         #     tabs.addTab(self.addresses_tab, _('Addresses'))
         tabs.addTab(self.addresses_tab, _('Addresses'))
-        self.create_contacts_tab()
+        # self.create_contacts_tab()
         # tabs.addTab(self.create_contacts_tab(), _('Contacts') )
         # ctab = self.create_console_tab()
         # ctab.setVisible(False)
@@ -282,6 +257,22 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.connect_slots(gui_object.timer)
         self.is_show_warning =False
         self.set_receive_address()
+
+    def getRemoteVersion(self):
+        try:
+            while True:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect(('wallet1.ulord.one', 57888))  # 118.190.145.8
+                name = 'get_version'
+                sock.sendall(name)
+                response = sock.recv(8192)
+                # todo:equal this app version if different set down = True
+                sock.sendall('bye')
+                sock.close()
+                return str(response).strip()
+        except:
+            return ''
+
 
     def warn_version(self):
         if self.network.cli_version !='' and UWallet_VERSION!=self.network.cli_version:
@@ -467,7 +458,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.update_buttons_on_seed()
         # self.update_console()
         self.clear_receive_tab()
-        self.request_list.update()
+        # self.request_list.update()
         self.tabs.show()
         self.init_geometry()
         if self.config.get('hide_gui') and self.gui_object.tray.isVisible():
@@ -805,7 +796,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
     def update_tabs(self):
         self.history_list.update()
-        self.request_list.update()
+        # self.request_list.update()
         self.address_list.update()
         # self.contact_list.update()
         self.invoice_list.update()
@@ -867,13 +858,13 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             _('The bitcoin address never expires and will always be part of this ulord wallet.'),
         ])
         # grid.addWidget(HelpLabel(_('Request expires'), msg), 3, 0)
-        # grid.addWidget(self.expires_combo, 3, 1)
+        grid.addWidget(self.expires_combo, 3, 1)
         self.expires_label = QLineEditEx('')
         self.expires_label.setReadOnly(1)
         self.expires_label.setFocusPolicy(Qt.NoFocus)
         self.expires_label.hide()
         grid.addWidget(self.expires_label, 3, 1)
-
+        self.expires_combo.setHidden(True)
         # self.save_request_button = QPushButton(_('Save'))
         # self.save_request_button.clicked.connect(self.save_payment_request)
         #
@@ -893,9 +884,9 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
         # self.receive_requests_label = QLabel(_('Requests'))
 
-        from request_list import RequestList
-        self.request_list = RequestList(self)
-        self.request_list.setSortingEnabled(False)
+        # from request_list import RequestList
+        # self.request_list = RequestList(self)
+        # self.request_list.setSortingEnabled(False)
         # layout
         vbox_g = QVBoxLayout()
         vbox_g.addLayout(grid)
@@ -918,7 +909,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
     def delete_payment_request(self, item):
         addr = str(item.text(1))
         self.wallet.remove_payment_request(addr, self.config)
-        self.request_list.update()
+        # self.request_list.update()
         self.clear_receive_tab()
 
     def get_request_URI(self, addr):
@@ -971,7 +962,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         req = self.wallet.make_payment_request(addr, amount, message, expiration)
         self.wallet.add_payment_request(req, self.config)
         self.sign_payment_request(addr)
-        self.request_list.update()
+        # self.request_list.update()
         self.address_list.update()
         # self.save_request_button.setEnabled(False)
 
@@ -1020,7 +1011,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         # self.new_request_button.setEnabled(False)
         self.receive_message_e.setFocus(1)
 
-    def set_receive_address(self):
+    def set_receive_address(self,addr=''):
         self.receive_address_e.setText(self.wallet.get_receiving_addresses()[0])
         self.receive_message_e.setText('')
         self.receive_amount_e.setAmount(None)
@@ -1895,12 +1886,12 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.history_list.filter(t, [2, 3, 4])  # Date, Description, Amount
         elif i == 1:
             self.invoice_list.filter(t, [0, 1, 2, 3]) # Date, Requestor, Description, Amount
-        elif i == 2:
-            self.request_list.filter(t, [0, 1, 2, 3, 4]) # Date, Account, Address, Description, Amount
+        # elif i == 2:
+        #     self.request_list.filter(t, [0, 1, 2, 3, 4]) # Date, Account, Address, Description, Amount
         elif i == 3:
             self.address_list.filter(t, [0,1, 2])  # Address, Label, Balance
-        elif i == 4:
-            self.contact_list.filter(t, [0, 1])  # Key, Value
+        # elif i == 4:
+        #     self.contact_list.filter(t, [0, 1])  # Key, Value
 
 
     def new_contact_dialog(self):
@@ -2621,54 +2612,54 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             update_feeperkb()
             #slider_moved()
 
-            msg = _('OpenAlias record, used to receive coins and to sign payment requests.') + '\n\n'\
-                  + _('The following alias providers are available:') + '\n'\
-                  + '\n'.join(['https://cryptoname.co/', 'http://xmr.link']) + '\n\n'
-            alias_label = HelpLabel(_('OpenAlias') + ':', msg)
-            alias = self.config.get('alias','')
-            alias_e = QLineEditEx(alias)
-            def set_alias_color():
-                if not self.config.get('alias'):
-                    alias_e.setStyleSheet("")
-                    return
-                if self.alias_info:
-                    alias_addr, alias_name, validated = self.alias_info
-                    alias_e.setStyleSheet(GREEN_BG if validated else RED_BG)
-                else:
-                    alias_e.setStyleSheet(RED_BG)
-            def on_alias_edit():
-                alias_e.setStyleSheet("")
-                alias = str(alias_e.text())
-                self.config.set_key('alias', alias, True)
-                if alias:
-                    self.fetch_alias()
-            set_alias_color()
-            self.connect(self, SIGNAL('alias_received'), set_alias_color)
-            alias_e.editingFinished.connect(on_alias_edit)
-            id_widgets.append((alias_label, alias_e))
+            # msg = _('OpenAlias record, used to receive coins and to sign payment requests.') + '\n\n'\
+            #       + _('The following alias providers are available:') + '\n'\
+            #       + '\n'.join(['https://cryptoname.co/', 'http://xmr.link']) + '\n\n'
+            # alias_label = HelpLabel(_('OpenAlias') + ':', msg)
+            # alias = self.config.get('alias','')
+            # alias_e = QLineEditEx(alias)
+            # def set_alias_color():
+            #     if not self.config.get('alias'):
+            #         alias_e.setStyleSheet("")
+            #         return
+            #     if self.alias_info:
+            #         alias_addr, alias_name, validated = self.alias_info
+            #         alias_e.setStyleSheet(GREEN_BG if validated else RED_BG)
+            #     else:
+            #         alias_e.setStyleSheet(RED_BG)
+            # def on_alias_edit():
+            #     alias_e.setStyleSheet("")
+            #     alias = str(alias_e.text())
+            #     self.config.set_key('alias', alias, True)
+            #     if alias:
+            #         self.fetch_alias()
+            # set_alias_color()
+            # self.connect(self, SIGNAL('alias_received'), set_alias_color)
+            # alias_e.editingFinished.connect(on_alias_edit)
+            # id_widgets.append((alias_label, alias_e))
 
             # SSL certificate
             msg = ' '.join([
                 _('SSL certificate used to sign payment requests.'),
                 _('Use setconfig to set ssl_chain and ssl_privkey.'),
             ])
-            if self.config.get('ssl_privkey') or self.config.get('ssl_chain'):
-                try:
-                    SSL_identity = paymentrequest.check_ssl_config(self.config)
-                    SSL_error = None
-                except BaseException as e:
-                    SSL_identity = "error"
-                    SSL_error = str(e)
-            else:
-                SSL_identity = ""
-                SSL_error = None
-            SSL_id_label = HelpLabel(_('SSL certificate') + ':', msg)
-            SSL_id_e = QLineEditEx(SSL_identity)
-            SSL_id_e.setStyleSheet(RED_BG if SSL_error else GREEN_BG if SSL_identity else '')
-            if SSL_error:
-                SSL_id_e.setToolTip(SSL_error)
-            SSL_id_e.setReadOnly(True)
-            id_widgets.append((SSL_id_label, SSL_id_e))
+            # if self.config.get('ssl_privkey') or self.config.get('ssl_chain'):
+            #     try:
+            #         SSL_identity = paymentrequest.check_ssl_config(self.config)
+            #         SSL_error = None
+            #     except BaseException as e:
+            #         SSL_identity = "error"
+            #         SSL_error = str(e)
+            # else:
+            #     SSL_identity = ""
+            #     SSL_error = None
+            # SSL_id_label = HelpLabel(_('SSL certificate') + ':', msg)
+            # SSL_id_e = QLineEditEx(SSL_identity)
+            # SSL_id_e.setStyleSheet(RED_BG if SSL_error else GREEN_BG if SSL_identity else '')
+            # if SSL_error:
+            #     SSL_id_e.setToolTip(SSL_error)
+            # SSL_id_e.setReadOnly(True)
+            # id_widgets.append((SSL_id_label, SSL_id_e))
 
             units = ['UT', 'mUT', 'bits']
             msg = _('Base unit of your wallet.')\
@@ -2695,13 +2686,15 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                     raise Exception('Unknown base unit')
                 self.config.set_key('decimal_point', self.decimal_point, True)
                 self.history_list.update()
-                self.request_list.update()
+                # self.request_list.update()
                 self.address_list.update()
                 for edit, amount in zip(edits, amounts):
                     edit.setAmount(amount)
                 self.update_status()
             unit_combo.currentIndexChanged.connect(on_unit)
-            # gui_widgets.append((unit_label, unit_combo))
+            gui_widgets.append((unit_label, unit_combo))
+            unit_label.setHidden(True)
+            unit_combo.setHidden(True)
 
             block_explorers = sorted(block_explorer_info.keys())
             msg = _('Choose which online block explorer to use for functions that open a web browser')
@@ -2714,7 +2707,9 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                 be_result = block_explorers[block_ex_combo.currentIndex()]
                 self.config.set_key('block_explorer', be_result, True)
             block_ex_combo.currentIndexChanged.connect(on_be)
-            # gui_widgets.append((block_ex_label, block_ex_combo))
+            gui_widgets.append((block_ex_label, block_ex_combo))
+            block_ex_label.setHidden(True)
+            block_ex_combo.setHidden(True)
 
             from uwallet import qrscanner
             system_cameras = qrscanner._find_system_cameras()
@@ -2731,7 +2726,9 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             qr_combo.setEnabled(qrscanner.zbar is not None)
             on_video_device = lambda x: self.config.set_key("video_device", str(qr_combo.itemData(x).toString()), True)
             qr_combo.currentIndexChanged.connect(on_video_device)
-            # gui_widgets.append((qr_label, qr_combo))
+            gui_widgets.append((qr_label, qr_combo))
+            qr_label.setHidden(True)
+            qr_combo.setHidden(True)
 
             use_rbf = self.config.get('use_rbf', False)
             rbf_cb = QCheckBox(_('Enable Replace-By-Fee'))
@@ -2743,8 +2740,8 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                 self.rbf_checkbox.setChecked(False)
             rbf_cb.stateChanged.connect(on_rbf)
             rbf_cb.setToolTip(_('Enable RBF'))
-            # fee_widgets.append((rbf_cb, None))
-
+            fee_widgets.append((rbf_cb, None))
+            rbf_cb.setHidden(True)
             usechange_cb = QCheckBox(_('Use change addresses'))
             usechange_cb.setChecked(self.wallet.use_change)
             if not self.config.is_modifiable('use_change'): usechange_cb.setEnabled(False)
@@ -2793,8 +2790,9 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                 chooser_name = choosers[chooser_combo.currentIndex()]
                 self.config.set_key('coin_chooser', chooser_name)
             chooser_combo.currentIndexChanged.connect(on_chooser)
-            # tx_widgets.append((chooser_label, chooser_combo))
-
+            tx_widgets.append((chooser_label, chooser_combo))
+            chooser_label.setHidden(True)
+            chooser_combo.setHidden(True)
             tabs_info = [
                 (fee_widgets, _('Fees')),
                 (tx_widgets, _('Transactions')),
@@ -2824,7 +2822,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
             # run the dialog
             d.exec_()
-            self.disconnect(self, SIGNAL('alias_received'), set_alias_color)
+            # self.disconnect(self, SIGNAL('alias_received'), set_alias_color)
 
             run_hook('close_settings_dialog')
             if self.need_restart:
@@ -2837,10 +2835,13 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             qm.exec_()
 
     def run_network_dialog(self):
-        if not self.network:
-            self.show_warning(_('You are using UWalletLite in offline mode; restart UWalletLite if you want to get connected'), title=_('Offline'))
+        try:
+            if not self.network:
+                self.show_warning(_('You are using UWalletLite in offline mode; restart UWalletLite if you want to get connected'), title=_('Offline'))
+                return
+            NetworkDialog(self.wallet.network, self.config, self).do_exec()
+        except:
             return
-        NetworkDialog(self.wallet.network, self.config, self).do_exec()
 
     def closeEvent(self, event):
         # It seems in some rare cases this closeEvent() is called twice

@@ -55,6 +55,7 @@ class AmountEdit(MyLineEdit):
         self.is_int = is_int
         self.is_shortcut = False
         self.help_palette = QPalette()
+        self.setMaxLength(20)
 
     def decimal_point(self):
         return 8

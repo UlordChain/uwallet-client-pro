@@ -36,7 +36,7 @@ from uwallet.bitcoin import is_address
 class AddressList(MyTreeWidget):
 
     def __init__(self, parent=None):
-        MyTreeWidget.__init__(self, parent, self.create_menu, [ _('Address'), _('Label'), _('Balance')+'                                        ', _('Tx')], 1)
+        MyTreeWidget.__init__(self, parent, self.create_menu, [ _('Address'), "           "+_('Label'), _('Balance')+'                                        ',_('Tx')], 1)
         # self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.headerItem().setTextAlignment(2,Qt.AlignHCenter | Qt.AlignVCenter)
 
@@ -72,7 +72,7 @@ class AddressList(MyTreeWidget):
                 addr_list = change_addresses if is_change else receiving_addresses
                 for address in addr_list:
                     num = len(self.wallet.history.get(address,[]))
-                    is_used = self.wallet.is_used(address)
+                    # is_used = self.wallet.is_used(address)
                     label = self.wallet.labels.get(address,'')
                     c, u, x = self.wallet.get_addr_balance(address)
                     balance = self.parent.format_amount(c + u + x)
@@ -84,13 +84,13 @@ class AddressList(MyTreeWidget):
                         address_item.setBackgroundColor(0, QColor('lightblue'))
                     if self.wallet.is_beyond_limit(address, is_change):
                         address_item.setBackgroundColor(0, QColor('red'))
-                    if is_used:
-                        if not used_flag:
-                            seq_item.insertChild(0, used_item)
-                            used_flag = True
-                        used_item.addChild(address_item)
-                    else:
-                        seq_item.addChild(address_item)
+                    # if is_used:
+                    #     if not used_flag:
+                    #         seq_item.insertChild(0, used_item)
+                    #         used_flag = True
+                    #     used_item.addChild(address_item)
+                    # else:
+                    seq_item.addChild(address_item)
                     if address == current_address:
                         self.setCurrentItem(address_item)
                     # add utxos

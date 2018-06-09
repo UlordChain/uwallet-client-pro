@@ -277,7 +277,7 @@ class TxDialog(QDialog, MessageBoxMixin):
             amount_str = _("Amount received:") + ' %s'% format_amount(amount) + ' ' + base_unit
         else:
             amount_str = _("Amount sent:") + ' %s'% format_amount(-amount) + ' ' + base_unit
-        fee_str = _("Transaction fee") + ': %s'% (format_amount(fee) + ' ' + base_unit if fee is not None else _('unknown'))
+        fee_str = _("Transaction fee") + ': %s'% (format_amount(fee) + ' ' + base_unit if fee is not None else _('None'))
         self.amount_label.setText(amount_str)
         self.fee_label.setText(fee_str)
         run_hook('transaction_dialog_update', self)

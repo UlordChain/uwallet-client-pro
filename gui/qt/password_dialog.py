@@ -155,7 +155,7 @@ class PasswordDialog(WindowModalDialog):
         self.setTitleBar(vbox)
         vbox.addLayout(self.playout.layout())
         vbox.addStretch(1)
-        vbox.addLayout(Buttons(CancelButton(self), OK_button))
+        vbox.addLayout(Buttons(OK_button,CancelButton(self)))
 
     def run(self):
         if not self.exec_():
