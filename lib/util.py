@@ -348,12 +348,12 @@ def time_difference(distance_in_time, include_seconds):
         return "over %d years" % (round(distance_in_minutes / 525600))
 
 block_explorer_info = {
-    'Blockchain.info': ('https://blockchain.info',
+    'explorer.ulord.one': ('http://explorer.ulord.one',
                         {'tx': 'tx', 'addr': 'address'})
 }
 
 def block_explorer(config):
-    return config.get('block_explorer', 'Blockchain.info')
+    return config.get('block_explorer', 'explorer.ulord.one')
 
 def block_explorer_tuple(config):
     return block_explorer_info.get(block_explorer(config))

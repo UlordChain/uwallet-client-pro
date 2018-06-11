@@ -26,7 +26,7 @@
 import copy
 import datetime
 import json
-
+import webbrowser
 import PyQt4
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -37,7 +37,7 @@ from uwallet.bitcoin import base_encode
 from uwallet.i18n import _
 from uwallet.plugins import run_hook
 from uwallet import util
-
+from uwallet.util import block_explorer_URL
 from util import *
 
 dialogs = []  # Otherwise python randomly garbage collects the dialogs...
@@ -112,24 +112,26 @@ class TxDialog(QDialog, MessageBoxMixin):
         self.broadcast_button = b = QPushButton(_("Broadcast"))
         b.clicked.connect(self.do_broadcast)
 
-        self.save_button = b = QPushButton(_("Save"))
-        b.clicked.connect(self.save)
+        # self.save_button = b = QPushButton(_("Save"))
+        # b.clicked.connect(self.save)
 
         self.cancel_button = b = QPushButton(_("Close"))
         b.clicked.connect(self.close)
         b.setDefault(True)
 
-        self.qr_button = b = QPushButton()
+        # self.qr_button = b = QPushButton()
         # b.setIcon(QIcon(":icons/ic_qr_code.png"))
-        b.clicked.connect(self.show_qr)
-        self.qr_button.setStyleSheet(
-            "QPushButton{background-color: white;border:0px;image: url(:icons/ic_qr_code.png)center no-repeat;}QPushButton:hover{image: url(:icons/ic_qr_code_pre.png) center no-repeat;}")
+        # b.clicked.connect(self.show_qr)
+        # self.qr_button.setStyleSheet(
+        #     "QPushButton{background-color: white;border:0px;image: url(:icons/ic_qr_code.png)center no-repeat;}QPushButton:hover{image: url(:icons/ic_qr_code_pre.png) center no-repeat;}")
         self.copy_button = CopyButton(lambda: str(self.tx), parent.app)
+        self.copy_button.setMinimumWidth(150)
+        self.copy_button.clicked.connect(self.showExplorerTx)
 
         # Action buttons
         self.buttons = [self.sign_button, self.broadcast_button, self.cancel_button]
         # Transaction sharing buttons
-        self.sharing_buttons = [self.copy_button, self.qr_button, self.save_button]
+        self.sharing_buttons = [self.copy_button]#self.qr_button,, self.save_button
 
         run_hook('transaction_dialog', self)
 
@@ -139,6 +141,10 @@ class TxDialog(QDialog, MessageBoxMixin):
         hbox.addLayout(Buttons(*self.buttons))
         vbox.addLayout(hbox)
         self.update()
+
+    def showExplorerTx(self):
+        tx_URL = block_explorer_URL(self.main_window.config, 'tx', str(self.tx_hash_e.text()))
+        webbrowser.open(tx_URL)
 
     def setTitleBar(self,vbox):
         tq = QLabel(_("Transaction"))

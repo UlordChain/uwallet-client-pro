@@ -155,8 +155,8 @@ class CloseButton(QPushButton):
 
 class CopyButton(QPushButton):
     def __init__(self, text_getter, app):
-        QPushButton.__init__(self, _("Copy"))
-        self.clicked.connect(lambda: app.clipboard().setText(text_getter()))
+        QPushButton.__init__(self, _("View on block explorer"))
+        # self.clicked.connect(lambda: app.clipboard().setText(text_getter()))
 
 class CopyCloseButton(QPushButton):
     def __init__(self, text_getter, app, dialog):
