@@ -437,7 +437,7 @@ def deserialize(raw):
 
 
 def push_script(x):
-    return op_push(len(x)/2) + x
+    return op_push(len(x)//2) + x
 
 
 class Transaction:

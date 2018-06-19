@@ -292,7 +292,7 @@ class TxDialog(QDialog, MessageBoxMixin):
         if self.tx.locktime > 0:
             vbox.addWidget(QLabel("LockTime: %d\n" % self.tx.locktime))
 
-        vbox.addWidget(QLabel(_("Inputs") + ' (%d)'%len(self.tx.inputs())))
+        vbox.addWidget(QLabel(_("Inputs") + _(' %d txs')%len(self.tx.inputs())))
         ext = QTextCharFormat()
         rec = QTextCharFormat()
         rec.setBackground(QBrush(QColor("lightgreen")))
@@ -312,6 +312,7 @@ class TxDialog(QDialog, MessageBoxMixin):
         i_text = QTextEditEx()
         i_text.setFont(QFont(MONOSPACE_FONT))
         i_text.setReadOnly(True)
+        i_text.setStyleSheet("font-family: \""+MONOSPACE_FONT+"\";")
         i_text.setMaximumHeight(100)
         cursor = i_text.textCursor()
         for x in self.tx.inputs():
@@ -335,16 +336,17 @@ class TxDialog(QDialog, MessageBoxMixin):
             cursor.insertBlock()
 
         vbox.addWidget(i_text)
-        vbox.addWidget(QLabel(_("Outputs") + ' (%d)'%len(self.tx.outputs())))
+        vbox.addWidget(QLabel(_("Outputs") + _(' %d txs')%len(self.tx.outputs())))
         o_text = QTextEditEx()
-        o_text.setFont(QFont(MONOSPACE_FONT))
+        # o_text.setFont(QFont(MONOSPACE_FONT))
+        o_text.setStyleSheet("font-family: \""+MONOSPACE_FONT+"\";")
         o_text.setReadOnly(True)
         o_text.setMaximumHeight(100)
         cursor = o_text.textCursor()
         for addr, v in self.tx.get_outputs():
             cursor.insertText(addr, text_format(addr))
             if v is not None:
-                cursor.insertText('\t', ext)
+                cursor.insertText('', ext)
                 cursor.insertText(format_amount(v), ext)
             cursor.insertBlock()
         vbox.addWidget(o_text)

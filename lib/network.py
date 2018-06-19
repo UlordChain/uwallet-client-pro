@@ -41,6 +41,7 @@ from bitcoin import *
 from interface import Connection, Interface
 from blockchain import Blockchain
 from version import UWallet_VERSION, PROTOCOL_VERSION
+from i18n import _
 
 FEE_TARGETS = [25, 10, 5, 2]
 
@@ -910,7 +911,7 @@ class Network(util.DaemonThread):
         try:
             r = queue.get(True, timeout)
         except Queue.Empty:
-            raise BaseException('Server did not answer')
+            raise BaseException(_('Server did not answer'))
         if r.get('error'):
             raise BaseException(r.get('error'))
         return r.get('result')

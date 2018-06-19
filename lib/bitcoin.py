@@ -222,6 +222,9 @@ def seed_type(x):
 
 is_seed = lambda x: bool(seed_type(x))
 
+# def isSeed(s):
+#     b = Mnemonic_bip39('english').check(s)
+#     return b
 # pywallet openssl private key implementation
 
 def i2o_ECPublicKey(pubkey, compressed=False):

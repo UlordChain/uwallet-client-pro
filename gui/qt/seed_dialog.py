@@ -51,6 +51,7 @@ class SeedLayoutBase(object):
         if not title:
             return hbox
         vbox = QVBoxLayout()
+        # vbox.addWidget(WWLabel("<font style=\"font-weight:bold;\">"+title+"</font>"))
         vbox.addWidget(WWLabel(title))
         vbox.addLayout(hbox)
         return vbox
@@ -72,25 +73,25 @@ class SeedDisplayLayout(SeedLayoutBase):
 def seed_warning_msg(seed):
     return ''.join([
         "<p>",
-        _("Please save these %d words on paper (order is important). "),
-        _("This seed will allow you to recover your wallet in case "
-          "of computer failure."),
+        _("Please keep the mnemonic to restore the wallet"),
+        # _("This seed will allow you to recover your wallet in case "
+        #   "of computer failure."),
         "</p>",
         "<b><font color=red>" + _("WARNING") + ":</font></b>",
         "<ul>",
-        "<li list-style-type:none;><font color=red>" + _("Never disclose your seed.") + "</font></li>",
-        "<li><font color=red>" + _("Never type it on a website.") + "</font></li>",
-        "<li><font color=red>" + _("Do not store it electronically.") + "</font></li>",
+        "<li list-style-type:none;><font color=red>" + _("Do not use photo, screenshot, copy to save the mnemonic on electronic devices.") + "</font></li>",
+        "<li><font color=red>" + _("Copy the mnemonic correctly on paper and keeep safe.") + "</font></li>",
+        # "<li><font color=red>" + _("Do not store it electronically.") + "</font></li>",
         "</ul>"
-    ]) % len(seed.split())
+    ]) #% len(seed.split())
 
 
 class CreateSeedLayout(SeedLayoutBase):
 
     def __init__(self, seed):
-        title =  _("Your wallet generation seed is:")
+
         vbox = QVBoxLayout()
-        vbox.addLayout(self._seed_layout(seed=seed, title=title))
+        vbox.addLayout(self._seed_layout(seed=seed, title=''))
         msg = seed_warning_msg(seed)
         vbox.addWidget(WWLabel(msg))
         self.layout_ = vbox
@@ -132,11 +133,14 @@ class SeedInputLayout(SeedLayoutBase):
 
     def on_edit(self):
         from uwallet.bitcoin import seed_type
+        from uwallet.mnemonic_bip39 import Mnemonic_bip39
         s = self.get_seed()
-        b = self.is_seed(s)
-        t = seed_type(s)
-        label = _('Seed Type') + ': ' + t if t else ''
-        self.seed_type_label.setText(label)
+        b = Mnemonic_bip39('english').check(s)
+        # b = self.is_seed(s)
+        # t = seed_type(s)
+        #
+        # label = _('Seed Type') + ': ' + t if t else ''
+        # self.seed_type_label.setText(label)
         self.parent.next_button.setEnabled(b)
 
 
@@ -144,7 +148,7 @@ class SeedInputLayout(SeedLayoutBase):
 class ShowSeedLayout(SeedLayoutBase):
 #team decline soap baby term dragon gaze staff all assist useful ivory
     def __init__(self, seed, passphrase):
-        title =  _("Your wallet generation seed is:")
+        title =  _("Mnemonic")
         vbox = QVBoxLayout()
         vbox.addLayout(self._seed_layout(seed=seed, title=title))
         if passphrase:
@@ -162,7 +166,7 @@ class ShowSeedLayout(SeedLayoutBase):
 
 class SeedDialog(WindowModalDialog):
     def __init__(self, parent, seed, passphrase):
-        WindowModalDialog.__init__(self, parent, ('UWalletLite - ' + _('Seed')))
+        WindowModalDialog.__init__(self, parent, ('UWalletLite - ' + _("Mnemonic")))
         self.setMinimumWidth(400)
         vbox = QVBoxLayout(self)
         self.setTitleBar(vbox)

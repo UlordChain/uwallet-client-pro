@@ -567,6 +567,7 @@ class QLineEditEx(QLineEdit):
     def __init__(self,text=None):
         QLineEdit.__init__(self,text)
 
+
     def contextMenuEvent(self, e):
         m = self.createStandardContextMenu()
         acs = m.actions()
@@ -637,14 +638,16 @@ def text_dialog(parent, title, label, ok_label, default=None):
 class ChoicesLayout(object):
     def __init__(self, msg, choices, on_clicked=None, checked_index=0):
         vbox = QVBoxLayout()
-        if len(msg) > 50:
-            vbox.addWidget(WWLabel(msg))
-            msg = ""
+        # if msg:
+        #     if len(msg) > 50:
+        vbox.addWidget(WWLabel("<font style=\"font-weight:bold;\">"+msg+"</font>"))
+                # msg = ""
         gb2 = QGroupBox()
         gb2.setStyleSheet("margin-bottom:6px;")
-        msgLabel = QLabel(msg)
-        msgLabel.setStyleSheet("padding-left:8px;")
-        vbox.addWidget(msgLabel)
+        # if msg:
+        #     msgLabel = QLabel(msg)
+        #     msgLabel.setStyleSheet("padding-left:8px;")
+        #     vbox.addWidget(msgLabel)
         vbox.addWidget(gb2)
 
         vbox2 = QVBoxLayout()

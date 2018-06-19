@@ -278,8 +278,6 @@ def get_FileSize(filePath):
     fsize = fsize/float(1024*1024)
     return round(fsize,2)
 
-
-
 if __name__ == '__main__':
     # on osx, delete Process Serial Number arg generated for apps launched in Finder
     sys.argv = filter(lambda x: not x.startswith('-psn'), sys.argv)

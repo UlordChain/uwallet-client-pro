@@ -70,7 +70,7 @@ class NetworkChoiceLayout(object):
             n = len(network.get_interfaces())
             if n:
                 # status = _("Blockchain") + ": " + "%d "%(network.get_local_height()) + _("blocks") +  ".\n" + _("Getting block headers from %d nodes.")%n
-                status = "\n"+_("Blockchain") + ": " + "%d " % (network.get_local_height()) + _("blocks") + ".\n"
+                status = "\n"+_("Blockchain") + ": " + "%d " % (network.get_local_height())+ ".\n"
             else:
                 status = _("Not connected")
             if network.is_connected():

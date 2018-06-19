@@ -76,7 +76,8 @@ class BaseWizard(object):
         title = ''
         message = '\n'.join([
             # _("The wallet '%s' does not exist.") % name,
-            _("What kind of wallet do you want to create?")
+            # _("What kind of wallet do you want to create?")
+            _("Select wallet")
         ])
         wallet_kinds = [
             ('standard',  _("Standard wallet")),
@@ -116,13 +117,15 @@ class BaseWizard(object):
     def choose_keystore(self):
         assert self.wallet_type in ['standard', 'multisig']
         i = len(self.keystores)
-        title = _('Add cosigner') + ' (%d of %d)'%(i+1, self.n) if self.wallet_type=='multisig' else _('Keystore')
+        title = _('Add cosigner') + ' (%d of %d)'%(i+1, self.n) if self.wallet_type=='multisig' else None
         if self.wallet_type =='standard' or i==0:
-            message = _('Do you want to create a new seed, or to restore a wallet using an existing seed?')
+            # message = _('Do you want to create a new seed, or to restore a wallet using an existing seed?')
+            message = _("Creation Mode")
             choices = [
-                ('create_seed', _('Create a new seed')),
-                ('restore_from_seed', _('I already have a seed')),
-                ('restore_from_key', _('Use public or private keys')),
+                # ('create_seed', _('Create a new seed')),
+                ('create_seed', _("Create mnemonic")),
+                ('restore_from_seed', _("Import mnemonic")),
+                ('restore_from_key', _("Import public/private key")),
             ]
             # if not self.is_kivy:
             #     choices.append(('choose_hw_device',  _('Use a hardware device')))
@@ -141,7 +144,8 @@ class BaseWizard(object):
     def import_addresses(self):
         v = keystore.is_address_list
         title = _("Import Ulord Addresses")
-        message = _("Enter a list of Ulord addresses. This will create a watching-only wallet.")
+        # message = _("Enter a list of Ulord addresses. This will create a watching-only wallet.")
+        message = _("Please enter a Ulord wallet address.")
         self.add_xpub_dialog(title=title, message=message, run_next=self.on_import_addresses, is_valid=v)
 
     def on_import_addresses(self, text):
@@ -154,10 +158,10 @@ class BaseWizard(object):
     def restore_from_key(self):
         if self.wallet_type == 'standard':
             v = keystore.is_any_key
-            title = _("Create keystore from keys")
+            title = _("Enter the public/private key or wallet address")
             message = ' '.join([
-                _("To create a watching-only wallet, please enter your master public key (xpub)."),
-                _("To create a spending wallet, please enter a master private key (xprv), or a list of Bitcoin private keys.")
+                _("Enter the root public key to create a browsing wallet "),
+                _("or enter the root private key or wallet address to create a consumer wallet")
             ])
             self.add_xpub_dialog(title=title, message=message, run_next=self.on_restore_from_key, is_valid=v)
         else:

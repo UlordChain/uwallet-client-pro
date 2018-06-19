@@ -109,6 +109,7 @@ class PayToEdit(ScanQRTextEdit):
         return address
 
     def check_text(self):
+        self.amount_edit.setAmount(None)
         self.errors = []
         if self.is_pr:
             return

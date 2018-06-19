@@ -104,6 +104,7 @@ class BTCAmountEdit(AmountEdit):
         AmountEdit.__init__(self, self._base_unit, is_int, parent)
         self.decimal_point = decimal_point
 
+
     def _base_unit(self):
         p = self.decimal_point()
         assert p in [2, 5, 8]

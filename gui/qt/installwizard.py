@@ -87,6 +87,7 @@ def wizard_dialog(func):
         #    out = ()
         if type(out) is not tuple:
             out = (out,)
+        # if out[0]!='not seed':
         run_next(*out)
 
     return func_wrapper
@@ -107,7 +108,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         self.MSG_ENTER_SEED_OR_MPK = _("Please enter a seed phrase or a master key (xpub or xprv):")
         self.MSG_COSIGNER = _("Please enter the master public key of cosigner #%d:")
         self.MSG_ENTER_PASSWORD = _(
-            "Choose a password to encrypt your wallet keys.Leave this field empty if you want to disable encryption.")
+            "Click next to unencrypt the wallet.")
         self.MSG_RESTORE_PASSPHRASE = \
             _(
                 "Please enter your seed derivation passphrase.Note: this is NOT your encryption password.Leave this field empty if you did not use one or are unsure.")
@@ -289,7 +290,10 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         if prior_layout:
             QWidget().setLayout(prior_layout)
         self.main_widget.setLayout(layout)
-        self.back_button.setEnabled(True)
+        if _('encrypt wallet') == title:
+            self.back_button.setEnabled(False)
+        else:
+            self.back_button.setEnabled(True)
         self.next_button.setEnabled(next_enabled)
         if next_enabled:
             self.next_button.setFocus()
@@ -356,6 +360,14 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
             # vbox.addWidget(cb_bip39)
         self.set_main_layout(vbox, title, next_enabled=False)
         seed = slayout.get_seed()
+
+        # if str(seed).split() != 12:
+        #     title = "UWalletLite"
+        #     text = _("Incorrect seed")
+        #     icontype = "warm"
+        #     qm = QMessageBoxEx(title, text, self, icontype)
+        #     qm.exec_()
+        #     return 'not seed'
         is_bip39 = cb_bip39.isChecked() if self.opt_bip39 else False
         is_ext = cb_pass.isChecked() if self.opt_ext else False
         return seed, True, is_ext
@@ -414,18 +426,18 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
 
     @wizard_dialog
     def restore_seed_dialog(self, run_next, test):
-        title = _('Enter Seed')
-        message = _('Please enter your seed phrase in order to restore your wallet.')
+        title = _("Import mnemonic")
+        message = _("Please enter your backup mnemonic.")
         # return self.seed_input(title, message, test)
         return self.seed_input(title, message, test)
 
     @wizard_dialog
     def restore_seed_dialog_bip39(self, run_next, test):
-        title = _('Enter Seed')
+        title = _("Import mnemonic")
         message = ' '.join([
-            _('Your seed is important!'),
-            _('If you lose your seed, your money will be permanently lost.'),
-            _('To make sure that you have properly saved your seed, please retype it here.')
+            _("Please enter your backup mnemonic."),
+            # _('If you lose your seed, your money will be permanently lost.'),
+            # _('To make sure that you have properly saved your seed, please retype it here.')
         ])
         return self.seed_input_bip39(title, message, test)
 
@@ -452,17 +464,18 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         # vbox.addWidget(QLabel(_('Option') + ':'))
         cb_pass = QCheckBox(_('Add a passphrase to this seed'))
         # vbox.addWidget(cb_pass)
-        self.set_main_layout(vbox)
+        title = _("Mnemonic")
+        self.set_main_layout(vbox,title)
         return cb_pass.isChecked()
 
     def pw_layout(self, msg, kind):
         playout = PasswordLayout(None, msg, kind, self.next_button)
-        self.set_main_layout(playout.layout())
+        self.set_main_layout(playout.layout(),_('encrypt wallet'))
         return playout.new_password()
 
     @wizard_dialog
     def request_password(self, run_next):
-        """Request the user enter a new password and confirm it.  Return  scatter educate hero fall thunder rough alert knee filter what script book
+        """Request the user enter a new password and confirm it.
         the password or None for no password."""
         return self.pw_layout(self.MSG_ENTER_PASSWORD, PW_NEW)
 

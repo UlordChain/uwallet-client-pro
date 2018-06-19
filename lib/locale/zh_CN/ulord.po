@@ -61,16 +61,19 @@ msgid "&From QR code"
 msgstr "从二维码(&F)"
 
 #: gui/qt/main_window.py:503
-msgid "&From file"
-msgstr "从文件(&F)"
+#msgid "&From file"
+msgid "&Local file loading"
+msgstr "本地文件加载(&F)"
 
 #: gui/qt/main_window.py:504
-msgid "&From text"
-msgstr "从文本(&T)"
+#msgid "&From text"
+msgid "&Manual loading"
+msgstr "手动加载(&T)"
 
 #: gui/qt/main_window.py:505
-msgid "&From the blockchain"
-msgstr "从 区块链 (&B)"
+#msgid "&From the blockchain"
+msgid "&Transaction ID loading"
+msgstr "交易ID加载 (&B)"
 
 #: gui/qt/main_window.py:510
 msgid "&Help"
@@ -234,11 +237,11 @@ msgstr "发送的金额:"
 
 #: gui/qt/main_window.py:1354
 msgid "Amount to be sent"
-msgstr "需要发送的金额."
+msgstr "发送金额"
 
 #: gui/qt/main_window.py:1023
 msgid "Amount to be sent."
-msgstr "需要发送的金额."
+msgstr "发送金额:"
 
 #: gui/qt/main_window.py:2703
 msgid "Appearance"
@@ -292,13 +295,13 @@ msgstr "Ulord交易一般不是免费的,发送者需要支付一定的手续费
 
 #: gui/qt/network_dialog.py:288
 msgid "Blockchain"
-msgstr "区块链"
+msgstr "区块高度"
 
 #: gui/qt/transaction_dialog.py:100
 msgid "Broadcast"
 msgstr "广播"
 
-#: gui/qt/main_window.py:1444
+#: gui/qt/main_window.py:144
 msgid "Broadcasting transaction..."
 msgstr "正在广播交易…"
 
@@ -451,7 +454,7 @@ msgstr "无法启动条码扫描器."
 
 #: gui/qt/util.py:199
 msgid "Critical Error"
-msgstr "警告"
+msgstr "友情提示"
 
 #: gui/qt/password_dialog.py:100
 msgid "Current Password:"
@@ -640,7 +643,7 @@ msgstr "输入密码"
 
 #: gui/qt/installwizard.py:360 gui/kivy/uix/dialogs/installwizard.py:564
 msgid "Enter Seed"
-msgstr "输入助记词"
+msgstr "导入助记词"
 
 #: gui/qt/main_window.py:391
 msgid "Enter a filename for the copy of your wallet"
@@ -915,7 +918,7 @@ msgstr "收入"
 
 #: gui/qt/installwizard.py:101
 msgid "Install Wizard"
-msgstr "钱包创建向导"
+msgstr "创建向导"
 
 #: gui/qt/main_window.py:2566
 msgid "Install the zbar package to enable this."
@@ -939,7 +942,7 @@ msgstr "Ulord地址不对"
 
 #: gui/qt/main_window.py:1286
 msgid "Invalid Lines found:"
-msgstr "发现无效地址:"
+msgstr "无效的支付地址."
 
 #: gui/kivy/main_window.py:793
 msgid "Invalid PIN"
@@ -1048,12 +1051,14 @@ msgid "Never"
 msgstr "永远不会"
 
 #: gui/qt/seed_dialog.py:43
-msgid "Never disclose your seed."
-msgstr "请妥善保存您的助记词."
+#msgid "Never disclose your seed."
+msgid "Do not use photo, screenshot, copy to save the mnemonic on electronic devices."
+msgstr "以防泄露,请不要使用拍照,截图,复制等方式将助记词保存在电子设备上."
 
 #: gui/qt/seed_dialog.py:44
-msgid "Never type it on a website."
-msgstr "请勿在任何网页中输入."
+#msgid "Never type it on a website."
+msgid "Copy the mnemonic correctly on paper and keeep safe."
+msgstr "请将助记词按顺序正确的抄写在纸上，放在你认为安全的地方."
 
 #: gui/qt/main_window.py:793
 msgid "New"
@@ -1278,8 +1283,9 @@ msgid "Please enter your seed derivation passphrase. Note: this is NOT your encr
 msgstr "请输入您的助记词派生密码.注意:这不是您的加密密码.如果您没有使用或不确定,请将此字段留空."
 
 #: gui/qt/installwizard.py:361
-msgid "Please enter your seed phrase in order to restore your wallet."
-msgstr "为了恢复您的钱包请输入您的助记词"
+#msgid "Please enter your seed phrase in order to restore your wallet."
+msgid "Please enter your backup mnemonic."
+msgstr "请输入您备份的助记词"
 
 #: gui/kivy/main_window.py:389
 msgid "Please install the Barcode Scanner app from ZXing"
@@ -1299,8 +1305,9 @@ msgstr "请重新输入您的助记词,以确认您已妥善保存."
 
 #: gui/qt/seed_dialog.py:37
 #, python-format
-msgid "Please save these %d words on paper (order is important). "
-msgstr "请在纸上记录以上%d个单词 (顺序很重要). "
+#msgid "Please save these words on paper (order is important). "
+msgid "Please keep the mnemonic to restore the wallet"
+msgstr "助记词用于恢复钱包,务必妥善保管"
 
 #: gui/qt/installwizard.py:476
 msgid "Please share it with your cosigners."
@@ -1357,7 +1364,7 @@ msgstr "私钥已导出."
 
 #: gui/qt/main_window.py:1374
 msgid "Proceed?"
-msgstr "要继续吗?"
+msgstr "是否继续发送交易?"
 
 #: gui/qt/main_window.py:2454
 msgid "Propose Replace-By-Fee"
@@ -1488,7 +1495,7 @@ msgstr "将发凭证存到文件"
 
 #: gui/qt/main_window.py:1743 gui/qt/seed_dialog.py:179
 #: gui/kivy/main_window.py:888
-msgid "Seed"
+msgid "Mnemonic"
 msgstr "助记词"
 
 #: gui/qt/seed_dialog.py:147
@@ -1547,12 +1554,12 @@ msgstr "服务器"
 #: gui/qt/main_window.py:683
 #, python-format
 msgid "Server is lagging (%d blocks)"
-msgstr "服务器滞后 (%d 个区块)"
+msgstr "当服务器滞后 (%d 个区块),请选择其他可用的服务器."
 
 #: gui/kivy/main_window.py:640
 #, python-format
 msgid "Server lagging (%d blocks)"
-msgstr "服务器滞后(%d 块)"
+msgstr "当服务器滞后 (%d 个区块),请选择其他可用的服务器."
 
 #: gui/qt/network_dialog.py:217
 msgid "Server peers"
@@ -1601,7 +1608,7 @@ msgstr "签名"
 
 #: gui/qt/main_window.py:1919
 msgid "Signature verified"
-msgstr "验证签名"
+msgstr "验证成功"
 
 #: gui/qt/main_window.py:1406
 msgid "Signing transaction..."
@@ -1748,7 +1755,7 @@ msgstr "支付请求将被签名."
 
 #: gui/qt/seed_dialog.py:38
 msgid "This seed will allow you to recover your wallet in case of computer failure."
-msgstr "如果您的电脑出现故障,该助记词可用在其它设备恢复您的钱包."
+msgstr "."
 
 #: gui/qt/transaction_dialog.py:141
 msgid "This transaction is not saved. Close anyway?"
@@ -1915,7 +1922,7 @@ msgstr "在区块浏览器上查看"
 
 #: gui/qt/seed_dialog.py:41
 msgid "WARNING"
-msgstr "警告"
+msgstr "友情提示"
 
 #: gui/qt/main_window.py:2107
 msgid "WARNING: ALL your private keys are secret."
@@ -1961,7 +1968,7 @@ msgstr "警告:如果您从助记词中恢复钱包,下一个地址将不会自�
 
 #: gui/qt/main_window.py:1921
 msgid "Wrong signature"
-msgstr "签名错误"
+msgstr "验证错误"
 
 #: gui/qt/network_dialog.py:366
 msgid "You are following branch"
@@ -2009,15 +2016,17 @@ msgstr "您的扩展助记词是"
 
 #: gui/qt/installwizard.py:369
 msgid "Your seed is important!"
-msgstr "<font style=\"font-weight:bold;\">提示:</font>您的助记词非常重要!如果您丢失了助记词,您的钱包将无法恢复.为确保您对助记词进行了备份,请输入您的助记词,从上一步的文本框中复制的助记词将无法粘贴!"
+msgstr "请输入您备份的助记词"
+#msgstr "<font style=\"font-weight:bold;\">提示:</font>您的助记词非常重要!如果您丢失了助记词,您的钱包将无法恢复.为确保您对助记词进行了备份,请输入您的助记词,从上一步的文本框中复制的助记词将无法粘贴!"
 
 #: gui/qt/network_dialog.py:366
 msgid "Your server is on branch"
 msgstr "您的服务器在分支上"
 
 #: gui/qt/installwizard.py:378 gui/qt/seed_dialog.py:182
-msgid "Your wallet generation seed is:"
-msgstr "您的助记词如下:"
+#msgid "Your wallet generation seed is:"
+msgid "Mnemonic"
+msgstr "助记词"
 
 #: gui/qt/main_window.py:2233
 msgid "Your wallet history has been successfully exported."
@@ -2148,8 +2157,9 @@ msgstr "命令行"
 msgid "Select your wallet file"
 msgstr "选择您的钱包文件"
 
-msgid "What kind of wallet do you want to create?"
-msgstr "您想要创建什么类型的钱包?"
+#msgid "What kind of wallet do you want to create?"
+msgid "Select wallet"
+msgstr "选择钱包类型"
 
 msgid "Standard wallet"
 msgstr "标准钱包"
@@ -2160,17 +2170,20 @@ msgstr "多重签名钱包"
 msgid "Import Ulord addresses or private keys"
 msgstr "导入Ulord地址或私钥"
 
-msgid "Do you want to create a new seed, or to restore a wallet using an existing seed?"
-msgstr "您想要创建新的助记词,还是使用现有助记词来恢复钱包?"
+#msgid "Do you want to create a new seed, or to restore a wallet using an existing seed?"
+msgid "Creation Mode"
+msgstr "创建方式"
 
-msgid "Create a new seed"
-msgstr "创建助记词"
+#msgid "Create a new seed"
+msgid "Create mnemonic"
+msgstr "新建助记词"
 
-msgid "I already have a seed"
-msgstr "我已经有一个助记词了"
+#msgid "I already have a seed"
+msgid "Import mnemonic"
+msgstr "导入助记词"
 
-msgid "Use public or private keys"
-msgstr "使用公钥或私钥"
+msgid "Import public/private key"
+msgstr "导入公/私钥"
 
 msgid "Use a hardware device"
 msgstr "使用一个硬件设备"
@@ -2182,7 +2195,7 @@ msgid "Enter a list of Bitcoin addresses (this will create a watching-only walle
 msgstr "输入Ulord地址列表(这将创建一个只收钱包)或私钥列表."
 
 msgid "Import Ulord Addresses"
-msgstr "导入Ulord地址"
+msgstr "导入钱包地址"
 
 msgid "Create keystore from a master key"
 msgstr "从根钥创建密钥库"
@@ -2369,16 +2382,17 @@ msgid "Welcome to the UWalletLite installation wizard."
 msgstr "欢迎使用UWalletLite钱包创建向导."
 
 msgid "Keystore"
-msgstr "创建助记词"
+msgstr "助记词"
 
-msgid "Enter a list of Ulord addresses. This will create a watching-only wallet."
-msgstr "请输入一个地址列表,它将创建一个只能用于查看的钱包."
+#msgid "Enter a list of Ulord addresses. This will create a watching-only wallet."
+msgid "Please enter a Ulord wallet address."
+msgstr "请输入一个Ulord钱包地址."
 
 msgid "Change Password"
 msgstr "更改密码"
 
 msgid "Your wallet keys are not encrypted"
-msgstr "您钱包的未加密"
+msgstr "您的钱包未加密"
 
 msgid "This wallet is not encrypted"
 msgstr "钱包未加密"
@@ -2404,11 +2418,12 @@ msgstr "服务器"
 msgid "Limit"
 msgstr "限制"
 
-msgid "Choose a password to encrypt your wallet keys."
-msgstr "输入一个密码来加密您的钱包钥匙."
+#msgid "Choose a password to encrypt your wallet keys."
+msgid "Click next to unencrypt the wallet."
+msgstr "如想取消钱包加密,请直接点击下一步."
 
-msgid "Leave this field empty if you want to disable encryption."
-msgstr "如果您不想加密,请将此字段保留为空."
+#msgid "Leave this field empty if you want to disable encryption."
+#msgstr "请直接点击下一步."
 
 msgid "UWalletLite is generating your addresses, please wait..."
 msgstr "UWalletLite正在生成您的地址,请稍等…"
@@ -2428,8 +2443,9 @@ msgstr "请输入根公钥#%d:"
 msgid "Please enter your seed derivation passphrase.Note: this is NOT your encryption password.Leave this field empty if you did not use one or are unsure."
 msgstr "请输入您的助记词派生密码.注意:这不是您的加密密码.如果您没有使用或不确定,请将此字段留空."
 
-msgid "Your wallet is encrypted. Use this dialog to change your password. To disable wallet encryption, enter an empty new password."
-msgstr "当前您的钱包已采用加密模式,此处对话框允许您修改密码.若新密码处留空,将取消密码保护."
+#msgid "Your wallet is encrypted. Use this dialog to change your password. To disable wallet encryption, enter an empty new password."
+msgid "The current wallet is encrypted. To cancel the password, set the new password to empty."
+msgstr "当前钱包已加密,若要取消密码可设置新密码为空."
 
 msgid "Undo        Ctrl+Z"
 msgstr "撤销    Ctrl+Z"
@@ -2453,8 +2469,8 @@ msgid "SelectAll   Ctrl+A"
 msgstr "全选    Ctrl+A"
 
 msgid "Choose a password to encrypt your wallet keys.Leave this field empty if you want to disable encryption."
-msgstr "输入一个密码来加密您的钱包,如果您想禁用加密,请将此字段保留为空."
-
+msgstr "如想取消钱包加密,请直接点击下一步."
+#
 msgid "Cannot start QR scanner."
 msgstr "无法开启QR扫描/"
 
@@ -2512,14 +2528,17 @@ msgstr "您的系统不支持硬件钱包."
 msgid "Please install the relevant libraries (eg python-trezor for Trezor)."
 msgstr "请安装相关的库(如:Trezor的python trezor)."
 
-msgid "To create a watching-only wallet, please enter your master public key (xpub)."
-msgstr "系统将创建一个只能用于浏览的钱包,请输入您的根公钥(xpub)."
+#msgid "To create a watching-only wallet, please enter your master public key (xpub)."
+msgid "Enter the root public key to create a browsing wallet "
+msgstr "输入根公钥创建浏览型钱包或输入根私钥"
 
-msgid "To create a spending wallet, please enter a master private key (xprv), or a list of Bitcoin private keys."
-msgstr"要创建一个消费钱包,请输入一个根私钥(xprv)或一个Ulord私钥列表."
+#msgid "To create a spending wallet, please enter a master private key (xprv), or a list of Bitcoin private keys."
+msgid "or enter the root private key or wallet address to create a consumer wallet"
+msgstr"或私钥列表创建消费型钱包."
 
-msgid "Create keystore from keys"
-msgstr "从密钥创建密钥库"
+#msgid "Create keystore from keys"
+msgid "Enter the public/private key or wallet address"
+msgstr "输入公/私钥或钱包地址"
 
 msgid "The wallet '%s' does not exist."
 msgstr "未能发现'%s'钱包."
@@ -2547,7 +2566,7 @@ msgid "Used"
 msgstr "使用"
 
 msgid "Transaction fee"
-msgstr "交易費用"
+msgstr "交易费用"
 
 msgid "Please wait... %d/%d"
 msgstr "请稍后… %d/%d"
@@ -2665,3 +2684,54 @@ msgstr '发现新版本,是否立即更新?'
 
 msgid 'None'
 msgstr '无'
+
+msgid ' %d txs'
+msgstr ' %d笔'
+
+msgid 'Invalid 0 Amount'
+msgstr '支付金额不能为0'
+
+msgid 'Server did not answer'
+msgstr '服务器没有响应.'
+
+msgid 'Please input txid'
+msgstr '请输入正确的交易ID.'
+
+msgid 'Invalid parameter'
+msgstr '请输入正确的参数.'
+
+msgid 'Invalid message'
+msgstr '消息不能为空.'
+
+msgid 'Invalid pubkey'
+msgstr '请输入正确的公钥.'
+
+msgid "connetion is abort."
+msgstr '网络连接已断开.'
+
+msgid 'Invalid 0 Fee'
+msgstr '交易费用不能为0'
+
+msgid 'Invalid address'
+msgstr '错误的地址.'
+
+msgid 'Invalid signtrue'
+msgstr '签名不能为空.'
+#
+msgid 'Invalid cyphertext'
+msgstr '密文不能为空.'
+
+msgid 'Invalid decrypt'
+msgstr '解密失败.'
+
+msgid 'Decrypt Successed'
+msgstr '解密成功.'
+
+msgid 'encrypt wallet'
+msgstr '钱包加密'
+
+msgid 'Incorrect seed'
+msgstr '请输入正确的助记词.'
+
+msgid 'amount can not be 0'
+msgstr '收款金额不能为0'

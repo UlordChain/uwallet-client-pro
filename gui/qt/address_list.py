@@ -63,12 +63,12 @@ class AddressList(MyTreeWidget):
                     name = _("Receiving") if not is_change else _("Change")
                     seq_item = QTreeWidgetItem( [ name, '', '', '', ''] )
                     account_item.addChild(seq_item)
-                    if not is_change:
-                        seq_item.setExpanded(True)
+                    # if not is_change:
+                    seq_item.setExpanded(True)
                 else:
                     seq_item = account_item
-                used_item = QTreeWidgetItem( [ _("Used"), '', '', '', ''] )
-                used_flag = False
+                # used_item = QTreeWidgetItem( [ _("Used"), '', '', '', ''] )
+                # used_flag = False
                 addr_list = change_addresses if is_change else receiving_addresses
                 for address in addr_list:
                     num = len(self.wallet.history.get(address,[]))
@@ -122,8 +122,8 @@ class AddressList(MyTreeWidget):
                 k = str(item.data(0,32).toString())
                 if k:
                     self.create_account_menu(position, k, item)
-                else:
-                    item.setExpanded(not item.isExpanded())
+                # else:
+                #     item.setExpanded(not item.isExpanded())
                 return
 
         menu = QMenu()

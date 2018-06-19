@@ -59,10 +59,13 @@ class PasswordLayout(object):
         self.titles = [_("Enter Password"), _("Change Password"), _("Enter Passphrase")]
         self.pw = QLineEditEx()
         self.pw.setEchoMode(2)
+        self.pw.setMaxLength(15)
         self.new_pw = QLineEditEx()
         self.new_pw.setEchoMode(2)
+        self.new_pw.setMaxLength(15)
         self.conf_pw = QLineEditEx()
         self.conf_pw.setEchoMode(2)
+        self.conf_pw.setMaxLength(15)
         self.kind = kind
         self.OK_button = OK_button
 

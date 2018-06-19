@@ -611,9 +611,9 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         paytomany_menu = tools_menu.addAction(_("&Pay to many"), self.paytomany)
 
         raw_transaction_menu = tools_menu.addMenu(_("&Load transaction"))
-        raw_transaction_menu.addAction(_("&From file"), self.do_process_from_file)
-        raw_transaction_menu.addAction(_("&From text"), self.do_process_from_text)
-        raw_transaction_menu.addAction(_("&From the blockchain"), self.do_process_from_txid)
+        raw_transaction_menu.addAction(_("&Local file loading"), self.do_process_from_file)
+        raw_transaction_menu.addAction(_("&Manual loading"), self.do_process_from_text)
+        raw_transaction_menu.addAction(_("&Transaction ID loading"), self.do_process_from_txid)
         # raw_transaction_menu.addAction(_("&From QR code"), self.read_tx_from_qrcode)
         self.raw_transaction_menu = raw_transaction_menu
 
@@ -765,7 +765,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                 # self.showProcessgress()
                 icon = QIcon(":icons/status_waiting.png")
             elif server_lag > 1:
-                text = _("Server is lagging (%d blocks)"%server_lag)
+                text = _("Server is lagging (%d blocks)")%server_lag
                 icon = QIcon(":icons/network_yellow.png")
             else:
                 c, u, x = self.wallet.get_balance()
@@ -782,11 +782,12 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         else:
             text = _("Not connected")
             icon = QIcon(":icons/network_red.png")
-
+        # text = _("Server is lagging (%d blocks)") % 0
         self.tray.setToolTip("%s (%s)" % (text, self.wallet.basename()))
         self.balance_label.setText(text)
         self.status_button.setIcon( icon )
         self.status_button.setStyleSheet("background-color: white;border:0px;")
+
 
 
     def update_wallet(self):
@@ -845,7 +846,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         grid.addWidget(QLabel(_('Requested amount')), 2, 0)
         grid.addWidget(self.receive_amount_e, 2, 1)
         self.receive_amount_e.textChanged.connect(self.update_receive_qr)
-
+        # self.receive_amount_e.editingFinished.connect(self.amount_edited)
         self.expires_combo = QComboBox()
         self.expires_combo.setView(QListView())
         self.expires_combo.addItems(map(lambda x:x[0], self.expiration_values))
@@ -1047,6 +1048,17 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.tabs.setCurrentIndex(2)
         self.receive_address_e.setText(addr)
         # self.new_request_button.setEnabled(True)
+
+    # def amount_edited(self):
+    #     tamount = self.receive_amount_e.text()
+    #     if float(tamount)==0:
+    #         title = "UWalletLite"
+    #         text = _("amount can not be 0")
+    #         icontype = "warm"
+    #         qm = QMessageBoxEx(title, text, self, icontype)
+    #         qm.exec_()
+            # self.receive_amount_e.setFocus()
+
 
     def update_receive_qr(self):
         addr = str(self.receive_address_e.text())
@@ -1346,7 +1358,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         else:
             errors = self.payto_e.get_errors()
             if errors:
-                self.show_warning(_("Invalid Lines found:") + "\n\n" + '\n'.join([ _("Line #") + str(x[0]+1) + ": " + x[1] for x in errors]))
+                self.show_warning(_("Invalid Lines found:"))# + "\n\n" + '\n'.join([ _("Line #") + str(x[0]+1) + ": " + x[1] for x in errors])
                 return
             outputs = self.payto_e.get_outputs()
 
@@ -1371,12 +1383,16 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             if amount is None:
                 self.show_error(_('Invalid Amount'))
                 return
-
+            if amount is 0:
+                self.show_error(_('Invalid 0 Amount'))
+                return
         fee = self.fee_e.get_amount()
         if fee is None:
             self.show_error(_('Invalid Fee'))
             return
-
+        if fee is 0:
+            self.show_error(_('Invalid 0 Fee'))
+            return
         coins = self.get_coins()
         return outputs, fee, label, coins
 
@@ -1384,6 +1400,9 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.do_send(preview = True)
 
     def do_send(self, preview = False):
+        if not self.network.is_connected():
+            self.show_message(_("connetion is abort."))
+            return
         if run_hook('abort_send', self):
             return
         r = self.read_send_tab()
@@ -1845,7 +1864,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
     def change_password_dialog(self):
         from password_dialog import PasswordDialog, PW_CHANGE
 
-        msg = (_('Your wallet is encrypted. Use this dialog to change your password. To disable wallet encryption, enter an empty new password.') if self.wallet.has_password()
+        msg = (_("The current wallet is encrypted. To cancel the password, set the new password to empty.") if self.wallet.has_password()
                else _('Your wallet keys are not encrypted'))
         d = PasswordDialog(self, self.wallet, msg, PW_CHANGE)
         ok, password, new_password = d.run()
@@ -2029,6 +2048,13 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
     @protected
     def do_sign(self, address, message, signature, password):
         message = unicode(message.toPlainText()).encode('utf-8')
+        if message ==None or message =='':
+            self.show_warning(_('Invalid message'))
+            return
+        pbk = str(address.text())
+        if pbk == None or pbk == '' or len(pbk) != 34:
+            self.show_warning(_('Invalid address'))
+            return
         task = partial(self.wallet.sign_message, str(address.text()),
                        message, password)
         def show_signed_message(sig):
@@ -2038,9 +2064,21 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
     def do_verify(self, address, message, signature):
         message = unicode(message.toPlainText())
         message = message.encode('utf-8')
+        if message ==None or message =='':
+            self.show_warning(_('Invalid message'))
+            return
+        pbk = str(address.text())
+        if pbk == None or pbk == '' or len(pbk) != 34:
+            self.show_warning(_('Invalid address'))
+            return
         try:
+            info = str(signature.toPlainText())
+            if info == None or info == '':
+                self.show_warning(_('Invalid signtrue'))
+                return
             # This can throw on invalid base64
             sig = base64.b64decode(str(signature.toPlainText()))
+
             verified = bitcoin.verify_message(address.text(), sig, message)
         except:
             verified = False
@@ -2096,15 +2134,32 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
     @protected
     def do_decrypt(self, message_e, pubkey_e, encrypted_e, password):
         cyphertext = str(encrypted_e.toPlainText())
-        task = partial(self.wallet.decrypt_message, str(pubkey_e.text()),
-                       cyphertext, password)
-        self.wallet.thread.add(task, on_success=message_e.setText)
+        if cyphertext ==None or cyphertext =='':
+            self.show_warning(_('Invalid cyphertext'))
+            return
+        # task = partial(self.wallet.decrypt_message, str(pubkey_e.text()),
+        #                cyphertext, password)
+        # self.wallet.thread.add(task, on_success=message_e.setText)
+        try:
+            txt = self.wallet.decrypt_message(str(pubkey_e.text()),cyphertext, password)
+            message_e.setText(txt)
+            self.show_message(_("Decrypt Successed"))
+        except:
+            self.show_warning(_('Invalid decrypt'))
+            return
 
     def do_encrypt(self, message_e, pubkey_e, encrypted_e):
         message = unicode(message_e.toPlainText())
+        if message ==None or message =='':
+            self.show_warning(_('Invalid message'))
+            return
+        pbk = str(pubkey_e.text())
+        if pbk ==None or pbk =='' or len(pbk)!=66:
+            self.show_warning(_('Invalid pubkey'))
+            return
         message = message.encode('utf-8')
         try:
-            encrypted = bitcoin.encrypt_message(message, str(pubkey_e.text()))
+            encrypted = bitcoin.encrypt_message(message, pbk)
             encrypted_e.setText(encrypted)
         except BaseException as e:
             traceback.print_exc(file=sys.stdout)
@@ -2251,6 +2306,9 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         txid = None
         if input.exec_():
             txid = input.textValue()
+            if len(txid) != 64:
+                self.show_message(_('Please input txid'))
+                return
         if txid:
             txid = str(txid).strip()
             try:
@@ -2285,6 +2343,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
         e = QTextEditEx()
         e.setReadOnly(True)
+        e.setStyleSheet("font-family: \"" + MONOSPACE_FONT + "\";")
         vbox.addWidget(e)
 
         defaultname = 'uwallet-private-keys.csv'
@@ -2345,12 +2404,15 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         with open(fileName, "w+") as f:
             if is_csv:
                 transaction = csv.writer(f)
-                transaction.writerow(["address", "private_key"])
+                # transaction.writerow(["address", "private_key"])
                 for addr, pk in pklist.items():
-                    transaction.writerow(["%34s"%addr,pk])
+                    # transaction.writerow(["%34s"%addr,pk])
+                    transaction.writerow([pk])
             else:
-                import json
-                f.write(json.dumps(pklist, indent = 4))
+                # import json
+                # f.write(json.dumps(pklist, indent = 4))
+                for addr, pk in pklist.items():
+                    f.write(pk+'\n')
 
 
     def do_import_labels(self):
@@ -2568,6 +2630,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             nz_help = _('Number of zeros displayed after the decimal point. For example, if this is set to 2, "1." will be displayed as "1.00"')
             nz_label = HelpLabel(_('Zeros after decimal point') + ':', nz_help)
             nz = QSpinBoxEx()
+            nz.setFocusPolicy(Qt.NoFocus);
             nz.setMinimum(0)
             nz.setMaximum(self.decimal_point)
             nz.setValue(self.num_zeros)
@@ -2581,6 +2644,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                     self.history_list.update()
                     self.address_list.update()
             nz.valueChanged.connect(on_nz)
+            nz.setMinimum(1)
             gui_widgets.append((nz_label, nz))
 
             msg = _('Fee per kilobyte of transaction.')
@@ -2600,6 +2664,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             dynfee_cb.setChecked(self.config.get('dynamic_fees', False))
             dynfee_cb.setToolTip(_("Use a fee per kB value recommended by the server."))
             fee_widgets.append((dynfee_cb, None))
+            dynfee_cb.setHidden(True)
             def update_feeperkb():
                 fee_e.setAmount(self.config.get('fee_per_kb', bitcoin.RECOMMENDED_FEE))
                 b = self.config.get('dynamic_fees', False)
@@ -2751,6 +2816,8 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                     self.wallet.use_change = usechange_result
                     self.wallet.storage.put('use_change', self.wallet.use_change)
                     multiple_cb.setEnabled(self.wallet.use_change)
+                if not usechange_cb.isChecked():
+                    multiple_cb.setChecked(False)
             usechange_cb.stateChanged.connect(on_usechange)
             usechange_cb.setToolTip(_('Using change addresses makes it more difficult for other people to track your transactions.'))
             tx_widgets.append((usechange_cb, None))
