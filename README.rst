@@ -1,50 +1,36 @@
-Electrum - Lightweight Bitcoin client
+Lightweight ulord client
 =====================================
 
 ::
 
   Licence: MIT Licence
-  Author: Thomas Voegtlin
   Language: Python
-  Homepage: https://electrum.org/
-
-
-.. image:: https://travis-ci.org/spesmilo/electrum.svg?branch=master
-    :target: https://travis-ci.org/spesmilo/electrum
-    :alt: Build Status
-
-
 
 
 
 Getting started
 ===============
 
-Electrum is a pure python application. However, if you want to use the
+uwallet is a pure python application. However, if you want to use the
 Qt interface, then you need to install the Qt dependencies::
 
     sudo apt-get install python-qt4
 
 If you downloaded the official package (tar.gz), then you can run
-Electrum from its root directory, without installing it on your
+uwallet from its root directory, without installing it on your
 system; all the python dependencies are included in the 'packages'
-directory. To run Electrum from its root directory, just do::
+directory. To run uwallet from its root directory, just do::
 
-    ./electrum
+    ./uwallet
 
 If you cloned the git repository, then you need to compile extra files
-before you can run Electrum. Read the next section, "Development
+before you can run uwallet. Read the next section, "Development
 Version".
 
 
 
 Development version
 ===================
-
-Check out the code from Github::
-
-    git clone git://github.com/spesmilo/electrum.git
-    cd electrum
 
 Run install (this should install dependencies)::
 
@@ -70,13 +56,9 @@ Create translations::
 Install on Linux systems
 ========================
 
-If you install Electrum on your system, you can run it from any
+If you install uwallet on your system, you can run it from any
 directory.
 
-If you have pip, you can do::
-
-    python setup.py sdist
-    sudo pip install --pre dist/Electrum-2.0.tar.gz
 
 
 If you don't have pip, install with::
@@ -94,20 +76,8 @@ In order to create binaries, you must create the 'packages' directory::
 
     ./contrib/make_packages
 
-This directory contains the python dependencies used by Electrum.
+This directory contains the python dependencies used by uwallet.
 
-Mac OS X
---------
-
-::
-
-    # On MacPorts installs: 
-    sudo python setup-release.py py2app
-    
-    # On Homebrew installs: 
-    ARCHFLAGS="-arch i386 -arch x86_64" sudo python setup-release.py py2app --includes sip
-    
-    sudo hdiutil create -fs HFS+ -volname "Electrum" -srcfolder dist/Electrum.app dist/electrum-VERSION-macosx.dmg
 
 Windows
 -------
