@@ -30,7 +30,6 @@ import time
 import shutil
 import socket
 
-
 script_dir = os.path.dirname(os.path.realpath(__file__))
 is_bundle = getattr(sys, 'frozen', False)
 is_local = not is_bundle and os.path.exists(os.path.join(script_dir, "setup-release.py"))
@@ -78,10 +77,11 @@ if not is_android:
     check_imports()
 
 # load local module as electrum
-# if is_bundle or is_local or is_android:
-#     import imp
-#     imp.load_module('uwallet', *imp.find_module('lib'))
-#     imp.load_module('uwallet_gui', *imp.find_module('gui'))
+if is_bundle or is_local or is_android:
+    import imp
+    imp.load_module('uwallet', *imp.find_module('lib'))
+    imp.load_module('uwallet_gui', *imp.find_module('gui'))
+
 #     imp.load_module('uwallet_plugins', *imp.find_module('plugins'))
 import uwallet ,uwallet_gui,uwallet_plugins,uwallet_gui.qt
 from uwallet import SimpleConfig, Network
@@ -271,7 +271,6 @@ def run_offline_command(config, config_options):
 def init_plugins(config, gui_name):
     from uwallet.plugins import Plugins
     return Plugins(config, is_bundle or is_local or is_android, gui_name)
-
 def get_FileSize(filePath):
     filePath = unicode(filePath,'utf8')
     fsize = os.path.getsize(filePath)
