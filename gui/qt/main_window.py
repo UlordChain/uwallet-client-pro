@@ -263,6 +263,9 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.is_show_warning =False
         self.set_receive_address()
 
+    def is_macos(self):
+        return is_macos
+
     def getRemoteVersion(self):
         try:
             while True:
@@ -569,9 +572,12 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.gui_object.start_new_window(full_path, None)
 
     def init_menubar(self):
-        menubar = QMenuBar()
-
-        menubar.setStyleSheet("padding-top:2px;")
+        if is_macos:
+            menubar = self.menuBar()
+            menubar.setNativeMenuBar(False)
+        else:
+            menubar = QMenuBar()
+            menubar.setStyleSheet("padding-top:2px;")
         # menubar.setMinimumSize(QtCore.QSize(0, 35))
         file_menu = menubar.addMenu(_("&File"))
         self.recently_visited_menu = file_menu.addMenu(_("&Recently open"))

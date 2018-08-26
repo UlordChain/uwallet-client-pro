@@ -75,7 +75,8 @@ class Ui_titleWD(object):
         # self.label_2.setObjectName(_fromUtf8("label_2"))
         # self.horizontalLayout_5.addWidget(self.label_2)
         menubar = parent.init_menubar()
-        self.horizontalLayout_5.addWidget(menubar)
+        if not parent.is_macos():
+            self.horizontalLayout_5.addWidget(menubar)
 
         # self.label_version = QtGui.QLabel(titleWD)
         # self.label_version.setSizeIncrement(QtCore.QSize(0, 0))
