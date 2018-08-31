@@ -1,5 +1,5 @@
 # from http://eli.thegreenplace.net/2009/03/07/computing-modular-square-roots-in-python/
-
+# -*- coding: utf-8 -*-
 def modular_sqrt(a, p):
     """ Find a quadratic residue (mod p) of 'a'. p
     must be an odd prime.

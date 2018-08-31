@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['uwallet'],
-             pathex=['F:\\MyProject\\Ulord\\uwallet-client-pro-test-huqp'],
+             pathex=['C:\\Work\\uwallet-client-pro'],
              binaries=[],
              datas=[],
              hiddenimports=['queue'],
@@ -23,7 +23,7 @@ exe = EXE(pyz,
           debug=False,
           strip=False,
           upx=True,
-          console=False , version='version', icon='uwallet.ico')
+          console=True , version='version', icon='uwallet.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

@@ -30,7 +30,7 @@ from cryptohello_hash import cryptohello_hash
 
 import hashlib
 import base64
-import os
+#import osc
 import re
 import hmac
 from signmessage import *

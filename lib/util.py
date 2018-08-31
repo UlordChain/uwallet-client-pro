@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Electrum - lightweight Bitcoin client
 # Copyright (C) 2011 Thomas Voegtlin
@@ -246,7 +247,8 @@ def user_dir():
     if "HOME" in os.environ:
         return os.path.join(os.environ["HOME"], ".uwallet")
     elif "APPDATA" in os.environ:
-        return os.path.join(os.environ["APPDATA"], "UWallet")
+        p = os.path.join(os.environ["APPDATA"], "UWallet")
+        return  p
     elif "LOCALAPPDATA" in os.environ:
         return os.path.join(os.environ["LOCALAPPDATA"], "UWallet")
     elif 'ANDROID_DATA' in os.environ:

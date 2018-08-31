@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Electrum - lightweight Bitcoin client
 # Copyright (C) 2012 thomasv@gitorious
@@ -537,8 +538,11 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         recent = self.config.get('recently_open', [])
         if filename in recent:
             recent.remove(filename)
+        print 'filename:', filename#.decode('gbk').encode('utf-8')
         recent.insert(0, filename)
+        print 'recent0:', recent
         recent = recent[:5]
+        print 'recent1:', recent
         self.config.set_key('recently_open', recent)
         self.recently_visited_menu.clear()
         for i, k in enumerate(sorted(recent)):

@@ -1,5 +1,5 @@
 # source: http://stackoverflow.com/questions/2758159/how-to-embed-a-python-interpreter-in-a-pyqt-widget
-
+# -*- coding: utf-8 -*-
 import sys, os, re
 import traceback, platform
 from PyQt4 import QtCore

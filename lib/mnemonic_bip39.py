@@ -1,4 +1,4 @@
-#
+# -*- coding: utf-8 -*-
 # Copyright (c) 2013 Pavol Rusnak
 # Copyright (c) 2017 mruddy
 #

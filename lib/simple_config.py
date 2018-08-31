@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import ast
 import json
 import threading
@@ -63,7 +65,9 @@ class SimpleConfig(PrintError):
         # Set self.path and read the user config
         self.user_config = {}  # for self.get in electrum_path()
         self.path = self.uwallet_path()
+        # print '68:usr_conf_path:',self.path
         self.user_config = read_user_config_function(self.path)
+        # print '70:usr_conf:',self.user_config
         # Upgrade obsolete keys
         self.fixup_keys({'auto_cycle': 'auto_connect'})
         # Make a singleton instance of 'self'
@@ -129,7 +133,9 @@ class SimpleConfig(PrintError):
         if not self.path:
             return
         path = os.path.join(self.path, "config")
-        s = json.dumps(self.user_config, indent=4, sort_keys=True)
+        # print '136:usr_conf:', self.user_config
+        s = json.dumps(self.user_config, indent=4, sort_keys=True)#ensure_ascii=False, indent=2) #
+        # path = unicode(path, 'utf8')
         f = open(path, "w")
         f.write(s)
         f.close()

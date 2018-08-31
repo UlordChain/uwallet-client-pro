@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from uwallet.i18n import _
 from uwallet.plugins import run_hook
 from PyQt4.QtGui import *

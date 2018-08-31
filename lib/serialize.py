@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018 The python-bitcoinlib developers
-#
+# -*- coding: utf-8 -*-
 # This file is part of python-bitcoinlib.
 #
 # It is subject to the license terms in the LICENSE file found in the top-level
