@@ -94,6 +94,7 @@ class Abstract_Wallet(PrintError):
         self.use_change            = storage.get('use_change', True)
         self.multiple_change       = storage.get('multiple_change', False)
         self.labels                = storage.get('labels', {})
+        self.lock_txoids           = storage.get('lock_txoids', [])
         self.frozen_addresses      = set(storage.get('frozen_addresses',[]))
         self.stored_height         = storage.get('stored_height', 0)       # last known height (for offline mode)
         self.history               = storage.get('addr_history',{})        # address -> list(txid, height)
@@ -246,6 +247,14 @@ class Abstract_Wallet(PrintError):
             self.storage.put('labels', self.labels)
 
         return changed
+
+    def set_lock_txoid(self,txhash):
+        if txhash in self.lock_txoids:
+            self.lock_txoids.remove(txhash)
+            self.storage.put('lock_txoids', list(self.lock_txoids))
+        else:
+            self.lock_txoids.append(txhash)
+            self.storage.put('lock_txoids', list(self.lock_txoids))
 
     def is_mine(self, address):
         return address in self.get_addresses()
@@ -514,7 +523,7 @@ class Abstract_Wallet(PrintError):
                     u -= v
         return c, u, x
 
-    def get_spendable_coins(self, domain = None, exclude_frozen = True):
+    def get_spendable_coins(self, domain = None, exclude_frozen = True,lock_txoids=[]):
         coins = []
         if domain is None:
             domain = self.get_addresses()
@@ -524,6 +533,8 @@ class Abstract_Wallet(PrintError):
             utxos = self.get_addr_utxo(addr)
             for x in utxos:
                 if x['coinbase'] and x['height'] + COINBASE_MATURITY > self.get_local_height():
+                    continue
+                if x['prevout_hash'] in lock_txoids:
                     continue
                 coins.append(x)
                 continue

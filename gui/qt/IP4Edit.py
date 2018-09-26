@@ -139,7 +139,7 @@ class Ip4Edit(QLineEdit):
             .arg(ippart4)
         self.emit(SIGNAL('textEdited'), ipaddr)
 
-    def setText(self, text):
+    def setText(self, text):#^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$
         regexp = QRegExp('^((2[0-4]\d|25[0-5]|[01]?\d\d?).){3}(2[0-4]\d||25[0-5]|[01]?\d\d?)$')
         validator = QRegExpValidator(regexp, self)
         nPos = 0

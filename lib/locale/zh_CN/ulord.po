@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: electrum\n"
+"Project-Id-Version: uwallet\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-16 13:29+0000\n"
 "PO-Revision-Date: 2017-09-21 04:49-0400\n"
@@ -12,9 +12,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: crowdin.com\n"
-"X-Crowdin-Project: electrum\n"
+"X-Crowdin-Project: uwallet\n"
 "X-Crowdin-Language: zh-CN\n"
-"X-Crowdin-File: /electrum-client/messages.pot\n"
+"X-Crowdin-File: /uwallet-client/messages.pot\n"
 
 #: gui/qt/main_window.py:2516
 msgid " These settings affects the fields in the Send tab"
@@ -1600,7 +1600,7 @@ msgstr "显示/隐藏"
 
 #: gui/qt/main_window.py:1947 gui/qt/transaction_dialog.py:97
 msgid "Sign"
-msgstr "生成主节点签名"
+msgstr "签名"
 
 #: gui/qt/main_window.py:1925
 msgid "Sign/verify Message"
@@ -2768,3 +2768,24 @@ msgstr '生成主节点特征码'
 
 msgid 'Sign Address'
 msgstr'地址             '
+
+msgid 'Warning: click the regenerate button to regenerate the master node certificate. Do you want to continue?'
+msgstr '警告:点击重新生成按钮将会重新生成主节点证书,是否继续?'
+
+msgid "reGenerate the private key"
+msgstr '重新生成主节点特征码'
+
+msgid 'The address is not included in the current list. Please check if it is the correct signature wallet.'
+msgstr '主节点签名地址不包含在当前地址列表中.请检查是否正确的签名钱包.'
+
+msgid "Sign Main Node"
+msgstr "生成主节点签名"
+
+msgid "unlock deposit"
+msgstr "解冻押金"
+
+msgid "Lock deposit"
+msgstr "冻结押金"
+
+msgid 'deposit is locked'
+msgstr "押金已冻结"

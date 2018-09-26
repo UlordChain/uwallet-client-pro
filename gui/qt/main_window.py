@@ -48,7 +48,7 @@ from uwallet.util import (block_explorer, block_explorer_info, format_time,
                            block_explorer_URL, format_satoshis, PrintError,
                            format_satoshis_plain, NotEnoughFunds, StoreDict,
                            UserCancelled)
-from uwallet import Transaction, mnemonic
+from uwallet import Transaction, mnemonic #
 from uwallet import util, bitcoin, commands, coinchooser
 from uwallet import SimpleConfig, paymentrequest
 from uwallet.wallet import Wallet, Multisig_Wallet
@@ -834,12 +834,15 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
     def show_address(self, addr):
         import address_dialog
         d = address_dialog.AddressDialog(self, addr)
-
         d.exec_()
 
     def show_transaction(self, tx, tx_desc = None):
         '''tx_desc is set only for txs created in the Send tab'''
         show_transaction(tx, self, tx_desc)
+
+    def lock_deposit(self,tx_hash,item,txt):
+        self.wallet.set_lock_txoid(tx_hash)
+        item.setText(3, txt)
 
     def create_receive_tab(self):
         # A 4-column grid layout.  All the stretch is in the last column.
@@ -1706,7 +1709,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             return self.pay_from
         else:
             domain = self.wallet.get_addresses()
-            return self.wallet.get_spendable_coins(domain)
+            return self.wallet.get_spendable_coins(domain,True,self.wallet.lock_txoids)
 
 
     def send_from_addresses(self, addrs):
@@ -2072,10 +2075,20 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         d.setLayout(vbox)
         d.exec_()
 
-    def generate_key(self,main_address_e):
+    def generate_key(self,main_address_e,b_g,b_rg):
         private_key = BitcoinPrivateKey()
         pk = private_key.to_wif()
         main_address_e.setText(pk)
+        b_g.setEnabled(False)
+        b_rg.setEnabled(True)
+
+    def regenerate_key(self,main_address_e,signature_e):
+        if not self.question(_('Warning: click the regenerate button to regenerate the master node certificate. Do you want to continue?')):#警告：点击重新生成按钮将会重新生成主节点证书,是否继续?
+            return
+        private_key = BitcoinPrivateKey()
+        pk = private_key.to_wif()
+        main_address_e.setText(pk)
+        signature_e.setText('')
 
     @protected
     def do_sign(self, address, message, signature,main_address_e, password):
@@ -2087,7 +2100,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         if pbk == None or pbk == '' or len(pbk) != 34:
             self.show_warning(_('Invalid address'))
             return
-        mainadd = str(main_address_e.text())
+        mainadd = str(main_address_e.text()).strip()
         if mainadd == None or mainadd == ''or len(mainadd) < 45:
             self.show_warning(_('Invalid main node key'))
             return
@@ -2095,6 +2108,15 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                        message, password,mainadd)
         def show_signed_message(sig):
             signature.setText(base64.b64encode(sig))
+            signMsg = {}
+            signMsg['Address'] = unicode(pbk).encode('utf-8')
+            signMsg['IP'] = message
+            signMsg['Signature'] = unicode(signature.toPlainText()).encode('utf-8')
+            signMsg['Key'] = mainadd
+            fpath = os.path.join(util.user_dir(), "msg_sign")
+            with open(fpath, 'w') as f:
+                s = json.dumps(signMsg, indent=4, sort_keys=True)
+                r = f.write(s)
         self.wallet.thread.add(task, on_success=show_signed_message)
 
     def do_verify(self, address, message, signature):
@@ -2142,10 +2164,13 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         layout.addLayout(hlayoutMid)
         address_e = QComboBox()
         address_e.setView(QListView())
-        receiving_addresses = self.wallet.get_receiving_addresses()
+        receiving_addresses = self.wallet.get_receiving_addresses()[:]
         change_addresses = self.wallet.get_change_addresses()
+        receiving_addresses.extend(change_addresses)
         address_e.addItems(receiving_addresses)
-        address_e.addItems(change_addresses)
+        if address.strip():
+            address_e.setCurrentIndex(receiving_addresses.index(address))
+        # address_e.setEditText(QString(address))
         address_e.setFixedWidth(481)
         hlayoutMid.addWidget(QLabel(_('Sign Address')))
         hlayoutMid.addWidget(address_e)
@@ -2164,24 +2189,45 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         hlayoutBtm.addWidget(signature_e)
 
         hbox = QHBoxLayout()
+        b_g = QPushButton(_("Generate the private key"))
+        b_rg = QPushButton(_("reGenerate the private key"))  # 重新生成
+        b_g.clicked.connect(lambda: self.generate_key(main_address_e,b_g,b_rg))
+        b_rg.clicked.connect(lambda: self.regenerate_key(main_address_e,signature_e))
+        hbox.addWidget(b_g)
+        hbox.addWidget(b_rg)
 
-        b = QPushButton(_("Generate the private key"))
-        b.clicked.connect(lambda: self.generate_key(main_address_e))
-        hbox.addWidget(b)
+        b_s = QPushButton(_("Sign Main Node"))
+        b_s.clicked.connect(lambda: self.do_sign(address_e, message_e, signature_e,main_address_e))
+        hbox.addWidget(b_s)
 
-        b = QPushButton(_("Sign"))
-        b.clicked.connect(lambda: self.do_sign(address_e, message_e, signature_e,main_address_e))
-        hbox.addWidget(b)
-
-        # b = QPushButton(_("Verify"))
-        # b.clicked.connect(lambda: self.do_verify(address_e, message_e, signature_e))
-        # hbox.addWidget(b)
-
+        msgFilePath = os.path.join(util.user_dir(), "msg_sign")
+        if not os.path.exists(msgFilePath):
+            b_g.setEnabled(True)
+            b_rg.setEnabled(False)
+        else:
+            b_g.setEnabled(False)
+            b_rg.setEnabled(True)
+            try:
+                with open(msgFilePath, 'r') as f:
+                    msgInfo = json.loads(f.read())
+                    sAddress = msgInfo['Address']
+                    message_e.setText(QString(msgInfo['IP']))
+                    if sAddress not in receiving_addresses:
+                        self.show_warning(_('The address is not included in the current list. Please check if it is the correct signature wallet.'))#地址不包含在当前列表中。请检查它是否是正确的签名钱包
+                    else:
+                        # address_e.setEditText(sAddress)
+                        address_e.setCurrentIndex(receiving_addresses.index(sAddress))
+                        main_address_e.setText(msgInfo['Key'])
+                        signature_e.setText(msgInfo['Signature'])
+            except Exception,ex:
+                pass
         b = QPushButton(_("Close"))
         b.clicked.connect(d.accept)
         hbox.addWidget(b)
         layout.addLayout(hbox)
         d.exec_()
+
+
 
 
     @protected

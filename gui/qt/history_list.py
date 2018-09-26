@@ -70,6 +70,7 @@ class HistoryList(MyTreeWidget):
         h = self.wallet.get_history(self.get_domain())
         item = self.currentItem()
         current_tx = item.data(0, Qt.UserRole).toString() if item else None
+
         self.clear()
         run_hook('history_tab_update_begin')
         # if(len(h)==0):
@@ -106,6 +107,10 @@ class HistoryList(MyTreeWidget):
             if current_tx == tx_hash:
                 self.setCurrentItem(item)
 
+            if tx_hash in self.parent.wallet.lock_txoids:
+                item.setText(3, _('deposit is locked'))
+
+
     def update_item(self, tx_hash, height, conf, timestamp):
         status, status_str = self.wallet.get_tx_status(tx_hash, height, conf, timestamp)
         icon = QIcon(":icons/" +  TX_ICONS[status])
@@ -122,6 +127,7 @@ class HistoryList(MyTreeWidget):
             return
         column = self.currentColumn()
         tx_hash = str(item.data(0, Qt.UserRole).toString())
+
         if not tx_hash:
             return
         if column is 0:
@@ -144,6 +150,11 @@ class HistoryList(MyTreeWidget):
             menu.addAction(_("Edit %s")%column_title, lambda: self.editItem(item, column))
 
         menu.addAction(_("Details"), lambda: self.parent.show_transaction(tx))
+        if v == 1000000000000:
+            if tx_hash in self.parent.wallet.lock_txoids:
+                menu.addAction(_("unlock deposit"), lambda: self.parent.lock_deposit(tx_hash,item,''))
+            else:
+                menu.addAction(_("Lock deposit"), lambda: self.parent.lock_deposit(tx_hash,item,_('deposit is locked')))
         if rbf:
             menu.addAction(_("Increase fee"), lambda: self.parent.bump_fee_dialog(tx))
         # if tx_URL:
