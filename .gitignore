@@ -1,0 +1,10 @@
+.idea/
+build
+*.egg
+*.xml
+.idea/workspace.xml
+
+*.pyd
+*.pyc
+/dist
+/UWallet.egg-info

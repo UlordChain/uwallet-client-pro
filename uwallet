@@ -356,10 +356,14 @@ if __name__ == '__main__':
         cpath = os.path.join(p, "recent_servers")
         if os.path.exists(cpath):
             os.remove(cpath)
-        if not os.path.exists(path):
-            if os.path.exists(localheader):
-                shutil.copyfile(localheader, path)
-        else:
+        # if not os.path.exists(path):
+        #     if os.path.exists(localheader):
+        #         shutil.copyfile(localheader, path)
+        # else:
+        #     if os.path.exists(localheader):
+        #         if get_FileSize(localheader)>get_FileSize(path):
+        #             shutil.copyfile(localheader, path)
+        if os.path.exists(path):
             if os.path.exists(localheader):
                 if get_FileSize(localheader)>get_FileSize(path):
                     shutil.copyfile(localheader, path)
