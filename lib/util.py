@@ -247,8 +247,8 @@ def user_dir():
     if "HOME" in os.environ:
         return os.path.join(os.environ["HOME"], ".uwallet")
     elif "APPDATA" in os.environ:
-        p = os.path.join(os.environ["APPDATA"], "UWallet")
-        return  p
+        p = os.path.join(os.environ["APPDATA"], "UWallet").replace('\\','/')
+        return  unicode(p, 'gbk')
     elif "LOCALAPPDATA" in os.environ:
         return os.path.join(os.environ["LOCALAPPDATA"], "UWallet")
     elif 'ANDROID_DATA' in os.environ:

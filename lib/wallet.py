@@ -1318,6 +1318,7 @@ class P2PK_Wallet(Abstract_Wallet):
         txin['redeemPubkey'] = pubkey
         txin['num_sig'] = 1
 
+
     def sign_message(self, address, message, password):
         sequence = self.get_address_index(address)
         return self.keystore.sign_message(sequence, message, password)
@@ -1401,7 +1402,7 @@ class Deterministic_Wallet(Abstract_Wallet):
     def create_new_address(self, for_change):
         pubkey_list = self.change_pubkeys if for_change else self.receiving_pubkeys
         n = len(pubkey_list)
-        x = self.new_pubkeys(for_change, n)
+        x = self.new_pubkeys(for_change, n)#c0dd56b7aff40fb4bd886a70d4baa2f2a0766ccda9bdc10f7b92cf88e0d08085  0263baa7ef5eb7b16b9e916347096922cd11db8187c6b61d2791adb41b0eb09d15
         pubkey_list.append(x)
         self.save_pubkeys()
         address = self.pubkeys_to_address(x)
@@ -1453,7 +1454,7 @@ class Deterministic_Wallet(Abstract_Wallet):
         if len(prev_addresses) < limit:
             return False
         prev_addresses = prev_addresses[max(0, i - limit):]
-        for addr in prev_addresses:
+        for addr in prev_addresses:#t
             if self.history.get(addr):
                 return False
         return True

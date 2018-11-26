@@ -107,8 +107,6 @@ def prompt_password(prompt, confirm=True):
         password = None
     return password
 
-
-
 def run_non_RPC(config):
     cmdname = config.get('cmd')
 
@@ -343,26 +341,12 @@ if __name__ == '__main__':
 
     if cmdname == 'gui':
         fd, server = daemon.get_fd_or_server(config)
-        # p = os.path.join(os.environ["APPDATA"], "UWallet")
-        # path = os.path.join(p, "blockchain_headers")
-        # newP = os.path.join(p, "newheader.h")
-        # if os.path.exists(path) and not os.path.exists(newP):
-        #     os.remove(path)
-        # if not os.path.exists(newP):
-        #     os.makedirs(newP)
         localheader = "blockchain_headers"
         p = os.path.join(os.environ["APPDATA"], "UWallet")
         path = os.path.join(p, "blockchain_headers")
         cpath = os.path.join(p, "recent_servers")
         if os.path.exists(cpath):
             os.remove(cpath)
-        # if not os.path.exists(path):
-        #     if os.path.exists(localheader):
-        #         shutil.copyfile(localheader, path)
-        # else:
-        #     if os.path.exists(localheader):
-        #         if get_FileSize(localheader)>get_FileSize(path):
-        #             shutil.copyfile(localheader, path)
         if os.path.exists(path):
             if os.path.exists(localheader):
                 if get_FileSize(localheader)>get_FileSize(path):

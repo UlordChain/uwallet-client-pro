@@ -30,10 +30,16 @@ import util
 from bitcoin import *
 import mmap
 import contextlib
-
+import shutil
 #576#96 #576
 MAX_TARGET = 0x000009b173000000000000000000000000000000000000000000000000000000 #0x00000000FFFF0000000000000000000000000000000000000000000000000000 qpc
 NULL_HASH = '0000000000000000000000000000000000000000000000000000000000000000'
+
+def get_FileSize(filePath):
+    # filePath = unicode(filePath,'utf8')
+    fsize = os.path.getsize(filePath)
+    fsize = fsize/float(1024*1024)
+    return round(fsize,2)
 
 class Blockchain(util.PrintError):
     '''Manages blockchain headers and their verification'''
@@ -183,9 +189,14 @@ class Blockchain(util.PrintError):
             urllib.urlretrieve(self.headers_url, filename)
             self.print_error("done.")
             print 'done.'
-        except Exception:
+        except Exception,ex:
             self.print_error("download failed. creating file", filename)
             open(filename, 'wb+').close()
+
+            localheader = "blockchain_headers"
+            p = os.path.join(os.environ["APPDATA"], "UWallet")
+            path = os.path.join(p, "blockchain_headers")
+            shutil.copyfile(localheader, path)
 
     def save_chunk(self, index, chunk):
         filename = self.path()

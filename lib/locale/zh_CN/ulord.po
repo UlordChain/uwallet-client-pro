@@ -2789,3 +2789,15 @@ msgstr "冻结押金"
 
 msgid 'deposit is locked'
 msgstr "押金已冻结"
+
+msgid 'LockTime:'
+msgstr '锁定时间:'
+
+msgid "&Create deposit transaction"
+msgstr "&创建押金交易"
+
+msgid "&Create Redeem transaction"
+msgstr "创建赎回交易"
+
+msgid 'Masternode deposit transaction'
+msgstr '主节点押金交易'

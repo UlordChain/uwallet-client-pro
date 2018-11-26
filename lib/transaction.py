@@ -459,6 +459,8 @@ class Transaction:
         self._inputs = None
         self._outputs = None
         self.locktime = 0
+        self.redeem_contract = None
+        self.is_deposit_tx = False
 
     def update(self, raw):
         self.raw = raw
@@ -596,7 +598,7 @@ class Transaction:
         return script
 
     @classmethod
-    def input_script(self, txin, i, for_sig):
+    def input_script(self, txin, i, for_sig,redeem_contract=None):
         # for_sig:
         #   -1   : do not sign, estimate length
         #   i>=0 : serialized tx for signing input i
@@ -630,28 +632,39 @@ class Transaction:
                     addrtype, h160 = bc_address_to_hash_160(txin['address'])
                     x_pubkey = 'fd' + (chr(addrtype) + h160).encode('hex')
                 script += push_script(x_pubkey)
+                if redeem_contract:
+                    script += push_script(redeem_contract)
             else:
                 script = '00' + script          # put op_0 in front of script
                 redeem_script = self.multisig_script(pubkeys, num_sig)
                 script += push_script(redeem_script)
 
         elif for_sig==i:
-            script = txin['redeemScript'] if p2sh else self.pay_script(TYPE_ADDRESS, address)
+            if redeem_contract:
+                script = txin[
+                    'redeemScript'] if p2sh else redeem_contract
+            else:
+                script = txin['redeemScript'] if p2sh else self.pay_script(TYPE_ADDRESS, address)
         else:
             script = ''
 
         return script
 
     @classmethod
-    def serialize_input(self, txin, i, for_sig):
+    def serialize_input(self, txin, i, for_sig,is_deposit_tx = False,redeem_contract=None):
         # Prev hash and index
         s = txin['prevout_hash'].decode('hex')[::-1].encode('hex')
         s += int_to_hex(txin['prevout_n'], 4)
         # Script length, script, sequence
-        script = self.input_script(txin, i, for_sig)
+        script = self.input_script(txin, i, for_sig,redeem_contract)
+
         s += var_int(len(script)/2)
         s += script
-        s += int_to_hex(txin.get('sequence', 0xffffffff), 4)
+        # s += int_to_hex(txin.get('sequence', 0xfffffffe), 4)
+        if redeem_contract or is_deposit_tx:#change timelock sequence
+            s += int_to_hex(txin.get('sequence', 0xfffffffe), 4)
+        else:
+            s += int_to_hex(txin.get('sequence', 0xffffffff), 4)
         return s
 
     def set_sequence(self, n):
@@ -669,7 +682,7 @@ class Transaction:
         s = int_to_hex(1, 4)                                         # version
         s += var_int(len(inputs))                                    # number of inputs
         for i, txin in enumerate(inputs):
-            s += self.serialize_input(txin, i, for_sig)
+            s += self.serialize_input(txin, i, for_sig,self.is_deposit_tx,self.redeem_contract)
         s += var_int(len(outputs))                                   # number of outputs
         for output in outputs:
             output_type, addr, amount = output

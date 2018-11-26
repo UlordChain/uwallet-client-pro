@@ -167,6 +167,7 @@ class Network(util.DaemonThread):
         # Server for addresses and transactions
         self.default_server = self.config.get('server')
         # Sanitize default server
+        self.has_if_height = False
         try:
             deserialize_server(self.default_server)
         except:
@@ -782,6 +783,8 @@ class Network(util.DaemonThread):
         self.max_block_height = if_height
         dif =  if_height - local_height
         self.blockchain.height_diff = dif
+        if if_height>0:
+            self.has_if_height = True
         # if dif < self.blockchain.CHUNK_SIZE:
         #     self.blockchain.height_diff = dif*2-1
         # else:
@@ -837,39 +840,6 @@ class Network(util.DaemonThread):
             interface.send_requests()
         for interface in rout:
             self.process_responses(interface)
-
-    # def runNow(self):
-    #     now = self.synchronous_get_now(('blockchain.numblocks.subscribe', []))
-    #
-    # def synchronous_get_now(self, request, timeout=30):
-    #     self.maintain_sockets()
-    #     queue = Queue.Queue()
-    #     self.send([request], queue.put)
-    #     for messages, callback in self.pending_sends:
-    #         for method, params in messages:
-    #             r = None
-    #             if method.endswith('.subscribe'):
-    #                 k = self.get_index(method, params)
-    #                 # add callback to list
-    #                 l = self.subscriptions.get(k, [])
-    #                 if callback not in l:
-    #                     l.append(callback)
-    #                 self.subscriptions[k] = l
-    #                 # check cached response for subscriptions
-    #                 r = self.sub_cache.get(k)
-    #             if r is not None:
-    #                 util.print_error("cache hit", k)
-    #                 callback(r)
-    #             else:
-    #                 message_id = self.queue_request(method, params)
-    #                 self.unanswered_requests[message_id] = method, params, callback
-    #     try:
-    #         r = queue.get(True, timeout)
-    #     except Queue.Empty:
-    #         raise BaseException('Server did not answer')
-    #     if r.get('error'):
-    #         raise BaseException(r.get('error'))
-    #     return r.get('result')
 
     def run(self):
         self.blockchain.init()

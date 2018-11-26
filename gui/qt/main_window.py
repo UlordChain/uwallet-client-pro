@@ -40,7 +40,8 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
 import icons_rc
-
+import time
+import  datetime
 from uwallet.bitcoin import COIN, is_valid, TYPE_ADDRESS
 from uwallet.plugins import run_hook
 from uwallet.i18n import _
@@ -112,7 +113,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             'zh_CN': _('Chinese'),
             'en_UK': _('English'),
         }
-
+        self.depost_datetime = None #todo dateitme
         self.expiration_values = [
             (_('1 hour'), 60 * 60),
             (_('1 day'), 24 * 60 * 60),
@@ -153,6 +154,8 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         if not is_macos:
             while self.network.blockchain.height_diff==0 and slpcount<50:
                 if self.network.blockchain.downloading:
+                    break
+                if self.network.has_if_height:
                     break
                 time.sleep(0.1)
                 slpcount +=1
@@ -543,6 +546,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         print 'recent0:', recent
         recent = recent[:5]
         print 'recent1:', recent
+        # self.config.set_key('recently_open', str(recent).decode("unicode-escape"))
         self.config.set_key('recently_open', recent)
         self.recently_visited_menu.clear()
         for i, k in enumerate(sorted(recent)):
@@ -621,6 +625,8 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         # tools_menu.addAction(_("&Plugins"), self.plugins_dialog)
         tools_menu.addSeparator()
         tools_menu.addAction(_("&Sign/verify message"), self.sign_verify_message)
+        tools_menu.addAction(_("&Create deposit transaction"), self.create_deposit_transaction)
+        tools_menu.addAction(_("&Create Redeem transaction"), self.redeem_deposit_transaction)
         tools_menu.addAction(_("&Encrypt/decrypt message"), self.encrypt_message)
         tools_menu.addSeparator()
 
@@ -841,6 +847,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         show_transaction(tx, self, tx_desc)
 
     def lock_deposit(self,tx_hash,item,txt):
+
         self.wallet.set_lock_txoid(tx_hash)
         item.setText(3, txt)
 
@@ -1229,6 +1236,8 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.fee_e.setStyleSheet(fee_color)
 
         self.amount_e.textChanged.connect(entry_changed)
+        self.amount_e.textEdited.connect(entry_changed)
+        self.fee_e.textEdited.connect(entry_changed)
         self.fee_e.textChanged.connect(entry_changed)
 
         self.invoices_label = QLabel(_('Invoices'))
@@ -1423,6 +1432,140 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         coins = self.get_coins()
         return outputs, fee, label, coins
 
+
+    def create_deposit_addr(self,nowdate):
+        # ���ȹ���str ��������в鿴��Լ���췽ʽ��Ȼ��sublime������.cpp���鿴�����ɺ�Լ�ķ�ʽ
+        #	CScript timeLockScript =	CScript() << lockTime << OP_CHECKLOCKTIMEVERIFY << OP_DROP << OP_DUP << OP_HASH160\
+        # << ToByteVector(uRecAdr) << OP_EQUALVERIFY << OP_CHECKSIG;
+        # //uRecAdrΪ��Կ��ϣ��ʮ�����Ʊ���Ҳ���ǹ�Կ�� ToByteVectorΪ��ȡ���볤���ټ���ȥ
+        # aaa = bitcoin.hash_160('045498ce5bb17576a91410a244ddcb0de0223fe3bdcdcfb8c2cb128d368d88ac'.decode('hex')).encode('hex')
+        if not nowdate:
+            return '','',''
+        address = self.wallet.get_receiving_addresses()[0]
+        dtime = nowdate + datetime.timedelta(minutes=30)  # TODO 365
+        ans_time = int(time.mktime(dtime.timetuple()))
+        locktime = bitcoin.int_to_hex(ans_time)
+          #����Ҫ��Ҫ�������ǵ�Ѻ��ڵ�ȥ���ԣ�����
+        # pubkey_list = self.wallet.get_public_keys('Ug42mkgGFK37E2APeTVLy2yGB92U435cRA')
+
+        # bytePbk = pubkey_list[0].decode('hex')
+        # hashpbk = bitcoin.hash_160(bytePbk).encode('hex')
+
+        hash160pbk = bitcoin.bc_address_to_hash_160(address)[1]
+        hexpbk = hash160pbk.encode('hex')
+
+        # locktime = '5651c95b'
+        # hexpbk = 'f4f761ee9c15b4149386f792cc12e31084eed27b'
+        contract = '04' + locktime + 'b1' + '75' + '76' + 'a9' + '14' + hexpbk + '88' + 'ac'
+
+        contractbyt = contract.decode('hex')
+        contract160 = bitcoin.hash_160(contractbyt)
+        addr = bitcoin.hash_160_to_bc_address(contract160, 63)
+        return addr,hexpbk,locktime
+
+    def create_deposit_transaction(self):
+        if self.tabs.currentIndex() != 1:
+            self.tabs.setCurrentIndex(1)
+        self.depost_datetime = datetime.datetime.now()
+        addr,addr160,locktime = self.create_deposit_addr(self.depost_datetime)
+        self.payto_e.setText(addr)
+        self.amount_e.setText('2')#todo change to 1000000000000
+
+    def redeem_deposit_transaction(self):
+        #todo is deposit transaction?
+        #todo is redeem?
+        #�Д��Ƿ�δ�H�صĽ���
+        #�����M��Ӌ��
+        #��ʾ��ݔ���ܴa
+        txs = self.wallet.transactions
+        isDep = False
+        tx_deposits = []
+        tx_redeems = []
+        # for txid in txs:
+        #     tx = self.wallet.transactions.get(txid)
+        #     # if len(tx.outputs()) != 3:
+        #     #     continue
+        #     for v in tx.outputs():
+        #         if v[2] == 200000000:  #todo -1000000000000  200000000 is easy for test
+        #             isDep = True
+        #             txraws.append(tx)
+        #             break
+        for txoid in self.wallet.transactions:
+            txobj = self.wallet.transactions.get(txoid)
+            if txobj.outputs()<1:
+                continue
+            if txobj.outputs()[0][2] == 200000000:
+                tx_deposits.append(txobj)
+            else:
+                tx_redeems.append(txobj)
+
+        for red_tx in tx_redeems:
+            prev_hash = red_tx.inputs()[0]['prevout_hash']
+            prevout_n = red_tx.inputs()[0]['prevout_n']
+            if prevout_n != 0:
+                continue
+            for dep in tx_deposits:
+                if dep.hash()== prev_hash:
+                    tx_deposits.remove(dep)
+                    break
+        if len(tx_deposits)>0:
+            tx = tx_deposits[-1]
+        else:
+            return
+
+        tx_hash, status, label, can_broadcast, can_rbf, amount, fee, height, conf, timestamp, exp_n = self.wallet.get_tx_info(tx)
+
+        oprtn = tx.outputs()[-1]#todo change index to 2
+        oprtn_info = oprtn[1].encode('hex')
+        redeem_address_160 = oprtn_info[20:].decode('hex')
+        hex_lock_time = bitcoin.rev_hex(oprtn_info[12:20])
+        unix_lock_time = int(hex_lock_time,16)
+        redeem_address = bitcoin.hash_160_to_bc_address(redeem_address_160)
+        outputs =[]
+        fee = self.wallet.estimate_fee(self.config,226)
+        outputs.append((0, redeem_address, 200000000 - fee))#todo deduct tx fee 199995400
+        coins = []
+        coin ={
+            'address':redeem_address,
+            'coinbase':False,
+            'height':height,
+            'prevout_hash':tx_hash,
+            'prevout_n':0,
+            'value':200000000
+        }
+        coins.append(coin)
+        unsign_tx = self.wallet.make_unsigned_transaction(coins, outputs, self.config, None)
+        # fee = unsign_tx.get_fee()
+        # if 200000000 - unsign_tx.outputs()[0][2] < fee:
+        #     unsign_tx.outputs()[0][2] = 200000000 - fee
+        unsign_tx.locktime = unix_lock_time
+        prev_out_lock_time = oprtn_info[12:20]
+        prev_out_address = oprtn_info[20:]
+        unsign_tx.redeem_contract = '04' + prev_out_lock_time + 'b1' + '75' + '76' + 'a9' + '14' + prev_out_address + '88' + 'ac'
+        # self.wallet.sign_transaction(unsign_tx,'123')#todo password need provide
+        # self.broadcast_transaction(unsign_tx, None)
+        # return
+        msg = []
+        if self.wallet.has_password():
+            msg.append("")
+            msg.append(_("Enter your password to proceed"))
+            password = self.password_dialog('\n'.join(msg))
+            if not password:
+                return
+        else:
+            msg.append(_('Proceed?'))
+            password = None
+            if not self.question('\n'.join(msg)):
+                return
+        def sign_done(success):
+            if success:
+                if not unsign_tx.is_complete():
+                    self.show_transaction(unsign_tx)
+                    self.do_clear()
+                else:
+                    self.broadcast_transaction(unsign_tx, None)
+        self.sign_tx_with_password(unsign_tx, sign_done, password)
+
     def do_preview(self):
         self.do_send(preview = True)
 
@@ -1437,8 +1580,26 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             return
         outputs, fee, tx_desc, coins = r
         amount = sum(map(lambda x:x[2], outputs))
+
+        addr,addr160,locktime= self.create_deposit_addr(self.depost_datetime)
+        if addr == self.payto_e.text():#todo is deposit tx?
+            contract= '6a1c09010001'+locktime+addr160
+            outputs.append((2, contract.decode('hex'), 0))#todo contract must insert end of the outputs   ####.decode('hex')
         try:
             tx = self.wallet.make_unsigned_transaction(coins, outputs, self.config, fee)
+            if addr == self.payto_e.text():#todo is deposit tx?
+                tx.is_deposit_tx = True
+                oprtn = tx.outputs()[0]
+                oprtn_info = oprtn[1].encode('hex')
+                op_return = tx.outputs()[0]
+                tx.outputs().remove(op_return)
+                tx.add_outputs([op_return])
+                # tt = bitcoin.rev_hex(locktime)
+                # unix_lock_time = int(tt, 16)
+                # tx.locktime = unix_lock_time
+                # self.wallet.sign_transaction(tx, '123')
+                # self.broadcast_transaction(tx, None)
+                # return
         except NotEnoughFunds:
             self.show_message(_("Insufficient funds"))
             return
@@ -2171,7 +2332,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         if address.strip():
             address_e.setCurrentIndex(receiving_addresses.index(address))
         # address_e.setEditText(QString(address))
-        address_e.setFixedWidth(481)
+        address_e.setFixedWidth(481) 
         hlayoutMid.addWidget(QLabel(_('Sign Address')))
         hlayoutMid.addWidget(address_e)
 
@@ -2190,7 +2351,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
         hbox = QHBoxLayout()
         b_g = QPushButton(_("Generate the private key"))
-        b_rg = QPushButton(_("reGenerate the private key"))  # 重新生成
+        b_rg = QPushButton(_("reGenerate the private key"))  # ��������
         b_g.clicked.connect(lambda: self.generate_key(main_address_e,b_g,b_rg))
         b_rg.clicked.connect(lambda: self.regenerate_key(main_address_e,signature_e))
         hbox.addWidget(b_g)

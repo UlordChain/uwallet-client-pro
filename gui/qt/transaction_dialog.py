@@ -261,14 +261,17 @@ class TxDialog(QDialog, MessageBoxMixin):
             self.sign_button.show()
         else:
             self.sign_button.hide()
-
+        tx_hash = self.tx.hash()
         self.tx_hash_e.setText(tx_hash or _('Unknown'))
         if desc is None:
             self.tx_desc.hide()
         else:
             self.tx_desc.setText(_("Description") + ': ' + desc)
             self.tx_desc.show()
-        self.status_label.setText(_('Status:') + ' ' + status)
+        tx_hei,tx_conf,tx_time = self.wallet.get_tx_height(tx_hash)
+        c_status = _("%d confirmations") % tx_conf
+        text_status = status if status == c_status else c_status
+        self.status_label.setText(_('Status:') + ' ' + text_status)
 
         if timestamp:
             time_str = datetime.datetime.fromtimestamp(timestamp).isoformat(' ')[:-3]
@@ -293,7 +296,9 @@ class TxDialog(QDialog, MessageBoxMixin):
 
     def add_io(self, vbox):
         if self.tx.locktime > 0:
-            vbox.addWidget(QLabel("LockTime: %d\n" % self.tx.locktime))
+            timeArray = time.localtime(self.tx.locktime)
+            otherStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
+            vbox.addWidget(QLabel(_("LockTime:") + otherStyleTime))
 
         vbox.addWidget(QLabel(_("Inputs") + _(' %d txs')%len(self.tx.inputs())))
         ext = QTextCharFormat()
