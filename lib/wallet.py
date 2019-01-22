@@ -89,7 +89,7 @@ class Abstract_Wallet(PrintError):
         self.synchronizer = None
         self.verifier = None
 
-        self.gap_limit_for_change = 5 #6# constant
+        self.gap_limit_for_change = 6#5 #6# constant
         # saved fields
         self.use_change            = storage.get('use_change', True)
         self.multiple_change       = storage.get('multiple_change', False)
@@ -484,7 +484,10 @@ class Abstract_Wallet(PrintError):
     def get_addr_utxo(self, address):
         coins, spent = self.get_addr_io(address)
         for txi in spent:
-            coins.pop(txi)
+            try:
+                coins.pop(txi)
+            except:
+                continue
         out = []
         for txo, v in coins.items():
             tx_height, value, is_cb = v
@@ -523,12 +526,13 @@ class Abstract_Wallet(PrintError):
                     u -= v
         return c, u, x
 
-    def get_spendable_coins(self, domain = None, exclude_frozen = True,lock_txoids=[]):
+    def get_spendable_coins(self, domain = None, exclude_frozen = True,lock_txoids=[],pay_val=0):
         coins = []
         if domain is None:
             domain = self.get_addresses()
         if exclude_frozen:
             domain = set(domain) - self.frozen_addresses
+        coin_val = 0
         for addr in domain:
             utxos = self.get_addr_utxo(addr)
             for x in utxos:
@@ -536,7 +540,10 @@ class Abstract_Wallet(PrintError):
                     continue
                 if x['prevout_hash'] in lock_txoids:
                     continue
+                coin_val += x['value']
                 coins.append(x)
+                if pay_val > 0 and coin_val > pay_val:
+                    return coins
                 continue
         return coins
 
@@ -1336,7 +1343,7 @@ class Deterministic_Wallet(Abstract_Wallet):
 
     def __init__(self, storage):
         Abstract_Wallet.__init__(self, storage)
-        self.gap_limit = storage.get('gap_limit', 1)#20
+        self.gap_limit = storage.get('gap_limit', 21)#20#1
 
     def has_seed(self):
         return self.keystore.has_seed()

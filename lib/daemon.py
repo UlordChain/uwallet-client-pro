@@ -248,4 +248,5 @@ class Daemon(DaemonThread):
             gui_name = 'qt'
         gui = __import__('uwallet_gui.' + gui_name, fromlist=['uwallet_gui'])
         self.gui = gui.UWalletGui(config, self, plugins)
+
         self.gui.main()
