@@ -347,7 +347,7 @@ if __name__ == '__main__':
         cpath = os.path.join(p, "recent_servers")
         if os.path.exists(cpath):
             os.remove(cpath)
-        if os.path.exists(path):
+        if os.path.exists(path):#本地有header则与程序包header比较大小 无则跳过从网络下载最新header
             if os.path.exists(localheader):
                 if get_FileSize(localheader)>get_FileSize(path):
                     shutil.copyfile(localheader, path)
