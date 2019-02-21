@@ -16,9 +16,8 @@ Qt interface, then you need to install the Qt dependencies::
 
     sudo apt-get install python-qt4
 
-If you downloaded the official package (tar.gz), then you can run
-uwallet from its root directory, without installing it on your
-system; all the python dependencies are included in the 'packages'
+If you download the official package (tar.gz), you can run
+uwallet from its root directory directly; all the python dependencies are included in the 'packages'
 directory. To run uwallet from its root directory, just do::
 
     ./uwallet
