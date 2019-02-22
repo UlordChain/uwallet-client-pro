@@ -31,7 +31,7 @@ Version".
 Development version
 ===================
 
-Run install (this should install dependencies)::
+Run install (python dependencies needed)::
 
     python setup.py install
 
