@@ -23,8 +23,7 @@ directory. To run uwallet from its root directory, just do::
     ./uwallet
 
 If you cloned the git repository, then you need to compile extra files
-before you can run uwallet. Read the next section, "Development
-Version".
+before you can run uwallet. Please refer to "Development Version".
 
 
 
