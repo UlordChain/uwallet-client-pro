@@ -80,7 +80,7 @@ This directory contains the python dependencies used by uwallet.
 Windows
 -------
 
-See `contrib/build-wine/README` file.
+See `README <https://github.com/UlordChain/uwallet-client-pro/blob/master/contrib/build-wine/README>`_ file.
 
 
 Android
