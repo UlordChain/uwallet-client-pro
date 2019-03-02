@@ -1343,7 +1343,7 @@ class Deterministic_Wallet(Abstract_Wallet):
 
     def __init__(self, storage):
         Abstract_Wallet.__init__(self, storage)
-        self.gap_limit = storage.get('gap_limit', 21)#20#1
+        self.gap_limit = storage.get('gap_limit', 1)#20#1
 
     def has_seed(self):
         return self.keystore.has_seed()

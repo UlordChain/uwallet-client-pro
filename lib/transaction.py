@@ -322,12 +322,14 @@ def parse_scriptSig(d, bytes):
         x_pubkey = decoded[1][1].encode('hex')
         try:
             signatures = parse_sig([sig])
-            pubkey, address = xpubkey_to_address(x_pubkey)
+            # pubkey, address = xpubkey_to_address(x_pubkey) #if parse_sig error over this
         except:
             import traceback
+            signatures = sig
             traceback.print_exc(file=sys.stdout)
             print_error("cannot find address in input script", bytes.encode('hex'))
-            return
+            # return
+        pubkey, address = xpubkey_to_address(x_pubkey)
         d['signatures'] = signatures
         d['x_pubkeys'] = [x_pubkey]
         d['num_sig'] = 1
@@ -391,25 +393,28 @@ def get_address_from_output_script(bytes):
 
 
 def parse_input(vds):
-    d = {}
-    prevout_hash = hash_encode(vds.read_bytes(32))
-    prevout_n = vds.read_uint32()
-    scriptSig = vds.read_bytes(vds.read_compact_size())
-    d['scriptSig'] = scriptSig.encode('hex')
-    sequence = vds.read_uint32()
-    if prevout_hash == '00'*32:
-        d['is_coinbase'] = True
-    else:
-        d['is_coinbase'] = False
-        d['prevout_hash'] = prevout_hash
-        d['prevout_n'] = prevout_n
-        d['sequence'] = sequence
-        d['pubkeys'] = []
-        d['signatures'] = {}
-        d['address'] = None
-        if scriptSig:
-            parse_scriptSig(d, scriptSig)
-    return d
+    try:
+        d = {}
+        prevout_hash = hash_encode(vds.read_bytes(32))
+        prevout_n = vds.read_uint32()
+        scriptSig = vds.read_bytes(vds.read_compact_size())
+        d['scriptSig'] = scriptSig.encode('hex')
+        sequence = vds.read_uint32()
+        if prevout_hash == '00'*32:
+            d['is_coinbase'] = True
+        else:
+            d['is_coinbase'] = False
+            d['prevout_hash'] = prevout_hash
+            d['prevout_n'] = prevout_n
+            d['sequence'] = sequence
+            d['pubkeys'] = []
+            d['signatures'] = {}
+            d['address'] = None
+            if scriptSig:
+                parse_scriptSig(d, scriptSig)
+        return d
+    except:
+        print "parse_inputs error"
 
 
 def parse_output(vds, i):

@@ -317,6 +317,7 @@ class TxDialog(QDialog, MessageBoxMixin):
         def format_amount(amt):
             return self.main_window.format_amount(amt, whitespaces = True)
 
+        '30440220548daebd80ed5ef06c7135232ceba378fecdb6238431b3b55aa046afc885af3802203b5e8884217c3417c6f9c7e34d4e6fc283c3d3c92ca34f73be99ffffb195ad6a01'
         i_text = QTextEditEx()
         i_text.setFont(QFont(MONOSPACE_FONT))
         i_text.setReadOnly(True)

@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['uwallet'],
-             pathex=['C:\\Work\\uwallet-client-pro'],
+             pathex=['D:\\Work\\uwallet-client-pro'],
              binaries=[],
              datas=[],
              hiddenimports=['queue'],

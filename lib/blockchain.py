@@ -100,7 +100,7 @@ class Blockchain(util.PrintError):
                                 s = str(self.set_step)+"/" + str(self.height_diff)
                                 s.rjust(1024, '\x00')
                                 m.write(s)
-                                m.flush()
+                                m.flush( )
             except BaseException, ex:
                 print 'writemmpErro: index:', self.set_step
                 print ex

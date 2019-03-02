@@ -69,7 +69,7 @@ import math
 import mmap
 import contextlib
 import subprocess
-import win32api
+# import win32api
 systemname = platform.system()
 if systemname == 'darwin':
     is_macos = True
@@ -1434,28 +1434,15 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
 
     def create_deposit_addr(self,nowdate):
-        # ���ȹ���str ��������в鿴��Լ���췽ʽ��Ȼ��sublime������.cpp���鿴�����ɺ�Լ�ķ�ʽ
-        #	CScript timeLockScript =	CScript() << lockTime << OP_CHECKLOCKTIMEVERIFY << OP_DROP << OP_DUP << OP_HASH160\
-        # << ToByteVector(uRecAdr) << OP_EQUALVERIFY << OP_CHECKSIG;
-        # //uRecAdrΪ��Կ��ϣ��ʮ�����Ʊ���Ҳ���ǹ�Կ�� ToByteVectorΪ��ȡ���볤���ټ���ȥ
-        # aaa = bitcoin.hash_160('045498ce5bb17576a91410a244ddcb0de0223fe3bdcdcfb8c2cb128d368d88ac'.decode('hex')).encode('hex')
         if not nowdate:
             return '','',''
         address = self.wallet.get_receiving_addresses()[0]
         dtime = nowdate + datetime.timedelta(minutes=30)  # TODO 365
         ans_time = int(time.mktime(dtime.timetuple()))
         locktime = bitcoin.int_to_hex(ans_time)
-          #����Ҫ��Ҫ�������ǵ�Ѻ��ڵ�ȥ���ԣ�����
-        # pubkey_list = self.wallet.get_public_keys('Ug42mkgGFK37E2APeTVLy2yGB92U435cRA')
-
-        # bytePbk = pubkey_list[0].decode('hex')
-        # hashpbk = bitcoin.hash_160(bytePbk).encode('hex')
-
         hash160pbk = bitcoin.bc_address_to_hash_160(address)[1]
         hexpbk = hash160pbk.encode('hex')
 
-        # locktime = '5651c95b'
-        # hexpbk = 'f4f761ee9c15b4149386f792cc12e31084eed27b'
         contract = '04' + locktime + 'b1' + '75' + '76' + 'a9' + '14' + hexpbk + '88' + 'ac'
 
         contractbyt = contract.decode('hex')
@@ -1474,22 +1461,10 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
     def redeem_deposit_transaction(self):
         #todo is deposit transaction?
         #todo is redeem?
-        #�Д��Ƿ�δ�H�صĽ���
-        #�����M��Ӌ��
-        #��ʾ��ݔ���ܴa
         txs = self.wallet.transactions
         isDep = False
         tx_deposits = []
         tx_redeems = []
-        # for txid in txs:
-        #     tx = self.wallet.transactions.get(txid)
-        #     # if len(tx.outputs()) != 3:
-        #     #     continue
-        #     for v in tx.outputs():
-        #         if v[2] == 200000000:  #todo -1000000000000  200000000 is easy for test
-        #             isDep = True
-        #             txraws.append(tx)
-        #             break
         for txoid in self.wallet.transactions:
             txobj = self.wallet.transactions.get(txoid)
             if txobj.outputs()<1:
@@ -1535,16 +1510,12 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         }
         coins.append(coin)
         unsign_tx = self.wallet.make_unsigned_transaction(coins, outputs, self.config, None)
-        # fee = unsign_tx.get_fee()
-        # if 200000000 - unsign_tx.outputs()[0][2] < fee:
-        #     unsign_tx.outputs()[0][2] = 200000000 - fee
+
         unsign_tx.locktime = unix_lock_time
         prev_out_lock_time = oprtn_info[12:20]
         prev_out_address = oprtn_info[20:]
         unsign_tx.redeem_contract = '04' + prev_out_lock_time + 'b1' + '75' + '76' + 'a9' + '14' + prev_out_address + '88' + 'ac'
-        # self.wallet.sign_transaction(unsign_tx,'123')#todo password need provide
-        # self.broadcast_transaction(unsign_tx, None)
-        # return
+
         msg = []
         if self.wallet.has_password():
             msg.append("")
@@ -1594,12 +1565,6 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                 op_return = tx.outputs()[0]
                 tx.outputs().remove(op_return)
                 tx.add_outputs([op_return])
-                # tt = bitcoin.rev_hex(locktime)
-                # unix_lock_time = int(tt, 16)
-                # tx.locktime = unix_lock_time
-                # self.wallet.sign_transaction(tx, '123')
-                # self.broadcast_transaction(tx, None)
-                # return
         except NotEnoughFunds:
             self.show_message(_("Insufficient funds"))
             return
