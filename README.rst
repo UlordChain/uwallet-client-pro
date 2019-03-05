@@ -86,4 +86,4 @@ See `README <https://github.com/UlordChain/uwallet-client-pro/blob/master/contri
 Android
 -------
 
-See `gui/kivy/Readme.txt` file.
+See `README <https://github.com/UlordChain/uwallet-client-pro/blob/master/gui/kivy/Readme.txt>`_ file.
