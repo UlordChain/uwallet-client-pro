@@ -51,7 +51,7 @@ Create translations::
 
 
 
-Install on Linux systems
+Installing on Linux system
 ========================
 
 If you install uwallet on your system, you can run it from any
