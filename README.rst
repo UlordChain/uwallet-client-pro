@@ -86,4 +86,4 @@ See `Windows README <https://github.com/UlordChain/uwallet-client-pro/blob/maste
 Android
 -------
 
-See `Android README <https://github.com/UlordChain/uwallet-client-pro/blob/master/gui/kivy/Readme.txt>`_ file.
+See `Android README <https://github.com/UlordChain/uwallet-client-pro/blob/master/gui/kivy/Readme.rst>`_ file.
