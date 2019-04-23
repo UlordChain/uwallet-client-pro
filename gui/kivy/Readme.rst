@@ -1,4 +1,4 @@
-?Getting start
+Getting start
 ===============
 Before compiling, create packages: `contrib/make_packages`
 
