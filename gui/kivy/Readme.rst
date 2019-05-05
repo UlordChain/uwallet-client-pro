@@ -9,8 +9,7 @@ Commands::
     `make apk` to make a apk
 
 
-If something in included modules like kivy or any other module changes
-then you need to rebuild the distribution. To do so:
+If modules included by the project are changed, like kivy or any other modules, rebuilding is needed:
 
   rm -rf .buildozer/android/platform/python-for-android/dist
 
