@@ -34,6 +34,8 @@ import shutil
 #576#96 #576
 MAX_TARGET = 0x000009b173000000000000000000000000000000000000000000000000000000 #0x00000000FFFF0000000000000000000000000000000000000000000000000000 qpc
 NULL_HASH = '0000000000000000000000000000000000000000000000000000000000000000'
+HEADER_SIZE= 180
+POS_BLOCK_HEIGHT = 314672
 
 def get_FileSize(filePath):
     # filePath = unicode(filePath,'utf8')
@@ -46,7 +48,7 @@ class Blockchain(util.PrintError):
     def __init__(self, config, network):
         self.config = config
         self.network = network
-        self.headers_url = 'https://ulord.one/UWalletLite_file/blockchain_headers'#"http://119.27.188.44:8080/downloads/blockchain_headers"
+        self.headers_url = ''#'https://ulord.one/UWalletLite_file/blockchain_headers'#"http://119.27.188.44:8080/downloads/blockchain_headers"
         self.local_height = 0
         self.set_local_height()
         self.set_step = 0
@@ -67,7 +69,7 @@ class Blockchain(util.PrintError):
         assert prev_hash == header.get('prev_block_hash'), "prev hash mismatch: %s vs %s" % (prev_hash, header.get('prev_block_hash'))
         assert bits == header.get('bits'), "bits mismatch: %s vs %s" % (bits, header.get('bits'))
         _hash = self.hash_header(header)
-        assert int('0x' + _hash, 16) <= target, "insufficient proof of work: %s vs target %s" % (int('0x' + _hash, 16), target)
+        # assert int('0x' + _hash, 16) <= target, "insufficient proof of work: %s vs target %s" % (int('0x' + _hash, 16), target)
 
     def verify_chain(self, chain):
         # first_header = chain[0]  stadium wide feature answer still emerge pause make melt chapter thank entire
@@ -106,15 +108,18 @@ class Blockchain(util.PrintError):
                 print ex
 
     def verify_chunk(self, index, data):
-        num = len(data) // 140
+        num = len(data) // HEADER_SIZE
         prev_header = None
         if index != 0:
             prev_header = self.read_header(index * self.CHUNK_SIZE - 1)
         for i in range(num):
-            raw_header = data[i * 140:(i + 1) * 140]
+            raw_header = data[i * HEADER_SIZE:(i + 1) * HEADER_SIZE]
             header = self.deserialize_header(raw_header)
             bits, target = self.get_target(index * self.CHUNK_SIZE + i, prev_header, header)
             if header is not None:
+                prev_hash = self.hash_header(prev_header)
+                if prev_hash != header.get('prev_block_hash'):
+                    print prev_hash
                 self.verify_header(header, prev_header, bits, target)
             prev_header = header
             try:
@@ -137,18 +142,36 @@ class Blockchain(util.PrintError):
                 print ex
 
     def serialize_header(self, res):
+        pbh = res.get('prev_block_hash')
+        if pbh is None:
+            pbh = '0' * 64
         s= ''
         try:
             s = int_to_hex(res.get('version'), 4) \
-                + rev_hex(self.get_block_hash(res)) \
-                + rev_hex(res.get('merkle_root')) \
-                + rev_hex(res.get('claim_trie_root')) \
-                + int_to_hex(int(res.get('timestamp')), 4) \
-                + int_to_hex(int(res.get('bits')), 4) \
-                + rev_hex(res.get('nonce'))
+                   + rev_hex(pbh) \
+                   + rev_hex(res.get('merkle_root')) \
+                   + rev_hex(res.get('claim_trie_root')) \
+                   + int_to_hex(int(res.get('timestamp')), 4) \
+                   + int_to_hex(int(res.get('bits')), 4) \
+                   + rev_hex(res.get('nonce')) \
+                   + int_to_hex(int(res.get('block_height')), 4) \
+                   + int_to_hex(int(res.get('produceno')), 4) \
+                   + rev_hex(res.get('votemasterno'))
         except Exception,e:
             print e
         return s
+
+    def serialize_header_nopos(self,res):
+        pbh = res.get('prev_block_hash')
+        if pbh is None:
+            pbh = '0' * 64
+        return int_to_hex(res.get('version'), 4) \
+               + rev_hex(pbh) \
+               + rev_hex(res.get('merkle_root')) \
+               + rev_hex(res.get('claim_trie_root')) \
+               + int_to_hex(int(res.get('timestamp')), 4) \
+               + int_to_hex(int(res.get('bits')), 4) \
+               + rev_hex(res.get('nonce'))
 
     def get_block_hash(self, header):
         block_hash = header.get('prev_block_hash')
@@ -159,20 +182,41 @@ class Blockchain(util.PrintError):
             return NULL_HASH
 
     def deserialize_header(self, s):
-        h = {}
-        h['version'] = hex_to_int(s[0:4])
-        h['prev_block_hash'] = hash_encode(s[4:36])
-        h['merkle_root'] = hash_encode(s[36:68])
-        h['claim_trie_root'] = hash_encode(s[68:100])
-        h['timestamp'] = hex_to_int(s[100:104])
-        h['bits'] = hex_to_int(s[104:108])
-        h['nonce'] = hash_encode(s[108:140])
+        # h = {}
+        # h['version'] = hex_to_int(s[0:4])
+        # h['prev_block_hash'] = hash_encode(s[4:36])
+        # h['merkle_root'] = hash_encode(s[36:68])
+        # h['claim_trie_root'] = hash_encode(s[68:100])
+        # h['timestamp'] = hex_to_int(s[100:104])
+        # h['bits'] = hex_to_int(s[104:108])
+        # h['nonce'] = hash_encode(s[108:140])
+        # h['block_height'] = hex_to_int(s[140:144]),
+        # h['produceno'] = hex_to_int(s[144:148]),
+        # h['votemasterno'] = hash_encode(s[148:180])
+
+        h = {
+            'version': hex_to_int(s[0:4]),
+            'prev_block_hash': hash_encode(s[4:36]),
+            'merkle_root': hash_encode(s[36:68]),
+            'claim_trie_root': hash_encode(s[68:100]),
+            'timestamp': hex_to_int(s[100:104]),
+            'bits': hex_to_int(s[104:108]),
+            'nonce': hash_encode(s[108:140]),
+            'block_height': hex_to_int(s[140:144]),
+            'produceno': hex_to_int(s[144:148]),
+            'votemasterno': hash_encode(s[148:180])
+            # 'solution': hash_encode(s[140:1484]) #3 1487
+        }
         return h
 
     def hash_header(self, header):
         if header is None:
             return '0' * 64
-        return hash_encode(Hash_Header(self.serialize_header(header).decode('hex')))
+        blockheight = header.get('block_height')
+        if blockheight > POS_BLOCK_HEIGHT:
+            return hash_encode(Hash_Header(self.serialize_header(header).decode('hex')))
+        else:
+            return hash_encode(Hash_Header_nopos(self.serialize_header_nopos(header).decode('hex')))
 
     def path(self):
         return util.get_headers_path(self.config)
@@ -201,18 +245,18 @@ class Blockchain(util.PrintError):
     def save_chunk(self, index, chunk):
         filename = self.path()
         f = open(filename, 'rb+')
-        f.seek(index * self.CHUNK_SIZE * 140) #qpc
+        f.seek(index * self.CHUNK_SIZE * HEADER_SIZE) #qpc
         h = f.write(chunk)
         f.close()
         self.set_local_height()
 
     def save_header(self, header):
         data = self.serialize_header(header).decode('hex')
-        assert len(data) == 140#qpc
+        assert len(data) == HEADER_SIZE#qpc
         height = header.get('block_height')
         filename = self.path()
         f = open(filename, 'rb+')
-        f.seek(height * 140)#qpc
+        f.seek(height * HEADER_SIZE)#qpc
         h = f.write(data)
         f.close()
         self.set_local_height()
@@ -220,7 +264,7 @@ class Blockchain(util.PrintError):
     def set_local_height(self):
         name = self.path()
         if os.path.exists(name):
-            h = os.path.getsize(name)/140 - 1#qpc
+            h = os.path.getsize(name)/HEADER_SIZE - 1#qpc
             if self.local_height != h:
                 self.local_height = h
 
@@ -228,10 +272,10 @@ class Blockchain(util.PrintError):
         name = self.path()
         if os.path.exists(name):
             f = open(name, 'rb')
-            f.seek(block_height * 140)#qpc
-            h = f.read(140)#qpc
+            f.seek(block_height * HEADER_SIZE)#qpc
+            h = f.read(HEADER_SIZE)#qpc
             f.close()
-            if len(h) == 140:#qpc
+            if len(h) == HEADER_SIZE:#qpc
                 h = self.deserialize_header(h)
                 return h
 

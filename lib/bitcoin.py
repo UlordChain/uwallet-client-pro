@@ -26,7 +26,7 @@
 import os
 import sys
 sys.path.append(os.path.realpath('.'))#qpc
-from cryptohello_hash import cryptohello_hash
+
 
 import hashlib
 import base64
@@ -36,7 +36,7 @@ import hmac
 from signmessage import *
 import version
 from util import print_error, InvalidPassword
-
+from cryptohello_hash import cryptohello_hash
 import ecdsa
 import aes
 
@@ -51,6 +51,7 @@ COIN = 100000000
 TYPE_ADDRESS = 0
 TYPE_PUBKEY  = 1
 TYPE_SCRIPT  = 2
+NODE_REG = 3
 
 
 # AES encryption
@@ -163,8 +164,11 @@ def Hash(x):
 def Hash_Header(x):
     if type(x) is unicode:
         x = x.encode('utf-8')
-    return cryptohello_hash(x,1) #qpc
+    return sha256(x)
 
+def Hash_Header_nopos(x):
+    if type(x) is unicode: x = x.encode('utf-8')
+    return cryptohello_hash(x, 1)  #qpc1)
 
 hash_encode = lambda x: x[::-1].encode('hex')
 hash_decode = lambda x: x.decode('hex')[::-1]

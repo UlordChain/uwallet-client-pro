@@ -34,7 +34,6 @@ import csv
 from decimal import Decimal
 import base64
 from functools import partial
-
 import PyQt4
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -69,7 +68,8 @@ import math
 import mmap
 import contextlib
 import subprocess
-# import win32api
+import requests,json
+
 systemname = platform.system()
 if systemname == 'darwin':
     is_macos = True
@@ -175,7 +175,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
                         # os.system("python progressbarWindow.py")
                         si = subprocess.STARTUPINFO()
                         si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                        subprocess.call('progressbarWindow.exe', startupinfo=si)
+                        subprocess.call('progressbarWindow.exe %s' % ('downHeader'), startupinfo=si)
                         # if (self.network.max_block_height - self.network.blockchain.local_height) > self.network.blockchain.CHUNK_SIZE-1:
                         #     sys.exit(0)
                 except Exception,ex:
@@ -266,6 +266,134 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.connect_slots(gui_object.timer)
         self.is_show_warning =False
         self.set_receive_address()
+        self.merge_utxo(False)
+        # self.merge_utxo(False)
+
+    def merge_utxo(self, menu=True):
+        try:
+            # addresses =  self.wallet.get_addresses()
+            # l = len(addresses)
+            # for tx in self.wallet.get_history(self.wallet.get_addresses()):
+            #     tx_hash, height, conf, timestamp, value, balance = tx
+            #     if tx_hash == '79f64e9cf876782b8f11641cf3681739d747301f12b6f97957d79200872e3546':
+            #         a = 1
+            spendCoins = self.wallet.get_spendable_coins()
+            spendCoinsLen = len(spendCoins)
+            utxoMergeCount = 100
+            loopCount = spendCoinsLen / utxoMergeCount + 1
+            if spendCoinsLen > 200:
+
+                tx,amout = self.mk_tx(spendCoins[0:utxoMergeCount])
+                txfee = 0L
+                for output in tx.get_outputs():
+                    txfee += output[1]
+                txfee = amout - txfee
+                mergetxfee = str(txfee * loopCount / 100000000.0)
+                msg =_('Too many UTXO are detected in your wallet, which will cause your wallet to respond very slowly. It is suggested that you merge UTXO, but some charges will be incurred.')+'\n\n'+ _("Fee:") +':  ' +mergetxfee+'UT'+'\n'+ 'UTXO:  ' + str(spendCoinsLen)
+
+                if self.question(msg, title="UWalletLite - " + _("Warning")):
+                    password = None
+                    msg = ''
+                    if self.wallet.has_password() and password == None:
+                        msg = _("Enter your password to proceed")
+                        password = self.password_dialog(msg)
+                        if not password:
+                            self.show_message(_("Incorrect password"));
+                            return
+                        else:
+                            try:
+                                if password:
+                                    self.wallet.check_password(password)
+                            except Exception as e:
+                                self.show_message(_("Incorrect password"));
+                                return
+                    with open("process.dat", "w") as f:
+                        f.write('\x00' * 1024)
+                    with open('process.dat', 'r+') as f:
+                        with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                            m.seek(0)
+                            s = str(0) + "/" + str(spendCoinsLen) + "/merge"
+                            s.rjust(1024, '\x00')
+                            m.write(s)
+                            m.flush()
+
+                    # with open("processResult.dat", "w") as f:
+                    #     f.write('\x00' * 1024)
+                    # with open('processResult.dat', 'r+') as f:
+                    #     with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                    #         m.seek(0)
+                    #         s = "merge_start"
+                    #         s.rjust(1024, '\x00')
+                    #         m.write(s)
+                    #         m.flush()
+
+                    # os.system('start D:\Work\uwallet-client-pro\dist\progressbarWindow\progressbarWindow.exe %s' % ('merge'))
+                    os.system('start progressbarWindow.exe %s' % ('merge'))
+                    self.hide()
+                    for i in range(loopCount):
+                        try:
+                            mergeCoins = spendCoins[i * utxoMergeCount:i * utxoMergeCount + utxoMergeCount]
+                            tx, amout = self.mk_tx(mergeCoins)
+                            tx.set_merge_progress_count(i * utxoMergeCount + (len(mergeCoins) - len(tx.inputs())),
+                                                        spendCoinsLen)
+                            self.wallet.sign_transaction(tx, password)
+                            status, msg = self.network.broadcast(tx)
+                        except Exception, ex:
+                            if ex.message == 'user cancel utxo_merge':
+                                self.show_message(_(ex.message));
+                                break
+                            else:
+                                print  ex.message
+                                continue
+                    # with open("processResult.dat", "w") as f:
+                    #     f.write('\x00' * 1024)
+                    # with open('processResult.dat', 'r+') as f:
+                    #     with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                    #         m.seek(0)
+                    #         s = "merge_over"
+                    #         s.rjust(1024, '\x00')
+                    #         m.write(s)
+                    #         m.flush()
+                    with open("process.dat", "w") as f:
+                        f.write('\x00' * 1024)
+                    with open('process.dat', 'r+') as f:
+                        with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                            m.seek(0)
+                            s = str(spendCoinsLen) + "/" + str(spendCoinsLen) + "/merge"
+                            s.rjust(1024, '\x00')
+                            m.write(s)
+                            m.flush()
+                    self.invoices.save()
+                    self.invoice_list.update()
+            else:
+                if menu:
+                    self.show_message(_('need not merge UTXO'));
+        except Exception, ex:
+            if ex.message == "'NoneType' object is not iterable":
+                self.show_message(_('Transaction Fee is too high'));
+            else:
+                self.show_message(_(ex.message));
+        if self.is_hidden():
+            self.setHidden(False)
+
+    def mk_tx(self,mergeCoins):
+        amount = 0L
+        if len(mergeCoins) == 0:
+            return
+        for c in mergeCoins:
+            amount += int(c['value'])
+        address = self.wallet.get_receiving_addresses()[0]
+        fee = None
+        if amount- 5000000>0:
+            outputs = [(0, address, amount - 5000000)] #5000000 预留的交易费
+        else:
+            outputs = [(0, address, (int)(amount*0.9))]
+        try:
+            tx = self.wallet.make_unsigned_transaction(mergeCoins, outputs, self.config, fee)
+            self.not_enough_funds = False
+            return tx , amount
+        except NotEnoughFunds:
+            self.not_enough_funds = True
 
     def is_macos(self):
         return is_macos
@@ -625,12 +753,18 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         # tools_menu.addAction(_("&Plugins"), self.plugins_dialog)
         tools_menu.addSeparator()
         tools_menu.addAction(_("&Sign/verify message"), self.sign_verify_message)
-        tools_menu.addAction(_("&Create deposit transaction"), self.create_deposit_transaction)
-        tools_menu.addAction(_("&Create Redeem transaction"), self.redeem_deposit_transaction)
         tools_menu.addAction(_("&Encrypt/decrypt message"), self.encrypt_message)
+        # tools_menu.addAction(_("&Create deposit transaction"), self.create_deposit_transaction)
+        # tools_menu.addAction(_("&Create Redeem transaction"), self.redeem_deposit_transaction)
+        tools_menu.addSeparator()
+
+        tools_menu.addAction(_("&MasterNode Regist"), self.masternode_regist_dialog)
+        # tools_menu.addAction(_("&Certificate Update"), self.masternode_update_dialog)
         tools_menu.addSeparator()
 
         paytomany_menu = tools_menu.addAction(_("&Pay to many"), self.paytomany)
+        tools_menu.addSeparator()
+        tools_menu.addAction(_("Merge UTXO"), self.merge_utxo)
 
         raw_transaction_menu = tools_menu.addMenu(_("&Load transaction"))
         raw_transaction_menu.addAction(_("&Local file loading"), self.do_process_from_file)
@@ -2208,6 +2342,17 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         b_g.setEnabled(False)
         b_rg.setEnabled(True)
 
+    def generate_pubkey(self,prvkey,regm,pubkey_edit):
+        try:
+            if prvkey == None or prvkey == '':
+                self.show_warning(_('Please enter the master special code'))
+                return
+            private_key = BitcoinPrivateKey(prvkey)
+            regm.setEnabled(True)
+            pubkey_edit.setText(private_key.public_key().to_hex())
+        except:
+            self.show_warning(_('Please check the master special code'))
+
     def regenerate_key(self,main_address_e,signature_e):
         if not self.question(_('Warning: click the regenerate button to regenerate the master node certificate. Do you want to continue?')):#警告：点击重新生成按钮将会重新生成主节点证书,是否继续?
             return
@@ -2271,6 +2416,322 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         else:
             self.show_error(_("Wrong signature"))
 
+    def masternode_update_dialog(self):
+        mainnodeCert = os.path.join(util.user_dir(), "mnode_cert")
+        txid = index = ip = puk = ''
+        if os.path.exists(mainnodeCert):
+            with open(mainnodeCert, 'r') as f:
+                certInfo = json.loads(f.read())
+                txid = certInfo['txid']
+                index = certInfo['index']
+                ip = certInfo['ip']
+                puk = certInfo['puk']
+        d = WindowModalDialog(self, _("Certificate Update"))
+        d.setMaximumSize(610, 340)
+        d.setMinimumSize(610, 340)
+        layout = QVBoxLayout(d)
+        d.setTitleBar(layout)
+
+        txidlayout=QHBoxLayout()
+        layout.addLayout(txidlayout)
+        txid_edit = QLineEditEx()
+        txid_edit.setMaximumWidth(480)
+        txid_edit.setPlaceholderText(_("send 10000ut to USu35JzWCXSvgvDL1utfFzb52zR1fdkfZ9..."))
+        txid_edit.setText(txid)
+        txidlayout.addWidget(QLabel(_('txid')))
+        txidlayout.addWidget(txid_edit)
+
+        indexlayout = QHBoxLayout()
+        layout.addLayout(indexlayout)
+        index_edit = QLineEditEx()
+        index_edit.setMaximumWidth(480)
+        index_edit.setPlaceholderText(_("Get it from the Blockchain Explorer or UWallet..."))
+        index_edit.setText(str(index))
+        indexlayout.addWidget(QLabel(_('index')))
+        indexlayout.addWidget(index_edit)
+
+        certlayout = QHBoxLayout()
+        layout.addLayout(certlayout)
+        cert_edit = QLineEditEx()
+        cert_edit.setMaximumWidth(480)
+        cert_edit.setPlaceholderText(_("Get it from the Developer community..."))
+        certlayout.addWidget(QLabel(_('certificate')))
+        certlayout.addWidget(cert_edit)
+
+        vtimelayout = QHBoxLayout()
+        layout.addLayout(vtimelayout)
+        vtime_edit = QLineEditEx()
+        vtime_edit.setPlaceholderText(_("Get it from the Developer community..."))
+        vtime_edit.setMaximumWidth(480)
+        vtimelayout.addWidget(QLabel(_('validdate')))
+        vtimelayout.addWidget(vtime_edit)
+
+        iplayout=QHBoxLayout()
+        layout.addLayout(iplayout)
+        ipedit = Ip4Edit()
+        if ip != '':
+            ipedit.setText(ip)
+        ipedit.setMaximumWidth(480)
+        iplayout.addWidget(QLabel(_('masterNode ip')))
+        iplayout.addWidget(ipedit)
+
+
+        pubkeylayout = QHBoxLayout()
+        layout.addLayout(pubkeylayout)
+        pubkey_edit = QLineEditEx()
+        pubkey_edit.setMaximumWidth(480)
+
+        pubkey_edit.setText(puk)
+        pubkeylayout.addWidget(QLabel(_('public key')))
+        pubkeylayout.addWidget(pubkey_edit)
+
+        hbox = QHBoxLayout()
+        regm = QPushButton(_("Certificate Update"))
+        regm.clicked.connect(lambda: self.masternode_regist(txid_edit,index_edit,cert_edit,vtime_edit,ipedit,pubkey_edit,2))
+        hbox.addWidget(regm)
+        b = QPushButton(_("Close"))
+        b.clicked.connect(d.accept)
+        hbox.addWidget(b)
+        layout.addLayout(hbox)
+        d.exec_()
+
+#交易可用庆平发的json再测试一波
+    def masternode_regist_dialog(self):
+        d = WindowModalDialog(self, _("MasterNode Regist"))
+        d.setMaximumSize(610, 390)
+        d.setMinimumSize(610, 390)
+        layout = QVBoxLayout(d)
+        d.setTitleBar(layout)
+
+        txidlayout=QHBoxLayout()
+        layout.addLayout(txidlayout)
+        txid_edit = QLineEditEx()
+        txid_edit.setPlaceholderText( _("send 10000ut to USu35JzWCXSvgvDL1utfFzb52zR1fdkfZ9..."))
+        txid_edit.setMaximumWidth(480)
+        txid = ''
+        index=''
+
+        txid_edit.setText(txid)
+        txidlayout.addWidget(QLabel(_('txid')))
+        txidlayout.addWidget(txid_edit)
+
+        indexlayout = QHBoxLayout()
+        layout.addLayout(indexlayout)
+        index_edit = QLineEditEx()
+        index_edit.setMaximumWidth(480)
+        index_edit.setPlaceholderText(_("Get it from the Blockchain Explorer or UWallet..."))
+        index_edit.setText(str(index))
+        indexlayout.addWidget(QLabel(_('index')))
+        indexlayout.addWidget(index_edit)
+
+        certlayout = QHBoxLayout()
+        layout.addLayout(certlayout)
+        cert_edit = QLineEditEx()
+        cert_edit.setMaximumWidth(480)
+        cert_edit.setPlaceholderText(_("Get it from the Developer community..."))
+        certlayout.addWidget(QLabel(_('certificate')))
+        certlayout.addWidget(cert_edit)
+
+        vtimelayout = QHBoxLayout()
+        layout.addLayout(vtimelayout)
+        vtime_edit = QLineEditEx()
+        vtime_edit.setMaximumWidth(480)
+        vtime_edit.setPlaceholderText(_("Get it from the Developer community..."))
+        vtimelayout.addWidget(QLabel(_('validdate')))
+        vtimelayout.addWidget(vtime_edit)
+
+        iplayout=QHBoxLayout()
+        layout.addLayout(iplayout)
+        ipedit = Ip4Edit()
+        ipedit.setMaximumWidth(480)
+        # ipedit.setPlaceholderText(_("Get it from the Developer community..."))
+        iplayout.addWidget(QLabel(_('masterNode ip')))
+        iplayout.addWidget(ipedit)
+
+        pvkeylayout = QHBoxLayout()
+        layout.addLayout(pvkeylayout)
+        pvkey_edit = QLineEditEx()
+        pvkey_edit.setMaximumWidth(480)
+        pvkey_edit.setPlaceholderText(_("Get it from the Developer community..."))
+        pvkeylayout.addWidget(QLabel(_('master special code')))
+        pvkeylayout.addWidget(pvkey_edit)
+
+        pubkeylayout = QHBoxLayout()
+        layout.addLayout(pubkeylayout)
+        pubkey_edit = QLineEditEx()
+        pubkey_edit.setMaximumWidth(480)
+        pubkey_edit.setPlaceholderText(_("click generate pubkey..."))
+        pubkeylayout.addWidget(QLabel(_('public key')))
+        pubkeylayout.addWidget(pubkey_edit)
+
+        hbox = QHBoxLayout()
+        gpub = QPushButton(_("generate pubkey"))
+        regm = QPushButton(_("regist masternode"))
+        regm.setEnabled(False)
+        gpub.clicked.connect(lambda: self.generate_pubkey(pvkey_edit.text(),regm,pubkey_edit))
+        regm.clicked.connect(lambda: self.masternode_regist(txid_edit,index_edit,cert_edit,vtime_edit,ipedit,pubkey_edit,1))
+        hbox.addWidget(gpub)
+        hbox.addWidget(regm)
+        b = QPushButton(_("Close"))
+        b.clicked.connect(d.accept)
+        hbox.addWidget(b)
+        layout.addLayout(hbox)
+        d.exec_()
+
+
+    def masternode_regist(self,txid_edit,index_edit,cert_edit,vtime_edit,ipedit,pubkey_edit,oper):
+
+        txid = str(txid_edit.text()).strip()
+        index = str(index_edit.text()).strip()
+        cert = str(cert_edit.text()).strip()
+        try:
+            chtime = str(vtime_edit.text()).strip()
+            timeArray = time.strptime(chtime, "%Y-%m-%d %H:%M:%S")
+            validate = str(int(time.mktime(timeArray)))
+        except:
+            self.show_warning(_('Date format error, please use  2019-01-01 23:59:59'))
+            return
+        amount = 5000000000;
+        if oper == 2:
+            amount = 500000000
+        ip = str(ipedit.text()).strip()
+        puk = str(pubkey_edit.text()).strip()
+
+
+        if len(cert) != 88:
+            self.show_warning(_('cert error'))
+            return
+        if len(puk) != 130:
+            self.show_warning(_('pubkey error'))
+            return
+        blockurl = 'http://explorer.ulord.one/api/tx/' + txid
+        try:
+            r = requests.get(blockurl)
+            decoded = json.loads(r.text)
+            value = decoded.get('vout')[int(index)].get('value')
+            if value != '10000.00000000':
+                self.show_warning(_('txid error or index error'))
+                return
+        except:
+            self.show_warning(_('txid error or index error'))
+            return
+        #########################################################
+        for tx in self.wallet.get_history(self.wallet.get_addresses()):
+            tx_hash, height, conf, timestamp, value, balance = tx
+            txobj = self.wallet.transactions.get(tx_hash)
+            if txobj != None and len(txobj.outputs())==6:
+                output = txobj.outputs()[0][1]
+                if ip in output:
+                    if not self.question(_("This IP has been registered. Do you want to continue?")):
+                        return
+                    else:
+                        break;
+        #########################################################
+        if not self.network.is_connected():
+            self.show_message(_("connetion is abort."))
+            # return
+        if run_hook('abort_send', self):
+            return
+        outputs=[(0,'USu35JzWCXSvgvDL1utfFzb52zR1fdkfZ9',amount)]
+        fee = 23000
+        coins = self.get_coins()
+        amount = sum(map(lambda x: x[2], outputs))
+
+        datatrs = "!" + index +"!" + "@" + validate + "@"+ "#" + "1" + "#" + "%" + ip + "%"
+        dataout = "6a"+ bitcoin.int_to_hex(len(datatrs)) + datatrs.encode("hex")
+        outputs.append((3, dataout, 0))
+
+        pukstrs = "pub:"+puk
+        pukstrs1 = "pub:"+puk.decode('hex')
+        # pukout = "6a"+ bitcoin.int_to_hex(len(pukstrs1))+"pub:".encode('hex')+puk
+        pukout = "6a4c867075623a"+ puk.encode('hex')
+        outputs.append((3, pukout, 0))
+
+        certstrs = "auth1:"+cert
+        certout = "6a4c"+bitcoin.int_to_hex(len(certstrs)) +certstrs.encode("hex")
+        outputs.append((3, certout, 0))
+
+        txidstrs = "txid:"+txid
+        txidout = "6a"+ bitcoin.int_to_hex(len(txidstrs)) +txidstrs.encode("hex")
+        outputs.append((3, txidout, 0))
+        # datatrs = "!" + index +"!" + "@" + validate + "@"+ "#" + "1" + "#" + "%" + ip + "%"
+        # dataout = "6a" + datatrs.encode("hex")
+        # outputs.append((3, dataout, 0))
+        #
+        # pukstrs = "pub:"+puk
+        # pukout = "6a" + "pub:".encode('hex')+ puk
+        # outputs.append((3, pukout, 0))
+        #
+        # certstrs = "auth1:"+cert
+        # certout = "6a" + certstrs.encode("hex")
+        # outputs.append((3, certout, 0))
+        #
+        # txidstrs = "txid:"+txid
+        # txidout = "6a" + txidstrs.encode("hex")
+        # outputs.append((3, txidout, 0))
+
+        try:
+            tx = self.wallet.make_unsigned_transaction(coins, outputs, self.config, fee)
+        except NotEnoughFunds:
+            self.show_message(_("Insufficient funds"))
+            return
+        except BaseException as e:
+            traceback.print_exc(file=sys.stdout)
+            self.show_message(str(e))
+            return
+
+        use_rbf = self.rbf_checkbox.isChecked()
+        if use_rbf:
+            tx.set_sequence(0)
+
+        if tx.get_fee() < self.wallet.relayfee() * tx.estimated_size() / 1000 and tx.requires_fee(self.wallet):
+            self.show_error(_("This transaction requires a higher fee, or it will not be propagated by the network"))
+            return
+
+
+        confirm_amount = self.config.get('confirm_amount', COIN)
+        msg = [
+            _("Amount to be sent") + ": " + self.format_amount_and_units(amount),
+            _("Mining fee") + ": " + self.format_amount_and_units(fee),
+        ]
+
+        extra_fee = run_hook('get_additional_fee', self.wallet, tx)
+        if extra_fee:
+            msg.append(_("Additional fees") + ": " + self.format_amount_and_units(extra_fee))
+
+        if tx.get_fee() >= self.config.get('confirm_fee', 100000):
+            msg.append(_('Warning') + ': ' + _("The fee for this transaction seems unusually high."))
+
+        if self.wallet.has_password():
+            msg.append("")
+            msg.append(_("Enter your password to proceed"))
+            password = self.password_dialog('\n'.join(msg))
+            if not password:
+                return
+        else:
+            msg.append(_('Proceed?'))
+            password = None
+            if not self.question('\n'.join(msg)):
+                return
+
+        def sign_done(success):
+            if success:
+                if not tx.is_complete():
+                    self.show_transaction(tx)
+                    self.do_clear()
+                else:
+                    self.broadcast_transaction(tx, '')
+
+        self.sign_tx_with_password(tx, sign_done, password)
+        mainnodeCert = os.path.join(util.user_dir(), "mnode_cert")
+        certMsg = {}
+        certMsg['txid'] = txid
+        certMsg['index'] = index
+        certMsg['ip'] = ip
+        certMsg['puk'] = puk
+        with open(mainnodeCert, 'w') as f:
+            s = json.dumps(certMsg, indent=4)
+            r = f.write(s)
 
     def sign_verify_message(self, address=''):
         d = WindowModalDialog(self, _('Sign/verify Message'))
@@ -2296,7 +2757,6 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         address_e.addItems(receiving_addresses)
         if address.strip():
             address_e.setCurrentIndex(receiving_addresses.index(address))
-        # address_e.setEditText(QString(address))
         address_e.setFixedWidth(481) 
         hlayoutMid.addWidget(QLabel(_('Sign Address')))
         hlayoutMid.addWidget(address_e)

@@ -2801,3 +2801,123 @@ msgstr "创建赎回交易"
 
 msgid 'Masternode deposit transaction'
 msgstr '主节点押金交易'
+
+msgid 'Too many UTXO are detected in your wallet, which will cause your wallet to respond very slowly. It is suggested that you merge UTXO, but some charges will be incurred.'
+msgstr '检测到您的钱包的UTXO过多，这将导致您的钱包响应变非常缓慢,建议您整合UTXO,该操作将会产生一些交易费用.'
+
+msgid 'Transaction Fee is too high'
+msgstr '交易费用设置过高.'
+
+msgid 'user cancel utxo_merge'
+msgstr '整合结束'
+
+msgid "Merge UTXO"
+msgstr '整合UTXO'
+
+msgid 'need not merge UTXO'
+msgstr '无需整合UTXO'
+
+msgid "MasterNode Regist"
+msgstr "主节点注册"
+
+msgid 'txid'
+msgstr '一万押金ID'
+
+msgid 'amount'
+msgstr '交易金额'
+
+msgid 'index'
+msgstr '交易索引'
+
+msgid 'certificate'
+msgstr '证书'
+
+msgid 'validdate'
+msgstr '有效时间'
+
+msgid 'masterNode ip'
+msgstr '主节点IP'
+
+msgid 'master special code'
+msgstr '节点特征码'
+
+msgid 'public key'
+msgstr '公钥'
+
+msgid "generate pubkey"
+msgstr "生成公钥"
+
+msgid "regist masternode"
+msgstr "注册主节点"
+
+msgid  'Master node registration successful.'
+msgstr '恭喜,主节点注册成功.'
+
+msgid  'Master node update successful.'
+msgstr '恭喜,主节点更新成功.'
+
+msgid 'Master node registration failed. Please check the parameters.'
+msgstr '主节点注册失败,请检查参数.'
+
+msgid  'Master node registration failed. Please check the network.'
+msgstr '主节点注册失败,请检查网络'
+
+msgid "&MasterNode Regist"
+msgstr "&主节点注册"
+
+msgid "&Certificate Update"
+msgstr "&证书更新"
+
+msgid "Certificate Update"
+msgstr "证书更新"
+
+msgid "Get it from the Developer community..."
+msgstr "可从开发者社区获取该输入..."
+
+msgid "click generate pubkey..."
+msgstr "点击生成公钥按钮..."
+
+msgid "Get it from the Blockchain Explorer..."
+msgstr "可从区块链浏览器获取该输入..."
+
+msgid 'Please enter the master special code'
+msgstr '请输入主节点特征码!'
+
+msgid 'Please check the master special code'
+msgstr '主节点特征码格式错误,请检查...'
+
+msgid 'Master node update failed. Please check the parameters.'
+msgstr '主节点更新失败,请检查参数.'
+
+msgid 'Master node update failed. Please check the network.'
+msgstr '主节点更新失败,请检查网络.'
+
+msgid "Get it from the Blockchain Explorer or UWallet..."
+msgstr "从钱包或区块链浏览器获取索引..."
+
+msgid "send 10000ut to USu35JzWCXSvgvDL1utfFzb52zR1fdkfZ9..."
+msgstr "对USu35JzWCXSvgvDL1utfFzb52zR1fdkfZ9发送10000UT押金的交易id..."
+
+msgid 'Date format error, please use  2019-01-01 23:59:59'
+msgstr '日期格式错误，请采用【2019-01-01 23:59:59】格式'
+
+msgid "MasterNode registered"
+msgstr "节点已注册，请勿重复注册"
+
+msgid "This IP has been registered. Do you want to continue?"
+msgstr "该ip已注册，是否继续?"
+
+msgid 'txid error'
+msgstr '交易id错误'
+
+msgid 'index error'
+msgstr '交易索引错误'
+
+msgid 'cert error'
+msgstr '证书错误'
+
+msgid 'pubkey error'
+msgstr '公钥错误'
+
+msgid 'txid error or index error'
+msgstr '未能查到10000UT交易,请检查交易id或索引'

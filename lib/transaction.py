@@ -34,6 +34,8 @@ from util import print_error, profiler
 import time
 import sys
 import struct
+import mmap
+import contextlib
 
 #
 # Workalike python implementation of Bitcoin's CDataStream class.
@@ -429,6 +431,10 @@ def parse_output(vds, i):
 
 def deserialize(raw):
     vds = BCDataStream()
+    ss = raw.decode('hex')
+    print len(ss)
+    aa = raw.encode('hex')
+    print aa
     vds.write(raw.decode('hex'))
     d = {}
     start = vds.read_cursor
@@ -452,6 +458,10 @@ class Transaction:
             self.raw = self.serialize()
         return self.raw
 
+    def set_merge_progress_count(self,current_loop_count,all_count):
+        self.merge_progress_count = current_loop_count
+        self.all_count = all_count
+
     def __init__(self, raw):
         if raw is None:
             self.raw = None
@@ -466,6 +476,7 @@ class Transaction:
         self.locktime = 0
         self.redeem_contract = None
         self.is_deposit_tx = False
+        self.merge_progress_count = None
 
     def update(self, raw):
         self.raw = raw
@@ -576,6 +587,8 @@ class Transaction:
     def pay_script(self, output_type, addr):
         if output_type == TYPE_SCRIPT:
             return addr.encode('hex')
+        elif output_type == NODE_REG:
+            return addr
         elif output_type == TYPE_ADDRESS:
             addrtype, hash_160 = bc_address_to_hash_160(addr)
             # if addrtype == 0 or addrtype ==68:#68#130
@@ -758,10 +771,36 @@ class Transaction:
                 out.add(i)
         return out
 
+    def merge_progress(self):
+        if self.merge_progress_count == None:
+            return
+        self.merge_progress_count = self.merge_progress_count + 1
+        try:
+            with open("process.dat", 'r') as f:
+                with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_READ)) as m:
+                    s = m.read(1024).replace('\x00', '')
+                    strs = s.split('/', 2);
+        except:
+            return
+        if len(strs) > 2 and strs[2] == 'cancel_merge':
+            raise ValueError('user cancel utxo_merge')
+        try:
+            with open("process.dat", "w") as f:
+                f.write('\x00' * 1024)
+            with open('process.dat', 'r+') as f:
+                with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                    m.seek(0)
+                    s = str(self.merge_progress_count) + "/" + str(self.all_count) + "/merge"
+                    s.rjust(1024, '\x00')
+                    m.write(s)
+                    m.flush()
+        except:
+            pass
 
     def sign(self, keypairs):
         for i, txin in enumerate(self.inputs()):
             num = txin['num_sig']
+            self.merge_progress()
             for x_pubkey in txin['x_pubkeys']:
                 signatures = filter(None, txin['signatures'])
                 if len(signatures) == num:

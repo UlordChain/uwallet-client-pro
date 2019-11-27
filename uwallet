@@ -78,14 +78,14 @@ if not is_android:
     check_imports()
 
 # load local module as electrum
-# if is_bundle or is_local or is_android:
-#     import imp
-#     imp.load_module('uwallet', *imp.find_module('lib'))
-#     imp.load_module('uwallet_gui', *imp.find_module('gui'))
+if is_bundle or is_local or is_android:
+    import imp
+    imp.load_module('uwallet', *imp.find_module('lib'))
+    imp.load_module('uwallet_gui', *imp.find_module('gui'))
 
 #     imp.load_module('uwallet_plugins', *imp.find_module('plugins'))
 import uwallet ,uwallet_gui,uwallet_plugins,uwallet_gui.qt
-from uwallet import SimpleConfig, Network
+from uwallet import SimpleConfig, Network,version
 from uwallet.wallet import Wallet
 from uwallet.storage import WalletStorage
 from uwallet.util import print_msg, print_stderr, json_encode, json_decode
@@ -95,7 +95,7 @@ from uwallet import daemon
 from uwallet import keystore
 from uwallet.mnemonic import Mnemonic
 
-# get password routine  pydev debugger: warning: trying to add breakpoint to file that does not exist: c:\python27\lib\site-packages\uwallet-2.7.1-py2.7.egg/uwallet\plugins.py
+# get password routine  pydev debugger: w arning: trying to add breakpoint to file that does not exist: c:\python27\lib\site-packages\uwallet-2.7.1-py2.7.egg/uwallet\plugins.py
 def prompt_password(prompt, confirm=True):
     import getpass
     password = getpass.getpass(prompt, stream=None)
@@ -345,9 +345,14 @@ if __name__ == '__main__':
         p = os.path.join(os.environ["APPDATA"], "UWallet")
         path = os.path.join(p, "blockchain_headers")
         cpath = os.path.join(p, "recent_servers")
+        version_path = os.path.join(p, "version")
         if os.path.exists(cpath):
             os.remove(cpath)
-        if os.path.exists(path):#本地有header则与程序包header比较大小 无则跳过从网络下载最新header
+        if not os.path.exists(version_path):
+            shutil.copyfile(localheader, path)
+            with open(version_path, 'w') as wf:
+                wf.write(version.UWallet_VERSION)
+        if os.path.exists(path):#Ã¦ÂÂ¬Ã¥ÂÂ°Ã¦ÂÂheaderÃ¥ÂÂÃ¤Â¸ÂÃ§Â¨ÂÃ¥ÂºÂÃ¥ÂÂheaderÃ¦Â¯ÂÃ¨Â¾ÂÃ¥Â¤Â§Ã¥Â°Â Ã¦ÂÂ Ã¥ÂÂÃ¨Â·Â³Ã¨Â¿ÂÃ¤Â»ÂÃ§Â½ÂÃ§Â»ÂÃ¤Â¸ÂÃ¨Â½Â½Ã¦ÂÂÃ¦ÂÂ°header
             if os.path.exists(localheader):
                 if get_FileSize(localheader)>get_FileSize(path):
                     shutil.copyfile(localheader, path)
@@ -356,7 +361,6 @@ if __name__ == '__main__':
             d = daemon.Daemon(config, fd)
             d.start()
             d.init_gui(config, plugins)
-            # a = raw_input()
             sys.exit(0)
         else:
             result = server.gui(config_options)

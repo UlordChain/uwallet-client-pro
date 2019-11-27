@@ -424,7 +424,7 @@ class Commands:
             self.wallet.sign_transaction(tx, self._password)
         return tx
 
-    @command('wp')
+    @command('wp')#更换钱包到测试服务器，打很多钱，循环调用payto，然后开始写merge代码
     def payto(self, destination, amount, tx_fee=None, from_addr=None, change_addr=None, nocheck=False, unsigned=False, rbf=False):
         """Create a transaction. """
         domain = [from_addr] if from_addr else None

@@ -48,6 +48,7 @@ FEE_TARGETS = [25, 10, 5, 2]
 DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
 
 DEFAULT_SERVERS = {
+# '114.67.37.198': {'t': '50001'}
 'wallet3-3.ulord.one': {'t': '10577'},
 'wallet1.ulord.one': {'t': '10579'},
 'wallet2.ulord.one': {'t': '10579'}
