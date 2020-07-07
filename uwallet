@@ -78,10 +78,10 @@ if not is_android:
     check_imports()
 
 # load local module as electrum
-if is_bundle or is_local or is_android:
-    import imp
-    imp.load_module('uwallet', *imp.find_module('lib'))
-    imp.load_module('uwallet_gui', *imp.find_module('gui'))
+# if is_bundle or is_local or is_android:
+#     import imp
+#     imp.load_module('uwallet', *imp.find_module('lib'))
+#     imp.load_module('uwallet_gui', *imp.find_module('gui'))
 
 #     imp.load_module('uwallet_plugins', *imp.find_module('plugins'))
 import uwallet ,uwallet_gui,uwallet_plugins,uwallet_gui.qt
@@ -352,7 +352,7 @@ if __name__ == '__main__':
             shutil.copyfile(localheader, path)
             with open(version_path, 'w') as wf:
                 wf.write(version.UWallet_VERSION)
-        if os.path.exists(path):#Ã¦ÂÂ¬Ã¥ÂÂ°Ã¦ÂÂheaderÃ¥ÂÂÃ¤Â¸ÂÃ§Â¨ÂÃ¥ÂºÂÃ¥ÂÂheaderÃ¦Â¯ÂÃ¨Â¾ÂÃ¥Â¤Â§Ã¥Â°Â Ã¦ÂÂ Ã¥ÂÂÃ¨Â·Â³Ã¨Â¿ÂÃ¤Â»ÂÃ§Â½ÂÃ§Â»ÂÃ¤Â¸ÂÃ¨Â½Â½Ã¦ÂÂÃ¦ÂÂ°header
+        if os.path.exists(path):#ÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¬ÃÂÃÂ¥ÃÂÃÂÃÂÃÂ°ÃÂÃÂ¦ÃÂÃÂÃÂÃÂheaderÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ§ÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¥ÃÂÃÂºÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂheaderÃÂÃÂ¦ÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¨ÃÂÃÂ¾ÃÂÃÂÃÂÃÂ¥ÃÂÃÂ¤ÃÂÃÂ§ÃÂÃÂ¥ÃÂÃÂ°ÃÂÃÂ ÃÂÃÂ¦ÃÂÃÂÃÂÃÂ ÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂ·ÃÂÃÂ³ÃÂÃÂ¨ÃÂÃÂ¿ÃÂÃÂÃÂÃÂ¤ÃÂÃÂ»ÃÂÃÂÃÂÃÂ§ÃÂÃÂ½ÃÂÃÂÃÂÃÂ§ÃÂÃÂ»ÃÂÃÂÃÂÃÂ¤ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂ½ÃÂÃÂ½ÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ°header
             if os.path.exists(localheader):
                 if get_FileSize(localheader)>get_FileSize(path):
                     shutil.copyfile(localheader, path)

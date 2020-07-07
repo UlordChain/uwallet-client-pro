@@ -416,6 +416,9 @@ class QMessageBoxEx(QDialog):
         self.setContentsMargins(15, 9, 15, 15)
         self.titleStr= title
 
+        if len(text)>160:
+            text = text[0:160]
+            text += "......"
         vbox = QVBoxLayout(self)
         self.setTitleBar(vbox)
         mdlHbox=QHBoxLayout()

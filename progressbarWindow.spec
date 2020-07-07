@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['progressbarWindow.py'],
-             pathex=['C:\\Work\\uwallet-client-pro'],
+             pathex=['D:\\Work\\uwallet-client-pro_new _run'],
              binaries=[],
              datas=[],
              hiddenimports=['queue'],
@@ -13,14 +13,17 @@ a = Analysis(['progressbarWindow.py'],
              excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
-             cipher=block_cipher)
+             cipher=block_cipher,
+             noarchive=False)
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
+          [],
           exclude_binaries=True,
           name='progressbarWindow',
           debug=False,
+          bootloader_ignore_signals=False,
           strip=False,
           upx=True,
           console=False , icon='uwallet.ico')

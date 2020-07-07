@@ -9,6 +9,7 @@ from PyQt4.QtCore import *
 import math
 import os
 import json
+import subprocess
 
 class ProgressBar(QWidget):
     def __init__(self, parent=None):
@@ -58,36 +59,56 @@ class ProgressBar(QWidget):
             with open("process.dat", 'r') as f:
                 with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_READ)) as m:
                     s = m.read(1024).replace('\x00', '')
-                    strs = s.split('/', 1);
-                    if len(strs)!=2:
-                        return
-                    down = int(strs[0])
-                    all = int(strs[1])
-                    # all = all-all%96
-                    if down==0:
-                        if self.language=="zh_CN":
-                            self.tq.setText(QString.fromUtf8("正在下载区块数据，请稍后..."))
-                        else:
-                            self.tq.setText(QString.fromUtf8("Synchronizing BlockHeader..."))
-                    self.setWindowTitle(s)
-
-                    self.pbar.setMaximum(int(all))
-                    self.pbar.setValue(down)
+                    strs = s.split('/', 2);
+            if len(strs) < 2:
+                return
+            if self.proceesAction=='downHeader':
+                down = int(strs[0])
+                all = int(strs[1])
+                if down==0:
                     if self.language=="zh_CN":
-                        self.tq.setText(QString.fromUtf8("正在同步区块数据，请稍后...(%d/%d)" % (down, all)))
+                        self.tq.setText(QString.fromUtf8("正在下载区块数据，请稍后..."))
                     else:
-                        self.tq.setText(QString.fromUtf8("Synchronizing BlockHeader...(%d/%d)" % (down, all)))
-                    if down>=all:
-                    # if (all-down)<=96:
-                        self.pbar.setMaximum(self.pbar.maximum())
-                        self.timer.stop()
-                        sys.exit(0)
+                        self.tq.setText(QString.fromUtf8("Synchronizing BlockHeader..."))
+                self.setWindowTitle(s)
+
+                self.pbar.setMaximum(int(all))
+                self.pbar.setValue(down)
+                if self.language=="zh_CN":
+                    self.tq.setText(QString.fromUtf8("正在同步区块数据，请稍后...(%d/%d)" % (down, all)))
+                else:
+                    self.tq.setText(QString.fromUtf8("Synchronizing BlockHeader...(%d/%d)" % (down, all)))
+                if down>=all:
+                    self.pbar.setMaximum(self.pbar.maximum())
+                    self.timer.stop()
+                    sys.exit(0)
+            if self.proceesAction=='merge':
+                # with open("processResult.dat", 'r') as f:
+                #     with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_READ)) as m:
+                #         s = m.read(1024).replace('\x00', '')
+                down = int(strs[0])
+                all = int(strs[1])
+                info = str(strs[2])
+                self.setWindowTitle(s)
+                self.pbar.setMaximum(int(all))
+                self.pbar.setValue(down)
+                if self.language == "zh_CN":
+                    self.tq.setText(QString.fromUtf8("正在合并UTXO，请稍后...(%d/%d)" % (down, all)))
+                else:
+                    self.tq.setText(QString.fromUtf8("Merging UTXO,Please Wait ...(%d/%d)" % (down, all)))
+                if down >= all :#or s =="merge_over"
+                    self.pbar.setMaximum(self.pbar.maximum())
+                    self.timer.stop()
+                    sys.exit(0)
+
 
     def onStart(self):
         if self.timer.isActive():
             self.timer.stop()
         else:
             self.timer.start(800, self)
+
+
 
     def setTitleBar(self,vbox):
         self.tq = QLabel()
@@ -96,7 +117,7 @@ class ProgressBar(QWidget):
         self.btn_close.setMinimumSize(QSize(21, 21))
         self.btn_close.setMaximumSize(QSize(21, 21))
         self.btn_close.setObjectName("btn_close")
-        self.btn_close.clicked.connect(self.close)
+        self.btn_close.clicked.connect(self.user_close_Event)
         self.btn_close.setStyleSheet("QPushButton{border: 1px solid #333333;width: 78px;height: 25px;border-top-left-radius: 3px;border-top-right-radius: 3px;border-bottom-left-radius: 3px;border-bottom-right-radius: 3px;background: white;}QPushButton#btn_close{border:0px;background:url(ic_clear.png) center no-repeat;}QPushButton#btn_close:hover{border:0px;background:url(ic_clear_copy_pre.png) center no-repeat;}QPushButton#btn_close:pressed{border:0px;background:url(ic_clear.png) center no-repeat;}")
         hbox = QHBoxLayout()
         hbox.addWidget(self.tq)
@@ -136,9 +157,27 @@ class ProgressBar(QWidget):
             painter.setPen(QPen(color, 1, Qt.SolidLine))
             painter.drawRoundRect(QRect(m - i, m - i, self.width() - (m - i) * 2, self.height() - (m - i) * 2), 0, 0)
 
+    def user_close_Event(self):
+        if self.proceesAction == 'merge':
+            with open("process.dat", "w") as f:
+                f.write('\x00' * 1024)
+            with open('process.dat', 'r+') as f:
+                with contextlib.closing(mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_WRITE)) as m:
+                    m.seek(0)
+                    s = str(0) + "/" + str(0) + "/cancel_merge"
+                    s.rjust(1024, '\x00')
+                    m.write(s)
+                    m.flush()
+        self.close()
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     icon = ProgressBar()
+    icon.proceesAction = sys.argv[1]
+    print icon.proceesAction
     icon.show()
     sys.exit(app.exec_())
+    # os.system('start D:\Work\uwallet-client-pro_lk\dist\progressbarWindow\progressbarWindow.exe')
+    # a = 1
+
 

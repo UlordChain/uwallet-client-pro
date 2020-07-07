@@ -759,7 +759,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         tools_menu.addSeparator()
 
         tools_menu.addAction(_("&MasterNode Regist"), self.masternode_regist_dialog)
-        # tools_menu.addAction(_("&Certificate Update"), self.masternode_update_dialog)
+        tools_menu.addAction(_("&Certificate Update"), self.masternode_update_dialog)
         tools_menu.addSeparator()
 
         paytomany_menu = tools_menu.addAction(_("&Pay to many"), self.paytomany)
@@ -2418,14 +2418,14 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
 
     def masternode_update_dialog(self):
         mainnodeCert = os.path.join(util.user_dir(), "mnode_cert")
-        txid = index = ip = puk = ''
+        txid = index = ip =  ''
         if os.path.exists(mainnodeCert):
             with open(mainnodeCert, 'r') as f:
                 certInfo = json.loads(f.read())
                 txid = certInfo['txid']
                 index = certInfo['index']
                 ip = certInfo['ip']
-                puk = certInfo['puk']
+                # puk = certInfo['puk']
         d = WindowModalDialog(self, _("Certificate Update"))
         d.setMaximumSize(610, 340)
         d.setMinimumSize(610, 340)
@@ -2470,24 +2470,22 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         layout.addLayout(iplayout)
         ipedit = Ip4Edit()
         if ip != '':
-            ipedit.setText(ip)
+            ipedit.setText(QString(ip))
         ipedit.setMaximumWidth(480)
         iplayout.addWidget(QLabel(_('masterNode ip')))
         iplayout.addWidget(ipedit)
 
-
-        pubkeylayout = QHBoxLayout()
-        layout.addLayout(pubkeylayout)
-        pubkey_edit = QLineEditEx()
-        pubkey_edit.setMaximumWidth(480)
-
-        pubkey_edit.setText(puk)
-        pubkeylayout.addWidget(QLabel(_('public key')))
-        pubkeylayout.addWidget(pubkey_edit)
+        prvkeylayout = QHBoxLayout()
+        layout.addLayout(prvkeylayout)
+        prvkey_edit = QLineEditEx()
+        prvkey_edit.setMaximumWidth(480)
+        prvkey_edit.setPlaceholderText(_("Get it from the Developer community..."))
+        prvkeylayout.addWidget(QLabel(_('master special code')))
+        prvkeylayout.addWidget(prvkey_edit)
 
         hbox = QHBoxLayout()
         regm = QPushButton(_("Certificate Update"))
-        regm.clicked.connect(lambda: self.masternode_regist(txid_edit,index_edit,cert_edit,vtime_edit,ipedit,pubkey_edit,2))
+        regm.clicked.connect(lambda: self.masternode_regist(txid_edit,index_edit,cert_edit,vtime_edit,ipedit,prvkey_edit,2))
         hbox.addWidget(regm)
         b = QPushButton(_("Close"))
         b.clicked.connect(d.accept)
@@ -2548,29 +2546,29 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         iplayout.addWidget(QLabel(_('masterNode ip')))
         iplayout.addWidget(ipedit)
 
-        pvkeylayout = QHBoxLayout()
-        layout.addLayout(pvkeylayout)
-        pvkey_edit = QLineEditEx()
-        pvkey_edit.setMaximumWidth(480)
-        pvkey_edit.setPlaceholderText(_("Get it from the Developer community..."))
-        pvkeylayout.addWidget(QLabel(_('master special code')))
-        pvkeylayout.addWidget(pvkey_edit)
+        # pvkeylayout = QHBoxLayout()
+        # layout.addLayout(pvkeylayout)
+        # pvkey_edit = QLineEditEx()
+        # pvkey_edit.setMaximumWidth(480)
+        # pvkey_edit.setPlaceholderText(_("Get it from the Developer community..."))
+        # pvkeylayout.addWidget(QLabel(_('master special code')))
+        # pvkeylayout.addWidget(pvkey_edit)
 
-        pubkeylayout = QHBoxLayout()
-        layout.addLayout(pubkeylayout)
-        pubkey_edit = QLineEditEx()
-        pubkey_edit.setMaximumWidth(480)
-        pubkey_edit.setPlaceholderText(_("click generate pubkey..."))
-        pubkeylayout.addWidget(QLabel(_('public key')))
-        pubkeylayout.addWidget(pubkey_edit)
+        prvkeylayout = QHBoxLayout()
+        layout.addLayout(prvkeylayout)
+        prvkey_edit = QLineEditEx()
+        prvkey_edit.setMaximumWidth(480)
+        prvkey_edit.setPlaceholderText(_("Get it from the Developer community..."))
+        prvkeylayout.addWidget(QLabel(_('master special code')))
+        prvkeylayout.addWidget(prvkey_edit)
 
         hbox = QHBoxLayout()
-        gpub = QPushButton(_("generate pubkey"))
+        # gpub = QPushButton(_("generate pubkey"))
         regm = QPushButton(_("regist masternode"))
-        regm.setEnabled(False)
-        gpub.clicked.connect(lambda: self.generate_pubkey(pvkey_edit.text(),regm,pubkey_edit))
-        regm.clicked.connect(lambda: self.masternode_regist(txid_edit,index_edit,cert_edit,vtime_edit,ipedit,pubkey_edit,1))
-        hbox.addWidget(gpub)
+        # regm.setEnabled(False)
+        # gpub.clicked.connect(lambda: self.generate_pubkey(pvkey_edit.text(),regm,pubkey_edit))
+        regm.clicked.connect(lambda: self.masternode_regist(txid_edit,index_edit,cert_edit,vtime_edit,ipedit,prvkey_edit,1))
+        # hbox.addWidget(gpub)
         hbox.addWidget(regm)
         b = QPushButton(_("Close"))
         b.clicked.connect(d.accept)
@@ -2579,7 +2577,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         d.exec_()
 
 
-    def masternode_regist(self,txid_edit,index_edit,cert_edit,vtime_edit,ipedit,pubkey_edit,oper):
+    def masternode_regist(self,txid_edit,index_edit,cert_edit,vtime_edit,ipedit,prvkey_edit,oper):
 
         txid = str(txid_edit.text()).strip()
         index = str(index_edit.text()).strip()
@@ -2591,12 +2589,15 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         except:
             self.show_warning(_('Date format error, please use  2019-01-01 23:59:59'))
             return
-        amount = 5000000000;
+        amount = 5000000000;#test 1000000000
         if oper == 2:
             amount = 500000000
         ip = str(ipedit.text()).strip()
-        puk = str(pubkey_edit.text()).strip()
+        prvk = str(prvkey_edit.text()).strip()
 
+
+        private_key = BitcoinPrivateKey(prvk)
+        puk = private_key.public_key().to_hex()
 
         if len(cert) != 88:
             self.show_warning(_('cert error'))
@@ -2604,28 +2605,52 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         if len(puk) != 130:
             self.show_warning(_('pubkey error'))
             return
-        blockurl = 'http://explorer.ulord.one/api/tx/' + txid
+        blockurl = 'http://explorer.ulord.one/api/tx/' + txid #test 'http://test-explorer.ulord.one:3001/api/tx/' + txid
+        masterurl = 'http://175.6.145.36:1024/getMasterNodeList?pageNum=1&pageSize=99999' #test http://114.67.37.198:1024/getMasterNodeList?pageNum=1&pageSize=99999
         try:
             r = requests.get(blockurl)
             decoded = json.loads(r.text)
             value = decoded.get('vout')[int(index)].get('value')
-            if value != '10000.00000000':
+            if value != '10000.00000000':#test 100.00000000
                 self.show_warning(_('txid error or index error'))
                 return
         except:
             self.show_warning(_('txid error or index error'))
             return
+        try:
+            r = requests.get(masterurl)
+            decoded = json.loads(r.text)
+        except:
+            self.show_warning(_('can not get master node list'))
+            return
         #########################################################
-        for tx in self.wallet.get_history(self.wallet.get_addresses()):
-            tx_hash, height, conf, timestamp, value, balance = tx
-            txobj = self.wallet.transactions.get(tx_hash)
-            if txobj != None and len(txobj.outputs())==6:
-                output = txobj.outputs()[0][1]
-                if ip in output:
-                    if not self.question(_("This IP has been registered. Do you want to continue?")):
-                        return
-                    else:
-                        break;
+        utxid = txid.encode('utf8')
+        if oper != 2:
+            for tx in self.wallet.get_history(self.wallet.get_addresses()):
+                tx_hash, height, conf, timestamp, value, balance = tx
+                txobj = self.wallet.transactions.get(tx_hash)
+                if txobj != None and len(txobj.outputs())==6:
+                    output = txobj.outputs()[0][1]
+                    if ip in output:
+                        if not self.question(_("This IP has been registered. Do you want to continue?")):
+                            return
+                        else:
+                            break;
+            #检测是否已使用交易id，已使用则返回
+            for obj in decoded.get('data'):
+                if utxid == obj.get('trx_hash'):
+                    self.show_warning(_('txid is used,The master node could not be registered'))
+                    return
+        else:
+            #检测是否包含交易id，包含则更新，不包含则提示注册
+            hashash = False
+            for obj in decoded.get('data'):
+                if utxid.encode("utf8") == obj.get('trx_hash'):
+                    hashash = True
+                    break
+            if not hashash:
+                self.show_warning(_('Your master node has expired, please choose to register the master node'))
+                return
         #########################################################
         if not self.network.is_connected():
             self.show_message(_("connetion is abort."))
@@ -2641,9 +2666,6 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         dataout = "6a"+ bitcoin.int_to_hex(len(datatrs)) + datatrs.encode("hex")
         outputs.append((3, dataout, 0))
 
-        pukstrs = "pub:"+puk
-        pukstrs1 = "pub:"+puk.decode('hex')
-        # pukout = "6a"+ bitcoin.int_to_hex(len(pukstrs1))+"pub:".encode('hex')+puk
         pukout = "6a4c867075623a"+ puk.encode('hex')
         outputs.append((3, pukout, 0))
 
@@ -2654,21 +2676,6 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         txidstrs = "txid:"+txid
         txidout = "6a"+ bitcoin.int_to_hex(len(txidstrs)) +txidstrs.encode("hex")
         outputs.append((3, txidout, 0))
-        # datatrs = "!" + index +"!" + "@" + validate + "@"+ "#" + "1" + "#" + "%" + ip + "%"
-        # dataout = "6a" + datatrs.encode("hex")
-        # outputs.append((3, dataout, 0))
-        #
-        # pukstrs = "pub:"+puk
-        # pukout = "6a" + "pub:".encode('hex')+ puk
-        # outputs.append((3, pukout, 0))
-        #
-        # certstrs = "auth1:"+cert
-        # certout = "6a" + certstrs.encode("hex")
-        # outputs.append((3, certout, 0))
-        #
-        # txidstrs = "txid:"+txid
-        # txidout = "6a" + txidstrs.encode("hex")
-        # outputs.append((3, txidout, 0))
 
         try:
             tx = self.wallet.make_unsigned_transaction(coins, outputs, self.config, fee)
@@ -2901,6 +2908,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
         d = WindowModalDialog(parent, _("Enter Password"))
         pw = QLineEditEx()
         pw.setPlaceholderText(_('Password'))
+        pw.setMaxLength(15)
         pw.setEchoMode(2)
         vbox = QVBoxLayout()
         d.setTitleBar(vbox)

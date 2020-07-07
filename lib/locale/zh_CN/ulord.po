@@ -2921,3 +2921,12 @@ msgstr '公钥错误'
 
 msgid 'txid error or index error'
 msgstr '未能查到10000UT交易,请检查交易id或索引'
+
+msgid 'txid is used,The master node could not be registered'
+msgstr '该交易id已被使用,无法注册主节点'
+
+msgid 'Your master node has expired, please choose to register the master node'
+msgstr '您的主节点证书已过期，请重新注册主节点'
+
+msgid 'can not get master node list'
+msgstr '无法获取主节点列表'
