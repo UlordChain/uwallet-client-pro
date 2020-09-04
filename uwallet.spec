@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['uwallet'],
-             pathex=['D:\\Work\\uwallet-client-pro'],
+             pathex=['/Users/shakawu/workspace/github/uwallet-client-pro'],
              binaries=[],
              datas=[],
              hiddenimports=['queue'],
@@ -34,3 +34,7 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                name='uwallet')
+app = BUNDLE(coll,
+             name='uwallet.app',
+             icon='uwallet.ico',
+             bundle_identifier=None)

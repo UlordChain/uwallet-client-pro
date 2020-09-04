@@ -2606,7 +2606,7 @@ class UWalletWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.show_warning(_('pubkey error'))
             return
         blockurl = 'http://explorer.ulord.one/api/tx/' + txid #test 'http://test-explorer.ulord.one:3001/api/tx/' + txid
-        masterurl = 'http://175.6.145.36:1024/getMasterNodeList?pageNum=1&pageSize=99999' #test http://114.67.37.198:1024/getMasterNodeList?pageNum=1&pageSize=99999
+        masterurl = 'https://masternode.xuanwuyun.com:8809/getMasterNodeList?pageNum=1&pageSize=99999' #test http://114.67.37.198:1024/getMasterNodeList?pageNum=1&pageSize=99999
         try:
             r = requests.get(blockurl)
             decoded = json.loads(r.text)

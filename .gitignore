@@ -8,3 +8,4 @@ build
 *.pyc
 /dist
 /UWallet.egg-info
+/venv/
