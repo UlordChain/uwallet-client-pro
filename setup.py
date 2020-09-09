@@ -42,7 +42,7 @@ setup(
         'requests',
         'qrcode',
         'protobuf',
-        'dnspython',
+        'dnspython==1.12.0',
         'jsonrpclib',
     ],
     packages=[

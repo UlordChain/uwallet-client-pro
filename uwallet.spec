@@ -1,10 +1,10 @@
-# -*- mode: python -*-
+# -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
 
 
 a = Analysis(['uwallet'],
-             pathex=['/Users/shakawu/workspace/github/uwallet-client-pro'],
+             pathex=['C:\\Users\\shakawu\\PycharmProjects\\uwallet-client-pro'],
              binaries=[],
              datas=[],
              hiddenimports=['queue'],
@@ -33,8 +33,5 @@ coll = COLLECT(exe,
                a.datas,
                strip=False,
                upx=True,
+               upx_exclude=[],
                name='uwallet')
-app = BUNDLE(coll,
-             name='uwallet.app',
-             icon='uwallet.ico',
-             bundle_identifier=None)

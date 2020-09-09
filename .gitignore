@@ -9,3 +9,4 @@ build
 /dist
 /UWallet.egg-info
 /venv/
+!/lib/*.pyd
